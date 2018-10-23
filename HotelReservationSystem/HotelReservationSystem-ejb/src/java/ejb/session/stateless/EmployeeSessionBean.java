@@ -33,6 +33,9 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
+    public EmployeeSessionBean() {
+    }
+    
     @Override
     public EmployeeEntity login(String username, String password) throws InvalidLoginCredentialException{
         try{

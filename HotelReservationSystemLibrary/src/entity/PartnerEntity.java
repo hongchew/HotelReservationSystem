@@ -23,17 +23,18 @@ public class PartnerEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long partnerId;
     private String partnerName;
-    private String password;
     private String username;
+    private String password;
+
 
     public PartnerEntity() {
     }
 
-    public PartnerEntity(Long partnerId, String partnerName, String password, String username) {
-        this.partnerId = partnerId;
+    public PartnerEntity(String partnerName, String username, String password) {
         this.partnerName = partnerName;
-        this.password = password;
         this.username = username;
+        this.password = password;
+
     }
 
     public static long getSerialVersionUID() {
@@ -94,7 +95,7 @@ public class PartnerEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.partnerEntity[ id=" + partnerId + " ]";
+        return partnerId + "    " + partnerName;
     }
     
 }

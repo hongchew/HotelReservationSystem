@@ -6,7 +6,9 @@
 package horsmanagementclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
+import ejb.session.stateless.PartnerSessionBeanRemote;
 import entity.EmployeeEntity;
+import entity.PartnerEntity;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,6 +18,7 @@ import java.util.Scanner;
  */
 public class SystemAdministrationModule {
     private EmployeeSessionBeanRemote employeeSessionBean;
+    private PartnerSessionBeanRemote partnerSessionBean;
     private Scanner sc;
     
     public SystemAdministrationModule() {
@@ -41,8 +44,10 @@ public class SystemAdministrationModule {
                     viewAllEmployees();
                     break;
                 case "3":
+                    createPartner();
                     break;
                 case "4":
+                    viewAllPartners();
                     break;
                 case "5":
                     System.exit(0);
@@ -67,15 +72,19 @@ public class SystemAdministrationModule {
             switch(response){
                 case "1":
                     employeeSessionBean.createNewSysAdmin(name, username, password);
+                    System.out.println("New System Administrator created.");                    
                     break;
                 case "2":
                     employeeSessionBean.createNewOpsManager(name, username, password);
+                    System.out.println("New Operation Manager created.");
                     break;
                 case "3":
                     employeeSessionBean.createNewSalesManager(name, username, password);
+                    System.out.println("New Sales Manager created.");
                     break;
                 case "4":
                     employeeSessionBean.createNewGuestRelationsOffr(name, username, password);
+                    System.out.println("New Guest Relations Officer created.");
                     break;
                 case "5":
                     return;
@@ -89,6 +98,26 @@ public class SystemAdministrationModule {
         List<EmployeeEntity> list = employeeSessionBean.retrieveAllEmployees();
         for(EmployeeEntity e: list){
             System.out.println(e.toString());
+        }
+    }
+    
+    public void createPartner(){
+        System.out.println("**** Create a new Partner Account****");
+        System.out.println("Enter partners's name:");
+        String name = sc.nextLine();
+        System.out.println("Enter username:");
+        String username = sc.nextLine();
+        System.out.println("Enter password:");
+        String password = sc.nextLine();
+        
+        partnerSessionBean.createNewPartner(name, username, password);
+        System.out.println("New partner created.");
+    }
+    
+    public void viewAllPartners(){
+        List<PartnerEntity> list = partnerSessionBean.retrieveAllPartners();
+        for(PartnerEntity p: list){
+            System.out.println(p.toString());
         }
     }
 }
