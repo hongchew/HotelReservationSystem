@@ -87,5 +87,8 @@ public class SystemAdministrationModule {
     
     public void viewAllEmployees(){
         List<EmployeeEntity> list = employeeSessionBean.retrieveAllEmployees();
+        for(EmployeeEntity e: list){
+            System.out.println(e.toString());
+        }
     }
 }

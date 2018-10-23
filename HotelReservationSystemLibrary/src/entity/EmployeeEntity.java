@@ -72,7 +72,7 @@ public abstract class EmployeeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.EmployeeEntity[ id=" + employeeId + " ]";
+        return accessRights + "     " + employeeName;
     }
 
     /**
