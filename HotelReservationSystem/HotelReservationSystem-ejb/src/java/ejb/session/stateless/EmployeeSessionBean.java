@@ -46,8 +46,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         }catch(InvalidLoginCredentialException ex){
             throw new InvalidLoginCredentialException("Invalid Login Credentials");
         }
-        
-        
     }
     
     @Override
@@ -97,6 +95,12 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public List<EmployeeEntity> retrieveAllEmployees(){
         Query query = em.createQuery("SELECT e FROM EmployeeEntity e");
-        return query.getResultList();
+        List<EmployeeEntity> list = query.getResultList();
+        for(EmployeeEntity e: list){
+            e.getEmployeeName();
+            e.getAccessRights();
+        }
+        
+        return list;
     }
 }
