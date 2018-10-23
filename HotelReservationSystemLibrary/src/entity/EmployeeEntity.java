@@ -10,12 +10,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import util.enumeration.EmployeeAccessRightsEnum;
 
 /**
  *
  * @author Hong Chew
  */
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class EmployeeEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,12 +29,12 @@ public abstract class EmployeeEntity implements Serializable {
     private String employeeName;
     private String username;
     private String password;
-    private Integer accessRights;
+    private EmployeeAccessRightsEnum accessRights;
             
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(String employeeName, String username, String password, Integer accessRights) {
+    public EmployeeEntity(String employeeName, String username, String password, EmployeeAccessRightsEnum accessRights) {
         this.employeeName = employeeName;
         this.username = username;
         this.password = password;
@@ -113,19 +117,14 @@ public abstract class EmployeeEntity implements Serializable {
         this.password = password;
     }
 
-    /**
-     * @return the accessRights
-     */
-    public Integer getAccessRights() {
+    public EmployeeAccessRightsEnum getAccessRights() {
         return accessRights;
     }
 
-    /**
-     * @param accessRights the accessRights to set
-     */
-    public void setAccessRights(Integer accessRights) {
+    public void setAccessRights(EmployeeAccessRightsEnum accessRights) {
         this.accessRights = accessRights;
     }
+
     
     
 }

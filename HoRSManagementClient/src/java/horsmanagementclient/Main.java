@@ -5,12 +5,18 @@
  */
 package horsmanagementclient;
 
+import ejb.session.stateless.EmployeeSessionBeanRemote;
+import javax.ejb.EJB;
+
 /**
  *
  * @author Hong Chew
  */
 public class Main {
 
+    @EJB
+    private static EmployeeSessionBeanRemote employeeSessionBean;
+    
     /**
      * @param args the command line arguments
      */
