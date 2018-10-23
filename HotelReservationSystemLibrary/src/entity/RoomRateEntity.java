@@ -21,7 +21,7 @@ import javax.persistence.Temporal;
  * @author saranya
  */
 @Entity
-public class RoomRate implements Serializable {
+public class RoomRateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -29,17 +29,17 @@ public class RoomRate implements Serializable {
     private Long roomRateId;
     private String nameOfRate;
     @ManyToMany
-    private ArrayList<RoomType> roomType;
+    private ArrayList<RoomTypeEntity> roomType;
     private BigDecimal ratePerNight;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date start;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date end;
 
-    public RoomRate() {
+    public RoomRateEntity() {
     }
 
-    public RoomRate(Long roomRateId, String nameOfRate, ArrayList<RoomType> roomType, BigDecimal ratePerNight, Date start, Date end) {
+    public RoomRateEntity(Long roomRateId, String nameOfRate, ArrayList<RoomTypeEntity> roomType, BigDecimal ratePerNight, Date start, Date end) {
         this.roomRateId = roomRateId;
         this.nameOfRate = nameOfRate;
         this.roomType = roomType;
@@ -59,7 +59,7 @@ public class RoomRate implements Serializable {
         return nameOfRate;
     }
 
-    public ArrayList<RoomType> getRoomType() {
+    public ArrayList<RoomTypeEntity> getRoomType() {
         return roomType;
     }
 
@@ -79,7 +79,7 @@ public class RoomRate implements Serializable {
         this.nameOfRate = nameOfRate;
     }
 
-    public void setRoomType(ArrayList<RoomType> roomType) {
+    public void setRoomType(ArrayList<RoomTypeEntity> roomType) {
         this.roomType = roomType;
     }
 
@@ -114,10 +114,10 @@ public class RoomRate implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the roomRateId fields are not set
-        if (!(object instanceof RoomRate)) {
+        if (!(object instanceof RoomRateEntity)) {
             return false;
         }
-        RoomRate other = (RoomRate) object;
+        RoomRateEntity other = (RoomRateEntity) object;
         if ((this.roomRateId == null && other.roomRateId != null) || (this.roomRateId != null && !this.roomRateId.equals(other.roomRateId))) {
             return false;
         }

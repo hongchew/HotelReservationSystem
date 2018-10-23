@@ -16,7 +16,7 @@ import javax.persistence.Id;
  * @author saranya
  */
 @Entity
-public class Room implements Serializable {
+public class RoomEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -28,11 +28,11 @@ public class Room implements Serializable {
     // isUsable ensures that the room is in good condition for customers to use 
     private boolean isUsable;
     
-    public Room() {
+    public RoomEntity() {
         
     }
     
-    public Room(Long roomId, int roomNum, boolean isOccupied, boolean isUsable) {
+    public RoomEntity(Long roomId, int roomNum, boolean isOccupied, boolean isUsable) {
         this.isOccupied = isOccupied;
         this.isUsable = isUsable;
         this.roomId = roomId;
@@ -75,10 +75,10 @@ public class Room implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the roomId fields are not set
-        if (!(object instanceof Room)) {
+        if (!(object instanceof RoomEntity)) {
             return false;
         }
-        Room other = (Room) object;
+        RoomEntity other = (RoomEntity) object;
         if ((this.roomId == null && other.roomId != null) || (this.roomId != null && !this.roomId.equals(other.roomId))) {
             return false;
         }

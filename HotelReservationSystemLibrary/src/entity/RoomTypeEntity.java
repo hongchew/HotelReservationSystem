@@ -19,7 +19,7 @@ import javax.persistence.OneToMany;
  * @author saranya
  */
 @Entity
-public class RoomType implements Serializable {
+public class RoomTypeEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -32,12 +32,12 @@ public class RoomType implements Serializable {
     private String amenities;
     @OneToMany(mappedBy = "roomType")
     @ManyToMany(mappedBy = "roomType")
-    private List<RoomRate> roomRates;
+    private List<RoomRateEntity> roomRates;
 
-    public RoomType() {
+    public RoomTypeEntity() {
     }
 
-    public RoomType(Long id, int numOfRooms, int capacity, String nameOfRoomType, String description, String amenities) {
+    public RoomTypeEntity(Long id, int numOfRooms, int capacity, String nameOfRoomType, String description, String amenities) {
         this.roomTypeId = id;
         this.numOfRooms = numOfRooms;
         this.capacity = capacity;
@@ -109,10 +109,10 @@ public class RoomType implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the roomTypeId fields are not set
-        if (!(object instanceof RoomType)) {
+        if (!(object instanceof RoomTypeEntity)) {
             return false;
         }
-        RoomType other = (RoomType) object;
+        RoomTypeEntity other = (RoomTypeEntity) object;
         if ((this.roomTypeId == null && other.roomTypeId != null) || (this.roomTypeId != null && !this.roomTypeId.equals(other.roomTypeId))) {
             return false;
         }
