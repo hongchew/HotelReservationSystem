@@ -10,6 +10,7 @@ import entity.GuestRelationOfficerEntity;
 import entity.OperationManagerEntity;
 import entity.SalesManagerEntity;
 import entity.SystemAdminEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -18,7 +19,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.enumeration.EmployeeAccessRightsEnum;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -94,4 +94,9 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         
     }
     
+    @Override
+    public List<EmployeeEntity> retrieveAllEmployees(){
+        Query query = em.createQuery("SELECT e FROM EmployeeEntity e");
+        return query.getResultList();
+    }
 }
