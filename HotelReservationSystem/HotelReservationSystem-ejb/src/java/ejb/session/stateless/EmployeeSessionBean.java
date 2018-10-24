@@ -19,6 +19,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -46,13 +47,13 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
                 throw new InvalidLoginCredentialException("Invalid Login Credentials");
             }
             
-        }catch(InvalidLoginCredentialException ex){
+        }catch(EmployeeNotFoundException ex){
             throw new InvalidLoginCredentialException("Invalid Login Credentials");
         }
     }
     
     @Override
-    public EmployeeEntity retrieveEmployeeByUsername(String username) throws InvalidLoginCredentialException{
+    public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException{
         Query query = em.createQuery("SELECT e FROM EmployeeEntity e WHERE e.username = :username");
         query.setParameter("username", username);
         
@@ -60,7 +61,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         return (EmployeeEntity) query.getSingleResult();
         }
         catch(NoResultException | NonUniqueResultException ex){
-            throw new InvalidLoginCredentialException("Invalid Login Credentials");
+            throw new EmployeeNotFoundException("Invalid Login Credentials");
         }
     }
     

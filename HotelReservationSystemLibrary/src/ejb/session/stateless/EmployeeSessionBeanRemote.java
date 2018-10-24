@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.EmployeeEntity;
 import java.util.List;
+import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -18,7 +19,7 @@ public interface EmployeeSessionBeanRemote {
 
     public EmployeeEntity login(String username, String password) throws InvalidLoginCredentialException;
 
-    public EmployeeEntity retrieveEmployeeByUsername(String username) throws InvalidLoginCredentialException;
+    public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
 
     public void createNewSysAdmin(String name, String username, String password);
 

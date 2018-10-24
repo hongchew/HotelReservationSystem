@@ -5,11 +5,16 @@
  */
 package ejb.session.stateless;
 
+import entity.EmployeeEntity;
+import util.exception.EmployeeNotFoundException;
+
 /**
  *
  * @author Hong Chew
  */
 
 public interface EmployeeSessionBeanLocal {
-    
+    public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
+
+    public void createNewSysAdmin(String name, String username, String password);
 }
