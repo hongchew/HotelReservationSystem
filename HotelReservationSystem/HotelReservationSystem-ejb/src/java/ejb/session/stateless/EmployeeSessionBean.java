@@ -42,6 +42,8 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         try{
             EmployeeEntity emp = retrieveEmployeeByUsername(username);
             if(emp.getPassword().equals(password)){
+                emp.getEmployeeId();
+                emp.getAccessRights();
                 return emp;
             }else{
                 throw new InvalidLoginCredentialException("Invalid Login Credentials");
