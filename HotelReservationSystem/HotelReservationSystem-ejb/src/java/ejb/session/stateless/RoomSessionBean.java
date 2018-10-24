@@ -11,6 +11,7 @@ import entity.RoomTypeEntity;
 import javax.ejb.Stateless;
 import entity.RoomRateEntity;
 import entity.RoomRateEntity;
+import java.math.BigDecimal;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.persistence.EntityManager;
@@ -21,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.InvalidLoginCredentialException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 /**
  *
@@ -60,16 +62,62 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
           
     }
     
-    public String viewRoomTypeDetails(RoomTypeEntity roomType) {
+   public void deleteRoomType(int roomTypeId) {
+        RoomTypeEntity thisRoomType = em.find(RoomTypeEntity.class, roomTypeId);
+        em.remove(thisRoomType);
+   }
+   
+  
+   public void createRoom(Long roomId, int roomNum, boolean isOccupied, boolean isUsable, RoomTypeEntity roomType) {
+        RoomEntity room = new RoomEntity(roomId, roomNum, isOccupied, isUsable, roomType);
+        em.persist(room);
+   }
+    
+    public void updateRoom(Long roomId, int roomNum, boolean isOccupied, boolean isUsable, RoomTypeEntity roomType) {
+        RoomEntity thisRoom = em.find(RoomEntity.class, roomId);
+        thisRoom.setIsOccupied(isOccupied);
+        thisRoom.setRoomNum(roomNum);
+        thisRoom.setIsUsable(isUsable);
+        thisRoom.setRoomType(roomType);
+        em.merge(thisRoom);
         
     }
     
-    public void createRoom(Long roomId, int roomNum, boolean isOccupied, boolean isUsable, RoomTypeEntity roomType) {
-        RoomEntity room = new RoomEntity(roomId, roomNum, isOccupied, isUsable, roomType);
-        em.persist(room);
+    public void deleteRoom(int roomId) {
+        RoomEntity thisRoom = em.find(RoomEntity.class, roomId);
+        em.remove(thisRoom);
     }
     
-    public void 
+    public List<String> viewAllRooms() {
+        Query query = em.createQuery("SELECT DISTINCT rm FROM RoomEntity rm");
+        return query.getResultList();
+    }
+    
+    public void createNewRoomRate(Long roomRateId, String nameOfRate, ArrayList<RoomTypeEntity> roomType, BigDecimal ratePerNight, Date start, Date end) {
+        RoomRateEntity newRoomRate = new RoomRateEntity(roomRateId, nameOfRate, roomType, ratePerNight, start,end);
+        em.persist(newRoomRate);
+    }
+    
+    public void updateRoomRate(Long roomRateId, String nameOfRate, ArrayList<RoomTypeEntity> roomType, BigDecimal ratePerNight, Date start, Date end) {
+        RoomRateEntity thisRoomRate = em.find(RoomRateEntity.class, roomRateId);
+        thisRoomRate.setNameOfRate(nameOfRate);
+        thisRoomRate.setRoomType(roomType);
+        thisRoomRate.setRatePerNight(ratePerNight);
+        thisRoomRate.setStart(start);
+        thisRoomRate.setEnd(end);
+        em.merge(thisRoomRate);
+    }
+    
+    public void deleteRoomRate(int roomRateId) {
+        RoomRateEntity thisRoomRate = em.find(RoomRateEntity.class, roomRateId);
+        em.remove(thisRoomRate);
+        
+    }
+    
+    public List<String> viewAllRoomRates() {
+        Query query = em.createQuery("SELECT DISTINCT rr FROM RoomRateEntity rr");
+        return query.getResultList();
+    }
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

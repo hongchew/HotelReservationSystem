@@ -6,6 +6,7 @@
 package horsmanagementclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
+import ejb.session.stateless.PartnerSessionBeanRemote;
 import javax.ejb.EJB;
 
 /**
@@ -16,6 +17,10 @@ public class Main {
 
     @EJB
     private static EmployeeSessionBeanRemote employeeSessionBean;
+    
+    @EJB
+    private static PartnerSessionBeanRemote partnerSessionBean;
+    
     
     /**
      * @param args the command line arguments

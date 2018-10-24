@@ -30,6 +30,7 @@ public class RoomEntity implements Serializable {
     // isUsable ensures that the room is in good condition for customers to use 
     private boolean isUsable;
     
+    //each room can only have one roomType attribute 
     @OneToOne(mappedBy = "roomEntity")
     private RoomTypeEntity roomType;
     
@@ -46,9 +47,33 @@ public class RoomEntity implements Serializable {
         this.roomType = roomType;
          
     }
-    
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
+    }
+
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public int getRoomNum() {
+        return roomNum;
+    }
+
+    public boolean getIsOccupied() {
+        return isOccupied;
+    }
+
+    public boolean getIsUsable() {
+        return isUsable;
+    }
+
+    public RoomTypeEntity getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
     public void setRoomNum(int roomNum) {
@@ -62,16 +87,11 @@ public class RoomEntity implements Serializable {
     public void setIsUsable(boolean isUsable) {
         this.isUsable = isUsable;
     }
-   
-    
 
-    public Long getRoomId() {
-        return roomId;
+    public void setRoomType(RoomTypeEntity roomType) {
+        this.roomType = roomType;
     }
 
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
-    }
 
     @Override
     public int hashCode() {
@@ -92,22 +112,6 @@ public class RoomEntity implements Serializable {
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "entity.Room[ id=" + roomId + " ]";
-    }
-
-    public int getRoomNum() {
-        return roomNum;
-    }
-
-    public boolean isIsOccupied() {
-        return isOccupied;
-    }
-
-    public boolean isIsUsable() {
-        return isUsable;
-    }
-    
 }
+
+
