@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
 /**
@@ -35,6 +36,8 @@ public class RoomRateEntity implements Serializable {
     private Date start;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date end;
+    @ManyToOne
+    private RoomTypeEntity roomTypeEntity;
 
     public RoomRateEntity() {
     }

@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -30,14 +31,20 @@ public class RoomTypeEntity implements Serializable {
     private String nameOfRoomType;
     private String description;
     private String amenities;
-    @OneToMany(mappedBy = "roomType")
-    @ManyToMany(mappedBy = "roomType")
+    private String size;
+
+    @OneToMany(mappedBy = "roomTypeEntity")
     private List<RoomRateEntity> roomRates;
+    @OneToMany(mappedBy = "roomType")
+    private List<RoomEntity> roomEntitys;
+    @OneToOne
+    private RoomEntity roomEntity;
+
 
     public RoomTypeEntity() {
     }
 
-    public RoomTypeEntity(Long id, int numOfRooms, int capacity, String nameOfRoomType, String description, String amenities) {
+    public RoomTypeEntity(Long id, int numOfRooms, int capacity, String nameOfRoomType, String description, String amenities, String size) {
         this.roomTypeId = id;
         this.numOfRooms = numOfRooms;
         this.capacity = capacity;
@@ -48,6 +55,10 @@ public class RoomTypeEntity implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
+    }
+
+    public Long getRoomTypeId() {
+        return roomTypeId;
     }
 
     public int getNumOfRooms() {
@@ -70,6 +81,18 @@ public class RoomTypeEntity implements Serializable {
         return amenities;
     }
 
+    public String getSize() {
+        return size;
+    }
+
+    public List<RoomRateEntity> getRoomRates() {
+        return roomRates;
+    }
+
+    public void setRoomTypeId(Long roomTypeId) {
+        this.roomTypeId = roomTypeId;
+    }
+
     public void setNumOfRooms(int numOfRooms) {
         this.numOfRooms = numOfRooms;
     }
@@ -89,15 +112,15 @@ public class RoomTypeEntity implements Serializable {
     public void setAmenities(String amenities) {
         this.amenities = amenities;
     }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public void setRoomRates(List<RoomRateEntity> roomRates) {
+        this.roomRates = roomRates;
+    }
     
-
-    public Long getRoomTypeId() {
-        return roomTypeId;
-    }
-
-    public void setRoomTypeId(Long roomTypeId) {
-        this.roomTypeId = roomTypeId;
-    }
 
     @Override
     public int hashCode() {

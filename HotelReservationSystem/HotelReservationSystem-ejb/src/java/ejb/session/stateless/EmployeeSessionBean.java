@@ -66,7 +66,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public void createNewSysAdmin(String name, String username, String password){
         
-        SystemAdminEntity sysAdmin = new SystemAdminEntity(username, username, password);
+        SystemAdminEntity sysAdmin = new SystemAdminEntity(name, username, password);
         em.persist(sysAdmin);
         
     }
@@ -74,7 +74,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public void createNewOpsManager(String name, String username, String password){
         
-        OperationManagerEntity opManager = new OperationManagerEntity(username, username, password);
+        OperationManagerEntity opManager = new OperationManagerEntity(name, username, password);
         em.persist(opManager);
         
     }
@@ -82,14 +82,14 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public void createNewSalesManager(String name, String username, String password){
         
-        SalesManagerEntity salesManager = new SalesManagerEntity(username, username, password);
+        SalesManagerEntity salesManager = new SalesManagerEntity(name, username, password);
         em.persist(salesManager);
         
     }
     @Override
     public void createNewGuestRelationsOffr(String name, String username, String password){
         
-        GuestRelationOfficerEntity grOffr = new GuestRelationOfficerEntity(username, username, password);
+        GuestRelationOfficerEntity grOffr = new GuestRelationOfficerEntity(name, username, password);
         em.persist(grOffr);
         
     }

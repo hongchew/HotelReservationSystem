@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -28,15 +30,21 @@ public class RoomEntity implements Serializable {
     // isUsable ensures that the room is in good condition for customers to use 
     private boolean isUsable;
     
+    @OneToOne(mappedBy = "roomEntity")
+    private RoomTypeEntity roomType;
+    
+    
     public RoomEntity() {
         
     }
     
-    public RoomEntity(Long roomId, int roomNum, boolean isOccupied, boolean isUsable) {
+    public RoomEntity(Long roomId, int roomNum, boolean isOccupied, boolean isUsable, RoomTypeEntity roomType) {
         this.isOccupied = isOccupied;
         this.isUsable = isUsable;
         this.roomId = roomId;
         this.roomNum = roomNum;   
+        this.roomType = roomType;
+         
     }
     
     public static long getSerialVersionUID() {
