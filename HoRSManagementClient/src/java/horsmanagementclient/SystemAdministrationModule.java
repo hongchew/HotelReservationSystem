@@ -19,18 +19,24 @@ import java.util.Scanner;
 public class SystemAdministrationModule {
     private EmployeeSessionBeanRemote employeeSessionBean;
     private PartnerSessionBeanRemote partnerSessionBean;
+    private EmployeeEntity sysAdmin;
     private Scanner sc;
     
     public SystemAdministrationModule() {
         this.sc = new Scanner(System.in);
     }
 
-    public SystemAdministrationModule(EmployeeSessionBeanRemote employeeSessionBean) {
+    public SystemAdministrationModule(EmployeeEntity sysAdmin, EmployeeSessionBeanRemote employeeSessionBean, PartnerSessionBeanRemote partnerSessionBean) {
+        this.sysAdmin = sysAdmin;
         this.employeeSessionBean = employeeSessionBean;
+        this.partnerSessionBean = partnerSessionBean;
     }
     
     
-    
+    /*
+    Navigation menu for SystemAdminEntity when they log into the Management Client.
+    Allows sysadmins to access methods to create employee & partners, and view all employess & partners
+    */
     public void runSysAdminModule(){
         System.out.println("****Welcome to the System Administration Module****\n");
         while(true){
@@ -57,6 +63,9 @@ public class SystemAdministrationModule {
         }
     }
     
+    /*
+    method for sysadmin to create a new employee (Sysadmin, ops manager, sales manager, guest relation offr) account 
+    */
     public void createEmployee(){
         System.out.println("**** Create a new Employee Account****");
         System.out.println("Enter employee's name:");
@@ -94,6 +103,9 @@ public class SystemAdministrationModule {
         }
     }
     
+    /*
+    Method for sysadmin to retrieve and view all employees in database (id and name)
+    */
     public void viewAllEmployees(){
         List<EmployeeEntity> list = employeeSessionBean.retrieveAllEmployees();
         for(EmployeeEntity e: list){
@@ -101,6 +113,9 @@ public class SystemAdministrationModule {
         }
     }
     
+    /*
+    Method for sysadmin to create new partner account 
+    */
     public void createPartner(){
         System.out.println("**** Create a new Partner Account****");
         System.out.println("Enter partners's name:");
@@ -114,6 +129,9 @@ public class SystemAdministrationModule {
         System.out.println("New partner created.");
     }
     
+    /*
+    Method for sysadmin to retrieve and view all partners in database (id and name)
+    */
     public void viewAllPartners(){
         List<PartnerEntity> list = partnerSessionBean.retrieveAllPartners();
         for(PartnerEntity p: list){
