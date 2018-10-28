@@ -122,5 +122,6 @@ public class RoomTypeEntity implements Serializable {
     public void setStatus(StatusEnum status) {
         this.status = status;
     }
+
  
 }

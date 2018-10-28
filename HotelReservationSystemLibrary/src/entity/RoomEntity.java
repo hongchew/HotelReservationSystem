@@ -37,7 +37,7 @@ public class RoomEntity implements Serializable {
     private Date isOccupiedTo;
     
     @Enumerated(EnumType.STRING)
-    private StatusEnum isAvailable;
+    private StatusEnum status;
     @Enumerated(EnumType.STRING)
     private IsOccupiedEnum occupancy;
     @ManyToOne
@@ -53,7 +53,7 @@ public class RoomEntity implements Serializable {
         this.unit = unit;
         this.roomNumber = roomNumber;
         this.isOccupiedTo = isOccupiedTo;
-        this.isAvailable = isAvailable;
+        this.status = isAvailable;
         this.occupancy = occupancy;
     }
 
@@ -77,8 +77,8 @@ public class RoomEntity implements Serializable {
         return isOccupiedTo;
     }
 
-    public StatusEnum getIsAvailable() {
-        return isAvailable;
+    public StatusEnum getStatus() {
+        return status;
     }
 
     public IsOccupiedEnum getOccupancy() {
@@ -105,8 +105,8 @@ public class RoomEntity implements Serializable {
         this.isOccupiedTo = isOccupiedTo;
     }
 
-    public void setIsAvailable(StatusEnum isAvailable) {
-        this.isAvailable = isAvailable;
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public void setOccupancy(IsOccupiedEnum occupancy) {
