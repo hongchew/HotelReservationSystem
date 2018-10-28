@@ -45,6 +45,8 @@ public class RoomTypeEntity implements Serializable {
     @OneToMany(mappedBy = "roomTypeEntity")
     private ArrayList<RoomRateEntity> roomRate;
 
+    
+
     public RoomTypeEntity() {
     }
 

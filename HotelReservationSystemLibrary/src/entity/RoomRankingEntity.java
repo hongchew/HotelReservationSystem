@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -25,20 +26,12 @@ public class RoomRankingEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private ArrayList<String> ranking;
+    
+    @OneToMany
+    private ArrayList<RoomTypeEntity> rankings;
 
     public RoomRankingEntity() {
-        ranking = new ArrayList<>();
-    }
-    
-    
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        rankings = new ArrayList<>();
     }
 
     @Override
@@ -65,5 +58,10 @@ public class RoomRankingEntity implements Serializable {
     public String toString() {
         return "entity.RoomRankingEntity[ id=" + id + " ]";
     }
+
+    public ArrayList<RoomTypeEntity> getRankings() {
+        return rankings;
+    }
+    
     
 }
