@@ -73,5 +73,38 @@ public class ExceptionReportEntity implements Serializable {
         String report =  "Error encountered for Reservation " + reservation.getId() + ":/n" + errorReport;
         return report;
     }
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
+    }
+
+    public Date getExceptionDate() {
+        return exceptionDate;
+    }
+
+    public void setExceptionDate(Date exceptionDate) {
+        this.exceptionDate = exceptionDate;
+    }
+
+    public String getErrorReport() {
+        return errorReport;
+    }
+
+    public void setErrorReport(String errorReport) {
+        this.errorReport = errorReport;
+    }
+
+    public ReservationRecordEntity getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(ReservationRecordEntity reservation) {
+        this.reservation = reservation;
+    }
+    
     
 }

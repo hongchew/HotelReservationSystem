@@ -13,9 +13,19 @@ import entity.EmployeeEntity;
  */
 public class HotelOperationModule {
 
+    
+    
     private EmployeeEntity currentEmployee;
     
+    
     public HotelOperationModule() {
+    }
+    
+    public void runHotelOperationModuleOperationsManager(){
+        System.out.println("****Welcome to the Hotel Operations Module****");
+        while(true){
+            
+        }
     }
     
     

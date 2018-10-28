@@ -80,5 +80,21 @@ public class AvailabilityRecordEntity implements Serializable {
     public String toString() {
         return "entity.AvailabilityRecordEntity[ id=" + id + " ]";
     }
+
+    public Date getAvailabiltyRecordDate() {
+        return availabiltyRecordDate;
+    }
+
+    public void setAvailabiltyRecordDate(Date availabiltyRecordDate) {
+        this.availabiltyRecordDate = availabiltyRecordDate;
+    }
+
+    public RoomTypeEntity getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomTypeEntity roomType) {
+        this.roomType = roomType;
+    }
     
 }

@@ -90,5 +90,46 @@ public class GuestEntity implements Serializable {
     public String toString() {
         return this.guestName + "      " + this.emailAddress;
     }
+
+    public String getGuestName() {
+        return guestName;
+    }
+
+    public void setGuestName(String guestName) {
+        this.guestName = guestName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public ArrayList<ReservationRecordEntity> getReservationRecords() {
+        return reservationRecords;
+    }
+
+    public void setReservationRecords(ArrayList<ReservationRecordEntity> reservationRecords) {
+        this.reservationRecords = reservationRecords;
+    }
+    
     
 }

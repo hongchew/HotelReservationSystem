@@ -5,17 +5,20 @@
  */
 package horsreservationclient;
 
+import ejb.session.stateless.GuestSessionBeanRemote;
+import ejb.session.stateless.PartnerSessionBeanRemote;
+
 /**
  *
  * @author Hong Chew
  */
-public class Main {
+public class MainApp {
     
-    public static void main(String[] args) {
-        // TODO code application logic here
-        MainApp mainApp = new MainApp();
-        mainApp.runApp();
-        
+    public MainApp() {
+    }
+    
+    public void runApp(){
+
     }
     
 }

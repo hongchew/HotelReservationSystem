@@ -23,9 +23,6 @@ import javax.validation.constraints.*;
  */
 @Entity
 public class ReservationRecordEntity implements Serializable {
-
-
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +59,25 @@ public class ReservationRecordEntity implements Serializable {
     @OneToOne(mappedBy = "reservation")
     private ExceptionReportEntity exception;
 
+    public ReservationRecordEntity() {
+    }
+
+    public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, GuestEntity reservedByGuest) {
+        this.roomType = roomType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.reservedByGuest = reservedByGuest;
+    }
+    
+        public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, PartnerEntity reservedByPartner) {
+        this.roomType = roomType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.reservedByPartner = reservedByPartner;
+    }
+
+    
+    
     public Long getId() {
         return id;
     }
@@ -166,5 +182,14 @@ public class ReservationRecordEntity implements Serializable {
     public String toString() {
         return "entity.ReservationRecordEntity[ id=" + id + " ]";
     }
+
+    public ExceptionReportEntity getException() {
+        return exception;
+    }
+
+    public void setException(ExceptionReportEntity exception) {
+        this.exception = exception;
+    }
+    
     
 }
