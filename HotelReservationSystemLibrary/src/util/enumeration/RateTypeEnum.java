@@ -9,7 +9,9 @@ package util.enumeration;
  *
  * @author saranya
  */
-public enum isOccupied {
-    UNOCCUPIED,
-    OCCUPIED
+public enum RateTypeEnum {
+    PUBLISHED,
+    NORMAL,
+    PEAK,
+    PROMOTION
 }

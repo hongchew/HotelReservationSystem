@@ -10,12 +10,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import util.enumeration.RateTypeEnum;
+import util.enumeration.StatusEnum;
 
 /**
  *
@@ -24,112 +28,104 @@ import javax.persistence.Temporal;
 @Entity
 public class RoomRateEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long roomRateId;
-    private String nameOfRate;
-    @ManyToMany
-    private ArrayList<RoomTypeEntity> roomType;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long rateId;
+    private String rateName;
     private BigDecimal ratePerNight;
+    
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
+    
+    @Enumerated(EnumType.STRING)
+    private RateTypeEnum rateType;
+    
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date start;
+    private Date startDate;
+    
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date end;
+    private Date endDate;
+    
     @ManyToOne
-    private RoomTypeEntity roomTypeEntity;
+    private RoomTypeEntity roomType;
 
     public RoomRateEntity() {
     }
 
-    public RoomRateEntity(Long roomRateId, String nameOfRate, ArrayList<RoomTypeEntity> roomType, BigDecimal ratePerNight, Date start, Date end) {
-        this.roomRateId = roomRateId;
-        this.nameOfRate = nameOfRate;
-        this.roomType = roomType;
+    public RoomRateEntity(Long rateId, String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {
+        this.rateId = rateId;
+        this.rateName = rateName;
         this.ratePerNight = ratePerNight;
-        this.start = start;
-        this.end = end;
-    }
-    
-    
-
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+        this.status = status;
+        this.rateType = rateType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.roomType = roomType;
     }
 
-    public String getNameOfRate() {
-        return nameOfRate;
+    public Long getRateId() {
+        return rateId;
     }
 
-    public ArrayList<RoomTypeEntity> getRoomType() {
-        return roomType;
+    public String getRateName() {
+        return rateName;
     }
 
     public BigDecimal getRatePerNight() {
         return ratePerNight;
     }
 
-    public Date getStart() {
-        return start;
+    public StatusEnum getStatus() {
+        return status;
     }
 
-    public Date getEnd() {
-        return end;
+    public RateTypeEnum getRateType() {
+        return rateType;
     }
 
-    public void setNameOfRate(String nameOfRate) {
-        this.nameOfRate = nameOfRate;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setRoomType(ArrayList<RoomTypeEntity> roomType) {
-        this.roomType = roomType;
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public RoomTypeEntity getRoomType() {
+        return roomType;
+    }
+
+    public void setRateId(Long rateId) {
+        this.rateId = rateId;
+    }
+
+    public void setRateName(String rateName) {
+        this.rateName = rateName;
     }
 
     public void setRatePerNight(BigDecimal ratePerNight) {
         this.ratePerNight = ratePerNight;
     }
 
-    public void setStart(Date start) {
-        this.start = start;
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-    
-
-    public Long getRoomRateId() {
-        return roomRateId;
+    public void setRateType(RateTypeEnum rateType) {
+        this.rateType = rateType;
     }
 
-    public void setRoomRateId(Long roomRateId) {
-        this.roomRateId = roomRateId;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (roomRateId != null ? roomRateId.hashCode() : 0);
-        return hash;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the roomRateId fields are not set
-        if (!(object instanceof RoomRateEntity)) {
-            return false;
-        }
-        RoomRateEntity other = (RoomRateEntity) object;
-        if ((this.roomRateId == null && other.roomRateId != null) || (this.roomRateId != null && !this.roomRateId.equals(other.roomRateId))) {
-            return false;
-        }
-        return true;
+    public void setRoomType(RoomTypeEntity roomType) {
+        this.roomType = roomType;
     }
-
-    @Override
-    public String toString() {
-        return "entity.RoomRate[ id=" + roomRateId + " ]";
-    }
-    
+      
 }
