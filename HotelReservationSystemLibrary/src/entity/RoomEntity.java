@@ -61,7 +61,7 @@ public class RoomEntity implements Serializable {
         this.floor = floor;
         this.unit = unit;
         this.roomNumber = floor.toString() + unit.toString();
-        this.isAvailable = StatusEnum.AVAILABLE;
+        this.status = StatusEnum.AVAILABLE;
         this.occupancy = IsOccupiedEnum.UNOCCUPIED;
         this.roomType = roomType;
     }
