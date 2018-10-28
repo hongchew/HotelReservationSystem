@@ -6,63 +6,71 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Column;
+import java.util.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.*;
 
 /**
  *
  * @author Hong Chew
  */
 @Entity
-public class ExceptionReportEntity implements Serializable {
+public class AvailabilityRecordEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reportId;
-    
-    @Temporal(TemporalType.DATE)
-    private Date exceptionDate;
-    
-    @NotNull
-    @Column(length = 140)
-    private String errorReport;    
-    
-    
-    @OneToOne
-    private ReservationRecordEntity reservation;
+    private Long id;
 
+    @Temporal(TemporalType.DATE)
+    private Date availabiltyRecordDate;
+    
+    private Long totalReservations;
+    
+    @ManyToOne
+    private RoomTypeEntity roomType;
+
+    public AvailabilityRecordEntity() {
+    }
+
+    public AvailabilityRecordEntity(Date date, Long totalReservations, RoomTypeEntity roomType) {
+        this.availabiltyRecordDate = date;
+        this.totalReservations = totalReservations;
+        this.roomType = roomType;
+    }
+    
+    public Long getAvailableRooms(){
+        return roomType.getTotalRooms() - totalReservations;
+    }
+    
     public Long getId() {
-        return reportId;
+        return id;
     }
 
     public void setId(Long id) {
-        this.reportId = id;
+        this.id = id;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (reportId != null ? reportId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ExceptionReportEntity)) {
+        if (!(object instanceof AvailabilityRecordEntity)) {
             return false;
         }
-        ExceptionReportEntity other = (ExceptionReportEntity) object;
-        if ((this.reportId == null && other.reportId != null) || (this.reportId != null && !this.reportId.equals(other.reportId))) {
+        AvailabilityRecordEntity other = (AvailabilityRecordEntity) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -70,8 +78,7 @@ public class ExceptionReportEntity implements Serializable {
 
     @Override
     public String toString() {
-        String report =  "Error encountered for Reservation " + reservation.getId() + ":/n" + errorReport;
-        return report;
+        return "entity.AvailabilityRecordEntity[ id=" + id + " ]";
     }
     
 }

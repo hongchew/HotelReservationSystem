@@ -44,10 +44,15 @@ public class RoomTypeEntity implements Serializable {
     
     @OneToMany(mappedBy = "roomTypeEntity")
     private ArrayList<RoomRateEntity> roomRate;
+    
+    @OneToMany(mappedBy = "roomType")
+    private ArrayList<AvailabilityRecordEntity> availabilityRecordEntitiess;
 
     
-
     public RoomTypeEntity() {
+        rooms = new ArrayList<>();
+        roomRate = new ArrayList<>();
+        availabilityRecordEntitiess = new ArrayList<>();
     }
 
     public RoomTypeEntity(Long typeId, String typeName, Integer totalRooms, String description, String bedType, Integer capacity, String amenities, StatusEnum status) {
@@ -123,6 +128,26 @@ public class RoomTypeEntity implements Serializable {
 
     public void setStatus(StatusEnum status) {
         this.status = status;
+    }
+    
+    public ArrayList<RoomEntity> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(ArrayList<RoomEntity> rooms) {
+        this.rooms = rooms;
+    }
+
+    public ArrayList<RoomRateEntity> getRoomRate() {
+        return roomRate;
+    }
+
+    public void setRoomRate(ArrayList<RoomRateEntity> roomRate) {
+        this.roomRate = roomRate;
+    }
+
+    public List<AvailabilityRecordEntity> getAvailabilityRecordEntitiess() {
+        return availabilityRecordEntitiess;
     }
  
 }
