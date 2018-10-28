@@ -6,12 +6,18 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import util.enumeration.IsOccupiedEnum;
+import util.enumeration.StatusEnum;
 
 /**
  *
@@ -19,99 +25,95 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class RoomEntity implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
-    private int roomNum;
-    private boolean isOccupied;
-    // isUsable ensures that the room is in good condition for customers to use 
-    private boolean isUsable;
+    private Integer floor;
+    private Integer unit;
+    private String roomNumber;
     
-    //each room can only have one roomType attribute 
-    @OneToOne(mappedBy = "roomEntity")
-    private RoomTypeEntity roomType;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date isOccupiedTo;
     
-    
+    @Enumerated(EnumType.STRING)
+    private StatusEnum isAvailable;
+    @Enumerated(EnumType.STRING)
+    private IsOccupiedEnum occupancy;
+    @ManyToOne
+    private RoomTypeEntity roomTypeEntity;
+
+    //default no argument constructor
     public RoomEntity() {
-        
-    }
-    
-    public RoomEntity(Long roomId, int roomNum, boolean isOccupied, boolean isUsable, RoomTypeEntity roomType) {
-        this.isOccupied = isOccupied;
-        this.isUsable = isUsable;
-        this.roomId = roomId;
-        this.roomNum = roomNum;   
-        this.roomType = roomType;
-         
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public RoomEntity(Long roomId, Integer floor, Integer unit, String roomNumber, Date isOccupiedTo, StatusEnum isAvailable, IsOccupiedEnum occupancy) {
+        this.roomId = roomId;
+        this.floor = floor;
+        this.unit = unit;
+        this.roomNumber = roomNumber;
+        this.isOccupiedTo = isOccupiedTo;
+        this.isAvailable = isAvailable;
+        this.occupancy = occupancy;
     }
 
     public Long getRoomId() {
         return roomId;
     }
 
-    public int getRoomNum() {
-        return roomNum;
+    public Integer getFloor() {
+        return floor;
     }
 
-    public boolean getIsOccupied() {
-        return isOccupied;
+    public Integer getUnit() {
+        return unit;
     }
 
-    public boolean getIsUsable() {
-        return isUsable;
+    public String getRoomNumber() {
+        return roomNumber;
     }
 
-    public RoomTypeEntity getRoomType() {
-        return roomType;
+    public Date getIsOccupiedTo() {
+        return isOccupiedTo;
+    }
+
+    public StatusEnum getIsAvailable() {
+        return isAvailable;
+    }
+
+    public IsOccupiedEnum getOccupancy() {
+        return occupancy;
     }
 
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
     }
 
-    public void setRoomNum(int roomNum) {
-        this.roomNum = roomNum;
+    public void setFloor(Integer floor) {
+        this.floor = floor;
     }
 
-    public void setIsOccupied(boolean isOccupied) {
-        this.isOccupied = isOccupied;
+    public void setUnit(Integer unit) {
+        this.unit = unit;
     }
 
-    public void setIsUsable(boolean isUsable) {
-        this.isUsable = isUsable;
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
-    public void setRoomType(RoomTypeEntity roomType) {
-        this.roomType = roomType;
+    public void setIsOccupiedTo(Date isOccupiedTo) {
+        this.isOccupiedTo = isOccupiedTo;
     }
 
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (roomId != null ? roomId.hashCode() : 0);
-        return hash;
+    public void setIsAvailable(StatusEnum isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the roomId fields are not set
-        if (!(object instanceof RoomEntity)) {
-            return false;
-        }
-        RoomEntity other = (RoomEntity) object;
-        if ((this.roomId == null && other.roomId != null) || (this.roomId != null && !this.roomId.equals(other.roomId))) {
-            return false;
-        }
-        return true;
+    public void setOccupancy(IsOccupiedEnum occupancy) {
+        this.occupancy = occupancy;
     }
+    
 }
+    
 
 
