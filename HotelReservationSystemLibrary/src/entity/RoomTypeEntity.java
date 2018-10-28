@@ -26,8 +26,8 @@ public class RoomTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
-    private int numOfRooms;
-    private int capacity;
+    private Integer numOfRooms;
+    private Integer capacity;
     private String nameOfRoomType;
     private String description;
     private String amenities;
@@ -44,7 +44,7 @@ public class RoomTypeEntity implements Serializable {
     public RoomTypeEntity() {
     }
 
-    public RoomTypeEntity(Long id, int numOfRooms, int capacity, String nameOfRoomType, String description, String amenities, String size) {
+    public RoomTypeEntity(Long id, Integer numOfRooms, Integer capacity, String nameOfRoomType, String description, String amenities, String size) {
         this.roomTypeId = id;
         this.numOfRooms = numOfRooms;
         this.capacity = capacity;
@@ -61,11 +61,11 @@ public class RoomTypeEntity implements Serializable {
         return roomTypeId;
     }
 
-    public int getNumOfRooms() {
+    public Integer getNumOfRooms() {
         return numOfRooms;
     }
 
-    public int getCapacity() {
+    public Integer getCapacity() {
         return capacity;
     }
 
@@ -93,11 +93,11 @@ public class RoomTypeEntity implements Serializable {
         this.roomTypeId = roomTypeId;
     }
 
-    public void setNumOfRooms(int numOfRooms) {
+    public void setNumOfRooms(Integer numOfRooms) {
         this.numOfRooms = numOfRooms;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(Integer capacity) {
         this.capacity = capacity;
     }
 

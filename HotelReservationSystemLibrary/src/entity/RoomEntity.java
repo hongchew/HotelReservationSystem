@@ -19,16 +19,14 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class RoomEntity implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
-    private int roomNum;
-    private boolean isOccupied;
+    private Integer roomNum;
+    private Boolean isOccupied;
     // isUsable ensures that the room is in good condition for customers to use 
-    private boolean isUsable;
+    private Boolean isUsable;
     
     //each room can only have one roomType attribute 
     @OneToOne(mappedBy = "roomEntity")
@@ -39,7 +37,7 @@ public class RoomEntity implements Serializable {
         
     }
     
-    public RoomEntity(Long roomId, int roomNum, boolean isOccupied, boolean isUsable, RoomTypeEntity roomType) {
+    public RoomEntity(Long roomId, Integer roomNum, Boolean isOccupied, Boolean isUsable, RoomTypeEntity roomType) {
         this.isOccupied = isOccupied;
         this.isUsable = isUsable;
         this.roomId = roomId;
@@ -48,23 +46,19 @@ public class RoomEntity implements Serializable {
          
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     public Long getRoomId() {
         return roomId;
     }
 
-    public int getRoomNum() {
+    public Integer getRoomNum() {
         return roomNum;
     }
 
-    public boolean getIsOccupied() {
+    public Boolean getIsOccupied() {
         return isOccupied;
     }
 
-    public boolean getIsUsable() {
+    public Boolean getIsUsable() {
         return isUsable;
     }
 
