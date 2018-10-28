@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.RoomEntity;
 import entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -13,6 +14,7 @@ import javax.ejb.Remote;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
 import util.enumeration.StatusEnum;
+import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
 /**
@@ -96,9 +98,21 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return query.getResultList();
     }
     
-    public void createNewRoom() {
-        
+    public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException { 
+        RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
+        RoomEntity newRoom = new RoomEntity(floor,unit,thisRoomType);
+        em.persist(newRoom);
     }
+    
+    //update the status and roomtype of a room
+    public void updateRoom(String roomNumber, String roomType, StatusEnum status ) throws RoomNotFoundException, RoomTypeNotFoundException {
+        RoomEntity thisRoom = retrieveRoomByRoomNumber(roomNumber);
+        RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
+        thisRoom.setRoomType(thisRoomType);
+        thisRoom.setStatus(status);  
+    }
+    
+    
     
     
     
@@ -111,6 +125,17 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomTypeNotFoundException("No such room type found");
         }
     }
+    
+    public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException {
+        
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomNumber = :roomnumber");
+            try{
+               return (RoomEntity) query.getSingleResult();
+            } catch (NoResultException | NonUniqueResultException e) {
+                  throw new RoomNotFoundException("No such room found");
+                }        
+    }
+    
     
     
 

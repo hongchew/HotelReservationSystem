@@ -94,6 +94,15 @@ public class RoomEntity implements Serializable {
         return occupancy;
     }
 
+    public RoomTypeEntity getRoomType() {
+        return roomType;
+    }
+
+    public ArrayList<ReservationRecordEntity> getReservationRecords() {
+        return reservationRecords;
+    }
+    
+
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
     }
@@ -121,6 +130,15 @@ public class RoomEntity implements Serializable {
     public void setOccupancy(IsOccupiedEnum occupancy) {
         this.occupancy = occupancy;
     }
+
+    public void setRoomType(RoomTypeEntity roomType) {
+        this.roomType = roomType;
+    }
+
+    public void setReservationRecords(ArrayList<ReservationRecordEntity> reservationRecords) {
+        this.reservationRecords = reservationRecords;
+    }
+ 
     
 }
     
