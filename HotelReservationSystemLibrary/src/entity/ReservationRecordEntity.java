@@ -24,14 +24,18 @@ import javax.validation.constraints.*;
 @Entity
 public class ReservationRecordEntity implements Serializable {
 
+
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @NotNull
+    @OneToOne
     private RoomTypeEntity roomType;
     
+    @ManyToOne
     private RoomEntity assignedRoom;
     
     @Temporal(TemporalType.DATE)
@@ -54,6 +58,9 @@ public class ReservationRecordEntity implements Serializable {
     
     @ManyToOne
     private PartnerEntity reservedByPartner;
+    
+    @OneToOne(mappedBy = "reservation")
+    private ExceptionReportEntity exception;
 
     public Long getId() {
         return id;

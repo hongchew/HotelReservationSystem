@@ -6,7 +6,7 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,8 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
+import javax.validation.constraints.*;
 import util.enumeration.IsOccupiedEnum;
 import util.enumeration.StatusEnum;
 
@@ -29,7 +30,10 @@ public class RoomEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
+    
+    @NotNull
     private Integer floor;
+    @NotNull
     private Integer unit;
     private String roomNumber;
     
@@ -38,23 +42,28 @@ public class RoomEntity implements Serializable {
     
     @Enumerated(EnumType.STRING)
     private StatusEnum isAvailable;
+    
     @Enumerated(EnumType.STRING)
     private IsOccupiedEnum occupancy;
+    
     @ManyToOne
-    private RoomTypeEntity roomTypeEntity;
+    private RoomTypeEntity roomType;
 
+    
+    @OneToMany(mappedBy = "assignedRoom")
+    private ArrayList<ReservationRecordEntity> reservationRecords;
+            
     //default no argument constructor
     public RoomEntity() {
     }
 
-    public RoomEntity(Long roomId, Integer floor, Integer unit, String roomNumber, Date isOccupiedTo, StatusEnum isAvailable, IsOccupiedEnum occupancy) {
-        this.roomId = roomId;
+    public RoomEntity(Integer floor, Integer unit, RoomTypeEntity roomType) {
         this.floor = floor;
         this.unit = unit;
-        this.roomNumber = roomNumber;
-        this.isOccupiedTo = isOccupiedTo;
-        this.isAvailable = isAvailable;
-        this.occupancy = occupancy;
+        this.roomNumber = floor.toString() + unit.toString();
+        this.isAvailable = StatusEnum.AVAILABLE;
+        this.occupancy = IsOccupiedEnum.UNOCCUPIED;
+        this.roomType = roomType;
     }
 
     public Long getRoomId() {

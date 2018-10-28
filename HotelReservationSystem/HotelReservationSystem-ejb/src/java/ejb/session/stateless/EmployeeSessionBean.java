@@ -60,7 +60,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         query.setParameter("username", username);
         
         try{
-        return (EmployeeEntity) query.getSingleResult();
+            return (EmployeeEntity) query.getSingleResult();
         }
         catch(NoResultException | NonUniqueResultException ex){
             throw new EmployeeNotFoundException("Invalid Login Credentials");
