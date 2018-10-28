@@ -41,8 +41,8 @@ public class RoomEntity implements Serializable {
     private Date isOccupiedTo;
     
     @Enumerated(EnumType.STRING)
-    private StatusEnum isAvailable;
-    
+    private StatusEnum status;
+
     @Enumerated(EnumType.STRING)
     private IsOccupiedEnum occupancy;
     
@@ -61,7 +61,7 @@ public class RoomEntity implements Serializable {
         this.floor = floor;
         this.unit = unit;
         this.roomNumber = floor.toString() + unit.toString();
-        this.isAvailable = StatusEnum.AVAILABLE;
+        this.status = StatusEnum.AVAILABLE;
         this.occupancy = IsOccupiedEnum.UNOCCUPIED;
         this.roomType = roomType;
     }
@@ -86,13 +86,22 @@ public class RoomEntity implements Serializable {
         return isOccupiedTo;
     }
 
-    public StatusEnum getIsAvailable() {
-        return isAvailable;
+    public StatusEnum getStatus() {
+        return status;
     }
 
     public IsOccupiedEnum getOccupancy() {
         return occupancy;
     }
+
+    public RoomTypeEntity getRoomType() {
+        return roomType;
+    }
+
+    public ArrayList<ReservationRecordEntity> getReservationRecords() {
+        return reservationRecords;
+    }
+    
 
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
@@ -114,13 +123,22 @@ public class RoomEntity implements Serializable {
         this.isOccupiedTo = isOccupiedTo;
     }
 
-    public void setIsAvailable(StatusEnum isAvailable) {
-        this.isAvailable = isAvailable;
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public void setOccupancy(IsOccupiedEnum occupancy) {
         this.occupancy = occupancy;
     }
+
+    public void setRoomType(RoomTypeEntity roomType) {
+        this.roomType = roomType;
+    }
+
+    public void setReservationRecords(ArrayList<ReservationRecordEntity> reservationRecords) {
+        this.reservationRecords = reservationRecords;
+    }
+ 
     
 }
     
