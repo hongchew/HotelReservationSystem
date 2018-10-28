@@ -6,10 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.*;
+import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -22,12 +25,25 @@ public class PartnerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long partnerId;
+    
+    @Column(unique = true, nullable = false) //1 partner -> 1 accound
+    @Size(min = 1, max = 32)
     private String partnerName;
+    
+    @Column(unique = true, nullable = false)
+    @Size(min = 6, max = 32)
     private String username;
+    
+    @Size(min = 6, max = 32)
+    @Column(nullable = false)
     private String password;
+    
+    @OneToMany(mappedBy = "reservedByPartner")
+    private ArrayList<ReservationRecordEntity> reservationRecords;
 
 
     public PartnerEntity() {
+        reservationRecords = new ArrayList<>();
     }
 
     public PartnerEntity(String partnerName, String username, String password) {
@@ -37,8 +53,8 @@ public class PartnerEntity implements Serializable {
 
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public ArrayList<ReservationRecordEntity> getReservationRecords() {
+        return reservationRecords;
     }
 
     public String getPartnerName() {
