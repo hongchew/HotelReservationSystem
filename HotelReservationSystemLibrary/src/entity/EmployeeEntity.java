@@ -6,12 +6,16 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.validation.constraints.Size;
 import util.enumeration.EmployeeAccessRightsEnum;
 
 /**
@@ -19,18 +23,31 @@ import util.enumeration.EmployeeAccessRightsEnum;
  * @author Hong Chew
  */
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class EmployeeEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
+    
+    @Size(min = 1, max = 32)
+    @Column(nullable = false)
     private String employeeName;
+    
+    @Size(min = 6, max = 32)
+    @Column(nullable = false, unique = true)
     private String username;
+    
+    @Size(min = 6, max = 32)
+    @Column(nullable = false)
     private String password;
+    
+    @Enumerated(EnumType.STRING)
     private EmployeeAccessRightsEnum accessRights;
             
+    
     public EmployeeEntity() {
     }
 

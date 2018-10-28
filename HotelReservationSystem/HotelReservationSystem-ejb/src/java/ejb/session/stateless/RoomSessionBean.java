@@ -35,7 +35,9 @@ import java.util.List;
 public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLocal {
     @PersistenceContext
     private EntityManager em;
-    
+
+    public RoomSessionBean() {
+    }
     
     
     public void createRoomType(Long roomId, String nameOfRoomType, String description, String amenities, String size, int capacityPerRoom, int numOfRooms) {
