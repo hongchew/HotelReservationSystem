@@ -28,12 +28,17 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     
     private EntityManager em;
+
+    public RoomSessionBean() {
+    }
     
+    @Override
     public void createNewRoomType(Long typeId, String typeName, Integer totalRooms, String description, String bedType, Integer capacity, String amenities, StatusEnum status) {
         RoomTypeEntity newRoomType = new RoomTypeEntity(typeId,  typeName,  totalRooms,  description,  bedType,  capacity,  amenities,status);
         em.persist(newRoomType);    
     }
     
+    @Override
     public String viewRoomTypeDetails(String typeName) {
         RoomTypeEntity roomType;
         try{
@@ -54,6 +59,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return details;
     }
     
+    @Override
     public void updateRoomType(String typeName, String newName, String newDescription, String newBedType, Integer newCapacity, String newAmenities,StatusEnum newStatus, Integer newTotalRooms) {
       RoomTypeEntity thisRoomType;
         try{
@@ -72,6 +78,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
       thisRoomType.setTotalRooms(newTotalRooms);
     }
     
+    @Override
     public void deleteRoomType(String typeName) throws RoomTypeNotFoundException {
         RoomTypeEntity thisRoomType;
         try{
@@ -79,25 +86,28 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
       } catch (RoomTypeNotFoundException e) {
           throw e;
       }
-        Query query = null;
+        Query query;
         try {
-            query = em.createQuery(" SELECT room FROM RoomTypeEntity type IN (type.rooms) room WHERE type.name = :typename AND room.occupancy = OCCUPIED");
+            query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.name = :typename AND room.occupancy = OCCUPIED");
+            query.setParameter("typename", typeName);
+            if(query.getResultList().isEmpty()) {
+                em.remove(thisRoomType); 
+            }else {
+                thisRoomType.setStatus(StatusEnum.DISABLED);
+            }
         } catch (Exception e) {
-            System.err.println("our damn query is wrong");
+            System.err.println("our  query is wrong");
         }
-        if(query.getResultList().isEmpty()) {
-            em.remove(thisRoomType); 
-        }
-        else {
-            thisRoomType.setStatus(StatusEnum.DISABLED);
-        }
+        
     }
     
+    @Override
     public List<String> viewAllRoomType() {
-        Query query = em.createQuery("SELECT roomType FROM RoomTypeEntity roomTypeEntity");
+        Query query = em.createQuery("SELECT roomType FROM RoomTypeEntity roomType");
         return query.getResultList();
     }
     
+    @Override
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException { 
         RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
         RoomEntity newRoom = new RoomEntity(floor,unit,thisRoomType);
@@ -105,6 +115,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     //update the status and roomtype of a room
+    @Override
     public void updateRoom(String roomNumber, String roomType, StatusEnum status ) throws RoomNotFoundException, RoomTypeNotFoundException {
         RoomEntity thisRoom = retrieveRoomByRoomNumber(roomNumber);
         RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
@@ -116,6 +127,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     
     
+    @Override
     public RoomTypeEntity retrieveByTypeName(String typeName) throws RoomTypeNotFoundException {
         Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.typeName = :typename");
         q.setParameter("typename", typeName);
@@ -126,6 +138,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
     
+    @Override
     public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException {
         
         Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomNumber = :roomnumber");
@@ -137,8 +150,5 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     
-    
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 }

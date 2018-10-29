@@ -5,8 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.RoomEntity;
 import entity.RoomTypeEntity;
+import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.StatusEnum;
+import util.exception.RoomNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 
 /**
  *
@@ -15,6 +20,22 @@ import javax.ejb.Remote;
 @Remote
 public interface RoomSessionBeanRemote {
 
-    public RoomTypeEntity createNewRoomType();
+    public void createNewRoomType(Long typeId, String typeName, Integer totalRooms, String description, String bedType, Integer capacity, String amenities, StatusEnum status);
+
+    public String viewRoomTypeDetails(String typeName);
+
+    public void updateRoomType(String typeName, String newName, String newDescription, String newBedType, Integer newCapacity, String newAmenities, StatusEnum newStatus, Integer newTotalRooms);
+
+    public void deleteRoomType(String typeName) throws RoomTypeNotFoundException;
+
+    public List<String> viewAllRoomType();
+
+    public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException;
+
+    public void updateRoom(String roomNumber, String roomType, StatusEnum status) throws RoomNotFoundException, RoomTypeNotFoundException;
+
+    public RoomTypeEntity retrieveByTypeName(String typeName) throws RoomTypeNotFoundException;
+
+    public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
     
 }
