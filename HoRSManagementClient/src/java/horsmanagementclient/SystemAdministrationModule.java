@@ -40,7 +40,7 @@ public class SystemAdministrationModule {
     public void runSysAdminModule(){
         System.out.println("****Welcome to the System Administration Module****\n");
         while(true){
-            System.out.println("(1) Create New Employee \n(2) View All Employee \n(3) Create New Partner \n(4) View All Partners \n(5) Exit System");
+            System.out.println("(1) Create New Employee \n(2) View All Employee \n(3) Create New Partner \n(4) View All Partners \n(5) Return");
             String response = sc.next();
             switch(response){
                 case "1":
@@ -56,7 +56,7 @@ public class SystemAdministrationModule {
                     viewAllPartners();
                     break;
                 case "5":
-                    System.exit(0);
+                    return;
                 default:
                     System.err.println("Invalid input please try again.");
             }
@@ -76,7 +76,7 @@ public class SystemAdministrationModule {
         String password = sc.nextLine();
         
         while(true){
-            System.out.println("(1)System Administrator \n(2)Operation Manager \n(3)Sales Manager \n(4)Guest Relation Officer \n(5)Return");
+            System.out.println("Create new employee as:\n(1)System Administrator \n(2)Operation Manager \n(3)Sales Manager \n(4)Guest Relation Officer \n(5)Cancel");
             String response = sc.next();
             switch(response){
                 case "1":

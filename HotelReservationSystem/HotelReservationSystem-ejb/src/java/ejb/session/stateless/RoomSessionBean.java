@@ -25,16 +25,18 @@ import util.exception.RoomTypeNotFoundException;
 @Local(RoomSessionBeanLocal.class)
 @Remote(RoomSessionBeanRemote.class)
 public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLocal {
-    
-    
+
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
+    
+    
 
     public RoomSessionBean() {
     }
     
     @Override
-    public void createNewRoomType(Long typeId, String typeName, Integer totalRooms, String description, String bedType, Integer capacity, String amenities, StatusEnum status) {
-        RoomTypeEntity newRoomType = new RoomTypeEntity(typeId,  typeName,  totalRooms,  description,  bedType,  capacity,  amenities,status);
+    public void createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities) {
+        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName,  description,  bedType,  capacity,  amenities);
         em.persist(newRoomType);    
     }
     
@@ -49,60 +51,57 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
       }
         
         String details = ("Type Name: " + roomType.getTypeName() +
-                          "Amenities: " + roomType.getAmenities() + 
-                          "Bed Type: " + roomType.getBedType() +
-                          "Description: " + roomType.getDescription() +
-                          "Capacity: " + roomType.getCapacity() +
-                          "Status: " + roomType.getStatus() +
-                          "Total Rooms: " + roomType.getTotalRooms());
+                          "\nDescription: " + roomType.getDescription() +
+                          "\nAmenities: " + roomType.getAmenities() + 
+                          "\nBed Type: " + roomType.getBedType() +
+                          "\nCapacity: " + roomType.getCapacity() +
+                          "\nStatus: " + roomType.getStatus() +
+                          "\nTotal Rooms: " + roomType.getTotalRooms()) + "\n";
         
         return details;
     }
     
     @Override
-    public void updateRoomType(String typeName, String newName, String newDescription, String newBedType, Integer newCapacity, String newAmenities,StatusEnum newStatus, Integer newTotalRooms) {
-      RoomTypeEntity thisRoomType;
+    public void updateRoomType(String typeName, String newDescription, String newBedType, Integer newCapacity, String newAmenities) throws RoomTypeNotFoundException {
+
         try{
-          thisRoomType = retrieveByTypeName(typeName);
-      } catch (RoomTypeNotFoundException e) {
-          System.err.println("No such roomType found");
-          return;
-      }
-      thisRoomType.setAmenities(newAmenities);
-      thisRoomType.setDescription(newDescription);
-      thisRoomType.setTypeName(newName);
-      thisRoomType.setBedType(newBedType);
-      thisRoomType.setCapacity(newCapacity);
-      thisRoomType.setAmenities(newAmenities);
-      thisRoomType.setStatus(newStatus);
-      thisRoomType.setTotalRooms(newTotalRooms);
+            RoomTypeEntity thisRoomType = retrieveByTypeName(typeName);
+            thisRoomType.setAmenities(newAmenities);
+            thisRoomType.setDescription(newDescription);
+            thisRoomType.setBedType(newBedType);
+            thisRoomType.setCapacity(newCapacity);
+        }catch (RoomTypeNotFoundException e) {
+            throw e;
+        }
+
     }
     
     @Override
     public void deleteRoomType(String typeName) throws RoomTypeNotFoundException {
         RoomTypeEntity thisRoomType;
         try{
-          thisRoomType = retrieveByTypeName(typeName);
+            thisRoomType = retrieveByTypeName(typeName);
       } catch (RoomTypeNotFoundException e) {
-          throw e;
+            throw e;
       }
-        Query query;
+        
         try {
-            query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.name = :typename AND room.occupancy = OCCUPIED");
+            Query query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.typeName = :typename AND room.occupancy = 'OCCUPIED'");
             query.setParameter("typename", typeName);
-            if(query.getResultList().isEmpty()) {
+            if(query.getResultList().isEmpty()) { //No rooms of the type are occupied
                 em.remove(thisRoomType); 
-            }else {
+            }else { //Some room of the type are occupied
+                
                 thisRoomType.setStatus(StatusEnum.DISABLED);
             }
         } catch (Exception e) {
-            System.err.println("our  query is wrong");
+            System.err.println("our query is wrong");
         }
         
     }
     
     @Override
-    public List<String> viewAllRoomType() {
+    public List<RoomTypeEntity> retrieveListOfRoomTypes() {
         Query query = em.createQuery("SELECT roomType FROM RoomTypeEntity roomType");
         return query.getResultList();
     }
@@ -112,6 +111,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
         RoomEntity newRoom = new RoomEntity(floor,unit,thisRoomType);
         em.persist(newRoom);
+        thisRoomType.addOneRoom();
     }
     
     //update the status and roomtype of a room
@@ -148,7 +148,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                   throw new RoomNotFoundException("No such room found");
                 }        
     }
-    
-    
+
+    public void persist(Object object) {
+        em.persist(object);
+    }
 
 }

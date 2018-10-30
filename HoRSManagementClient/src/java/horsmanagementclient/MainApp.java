@@ -60,11 +60,10 @@ public class MainApp {
         try {
             currentEmployee = employeeSessionBean.login(username, password);
             System.out.println("Login successful.");
+            employeeMenu();
         }catch (InvalidLoginCredentialException ex) {
             System.err.println("Invalid Credentials. Please Try Again.");
-            return;
         } 
-        employeeMenu();
     }
     
     public void employeeMenu(){
@@ -93,9 +92,8 @@ public class MainApp {
                     System.out.println("(1)Hotel Operation (Operation Manager) Module \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
-                        /*
-                        ADD RELEVANT METHOD
-                        */
+                        HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, currentEmployee);
+                        opsMod.runHotelOperationModuleOperationsManager();
                     }else if(response.equals("2")){
                         doLogout();
                         break;
@@ -110,9 +108,8 @@ public class MainApp {
                     System.out.println("(1)Hotel Operation Module (Sales Manager) \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
-                        /*
-                        ADD RELEVANT METHOD
-                        */
+                        HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, currentEmployee);
+                        
                     }else if(response.equals("2")){
                         doLogout();
                         break;

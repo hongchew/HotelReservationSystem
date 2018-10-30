@@ -55,16 +55,16 @@ public class RoomTypeEntity implements Serializable {
         availabilityRecordEntitiess = new ArrayList<>();
     }
 
-    public RoomTypeEntity(Long typeId, String typeName, Integer totalRooms, String description, String bedType, Integer capacity, String amenities, StatusEnum status) {
-        this.typeId = typeId;
+    public RoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities) {
         this.typeName = typeName;
-        this.totalRooms = totalRooms;
+        this.totalRooms = 0;
         this.description = description;
         this.bedType = bedType;
         this.capacity = capacity;
         this.amenities = amenities;
-        this.status = status;
+        this.status = StatusEnum.AVAILABLE;
     }
+    
 
     public Long getTypeId() {
         return typeId;
@@ -150,4 +150,7 @@ public class RoomTypeEntity implements Serializable {
         return availabilityRecordEntitiess;
     }
  
+    public void addOneRoom(){
+        totalRooms++;
+    }
 }

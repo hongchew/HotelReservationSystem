@@ -20,15 +20,13 @@ import util.exception.RoomTypeNotFoundException;
 @Remote
 public interface RoomSessionBeanRemote {
 
-    public void createNewRoomType(Long typeId, String typeName, Integer totalRooms, String description, String bedType, Integer capacity, String amenities, StatusEnum status);
-
     public String viewRoomTypeDetails(String typeName);
 
-    public void updateRoomType(String typeName, String newName, String newDescription, String newBedType, Integer newCapacity, String newAmenities, StatusEnum newStatus, Integer newTotalRooms);
-
+    public void updateRoomType(String typeName, String newDescription, String newBedType, Integer newCapacity, String newAmenities) throws RoomTypeNotFoundException;
+    
     public void deleteRoomType(String typeName) throws RoomTypeNotFoundException;
 
-    public List<String> viewAllRoomType();
+    public List<RoomTypeEntity> retrieveListOfRoomTypes();
 
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException;
 
@@ -37,5 +35,7 @@ public interface RoomSessionBeanRemote {
     public RoomTypeEntity retrieveByTypeName(String typeName) throws RoomTypeNotFoundException;
 
     public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
+
+    public void createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities);
     
 }
