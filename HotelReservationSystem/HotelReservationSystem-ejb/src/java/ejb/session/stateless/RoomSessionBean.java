@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import entity.RoomEntity;
 import entity.RoomTypeEntity;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -29,6 +31,8 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
     
+    @Resource
+    private EJBContext eJBContext;
     
 
     public RoomSessionBean() {
@@ -44,11 +48,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public String viewRoomTypeDetails(String typeName) {
         RoomTypeEntity roomType;
         try{
-          roomType = retrieveByTypeName(typeName);
-      } catch (RoomTypeNotFoundException e) {
-          System.err.println("No such roomType found");
-          return null;
-      }
+            roomType = retrieveRoomTypeByTypeName(typeName);
+        }catch (RoomTypeNotFoundException e) {
+            System.err.println("No such roomType found");
+            return null;
+        }
         
         String details = ("Type Name: " + roomType.getTypeName() +
                           "\nDescription: " + roomType.getDescription() +
@@ -65,12 +69,13 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public void updateRoomType(String typeName, String newDescription, String newBedType, Integer newCapacity, String newAmenities) throws RoomTypeNotFoundException {
 
         try{
-            RoomTypeEntity thisRoomType = retrieveByTypeName(typeName);
+            RoomTypeEntity thisRoomType = retrieveRoomTypeByTypeName(typeName);
             thisRoomType.setAmenities(newAmenities);
             thisRoomType.setDescription(newDescription);
             thisRoomType.setBedType(newBedType);
             thisRoomType.setCapacity(newCapacity);
         }catch (RoomTypeNotFoundException e) {
+            eJBContext.setRollbackOnly();
             throw e;
         }
 
@@ -80,7 +85,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public void deleteRoomType(String typeName) throws RoomTypeNotFoundException {
         RoomTypeEntity thisRoomType;
         try{
-            thisRoomType = retrieveByTypeName(typeName);
+            thisRoomType = retrieveRoomTypeByTypeName(typeName);
       } catch (RoomTypeNotFoundException e) {
             throw e;
       }
@@ -108,19 +113,32 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     @Override
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException { 
-        RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
-        RoomEntity newRoom = new RoomEntity(floor,unit,thisRoomType);
-        em.persist(newRoom);
-        thisRoomType.addOneRoom();
+        try {
+            RoomTypeEntity thisRoomType = retrieveRoomTypeByTypeName(roomType);
+            RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);
+            em.persist(newRoom);
+            thisRoomType.addRoom(newRoom);
+        } catch (RoomTypeNotFoundException roomTypeNotFoundException) {
+            eJBContext.setRollbackOnly();
+            throw roomTypeNotFoundException;
+        }
     }
     
     //update the status and roomtype of a room
     @Override
     public void updateRoom(String roomNumber, String roomType, StatusEnum status ) throws RoomNotFoundException, RoomTypeNotFoundException {
-        RoomEntity thisRoom = retrieveRoomByRoomNumber(roomNumber);
-        RoomTypeEntity thisRoomType = retrieveByTypeName(roomType);
-        thisRoom.setRoomType(thisRoomType);
-        thisRoom.setStatus(status);  
+        try {
+            RoomEntity thisRoom = retrieveRoomByRoomNumber(roomNumber);
+            RoomTypeEntity oldRoomType = thisRoom.getRoomType();
+            RoomTypeEntity newRoomType = retrieveRoomTypeByTypeName(roomType);
+            oldRoomType.removeRoom(thisRoom);
+            newRoomType.addRoom(thisRoom);
+            thisRoom.setRoomType(newRoomType);
+            thisRoom.setStatus(status);            
+        } catch (RoomNotFoundException | RoomTypeNotFoundException e) {
+            eJBContext.setRollbackOnly();
+            System.out.println(e.getMessage());
+        }
     }
     
     
@@ -128,7 +146,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     
     @Override
-    public RoomTypeEntity retrieveByTypeName(String typeName) throws RoomTypeNotFoundException {
+    public RoomTypeEntity retrieveRoomTypeByTypeName(String typeName) throws RoomTypeNotFoundException {
         Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.typeName = :typename");
         q.setParameter("typename", typeName);
         try{ 
@@ -149,8 +167,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                 }        
     }
 
-    public void persist(Object object) {
-        em.persist(object);
+    @Override
+    public List<RoomEntity> retrieveAllRooms(){
+        Query q = em.createQuery("SELECT r FROM RoomEntity r ORDER BY r.roomNumber ASC");
+        return q.getResultList();
     }
-
+    
+    
+    @Override
+    public String viewRoomDetails(RoomEntity room){
+        return "Room Number " + room.getRoomNumber() + ", " + room.getRoomType() + ", " + room.getStatus();
+    }
+    
 }

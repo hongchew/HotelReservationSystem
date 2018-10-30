@@ -32,10 +32,14 @@ public interface RoomSessionBeanRemote {
 
     public void updateRoom(String roomNumber, String roomType, StatusEnum status) throws RoomNotFoundException, RoomTypeNotFoundException;
 
-    public RoomTypeEntity retrieveByTypeName(String typeName) throws RoomTypeNotFoundException;
+    public RoomTypeEntity retrieveRoomTypeByTypeName(String typeName) throws RoomTypeNotFoundException;
 
     public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
 
     public void createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities);
+
+    public List<RoomEntity> retrieveAllRooms();
+
+    public String viewRoomDetails(RoomEntity room);
     
 }

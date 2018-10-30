@@ -30,7 +30,7 @@ public class AvailabilityRecordEntity implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date availabiltyRecordDate;
     
-    private Long totalReservations;
+    private Integer totalReservations;
     
     @ManyToOne
     private RoomTypeEntity roomType;
@@ -38,13 +38,13 @@ public class AvailabilityRecordEntity implements Serializable {
     public AvailabilityRecordEntity() {
     }
 
-    public AvailabilityRecordEntity(Date date, Long totalReservations, RoomTypeEntity roomType) {
+    public AvailabilityRecordEntity(Date date, Integer totalReservations, RoomTypeEntity roomType) {
         this.availabiltyRecordDate = date;
         this.totalReservations = totalReservations;
         this.roomType = roomType;
     }
     
-    public Long getAvailableRooms(){
+    public Integer getAvailableRooms(){
         return roomType.getTotalRooms() - totalReservations;
     }
     

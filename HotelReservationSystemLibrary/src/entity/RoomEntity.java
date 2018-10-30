@@ -27,6 +27,8 @@ import util.enumeration.StatusEnum;
 @Entity
 public class RoomEntity implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
@@ -60,7 +62,7 @@ public class RoomEntity implements Serializable {
     public RoomEntity(Integer floor, Integer unit, RoomTypeEntity roomType) {
         this.floor = floor;
         this.unit = unit;
-        this.roomNumber = floor.toString() + unit.toString();
+        this.roomNumber = floor.toString() + "-" + unit.toString();
         this.status = StatusEnum.AVAILABLE;
         this.occupancy = IsOccupiedEnum.UNOCCUPIED;
         this.roomType = roomType;

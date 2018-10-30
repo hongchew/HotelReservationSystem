@@ -7,8 +7,13 @@ package horsmanagementclient;
 
 import ejb.session.stateless.RoomSessionBeanRemote;
 import entity.EmployeeEntity;
+import entity.RoomEntity;
 import entity.RoomTypeEntity;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.enumeration.StatusEnum;
+import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
 /**
@@ -177,18 +182,19 @@ public class HotelOperationModule {
     private void roomManagement(){
         while(true){
             System.out.println("(1) Create new Room");
-            System.out.println("(2) Delete Room");
-            System.out.println("(3) View All Rooms");
-            System.out.println("(4) Return");
+            System.out.println("(2) Update Room");
+            System.out.println("(3) Delete Room");
+            System.out.println("(4) View All Rooms");
+            System.out.println("(5) Return");
             
             String response = sc.next();
             switch(response){
                 case "1":
-                    
+                    createNewRoom();
                     break;
                     
                 case "2":
-                    
+                    updateRoom();
                     break;
                     
                 case "3":
@@ -196,12 +202,80 @@ public class HotelOperationModule {
                     break;
                     
                 case "4":
+                    viewAllRooms();
+                    break;
+                    
+                case "5":
                     return;
                                       
                 default:
                     System.err.println("Please input a valid command.");
             }
             
+        }
+    }
+    
+    private void createNewRoom(){
+        try {
+            System.out.println("Enter Floor Number of New Room");
+            Integer floor = sc.nextInt();
+            System.out.println("Enter Unit Number of New Room");
+            Integer unit = sc.nextInt();
+            System.out.println("Select Room Type:");
+            List<RoomTypeEntity> roomTypes = viewAllRoomTypes();
+            int typeSelection = sc.nextInt();
+            String typeName = roomTypes.get(typeSelection).getTypeName();
+            roomSessionBean.createNewRoom(floor, unit, typeName);
+            System.out.println("New Room " + floor + "-" + unit +" Created");
+        } catch (RoomTypeNotFoundException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+    }
+    
+    private void updateRoom(){
+        System.out.println("Enter room floor number");
+        String floor = sc.next();
+        System.out.println("Enter room unit number");
+        String unit = sc.next();
+        
+        String roomNumber = floor + "-" + unit;
+        try{
+            System.out.println(roomSessionBean.viewRoomDetails(roomSessionBean.retrieveRoomByRoomNumber(roomNumber)));
+            System.out.println("Enter new room type:");
+            List<RoomTypeEntity> roomTypes = viewAllRoomTypes();
+            int typeNum =  sc.nextInt();
+            RoomTypeEntity roomType = roomTypes.get(typeNum);
+            System.out.println("Enter new room status \n(1)AVAILABLE \n(2)DISABLED");
+            StatusEnum status;
+            switch(sc.next()){
+                case "1":
+                    status = StatusEnum.AVAILABLE;
+                    break;
+                case "2":
+                    status = StatusEnum.DISABLED;
+                    break;
+                default:
+                    System.err.println("Not an available status");
+                    updateRoom(); //redo
+                    return;
+            }
+            roomSessionBean.updateRoom(roomNumber, roomType.getTypeName(), status);
+            
+        }catch(RoomNotFoundException | NullPointerException | RoomTypeNotFoundException e){
+            System.err.println(e.getMessage());
+            return;
+        }
+        
+        
+        
+    }
+    
+    private void viewAllRooms(){
+        List<RoomEntity> rooms = roomSessionBean.retrieveAllRooms();
+        System.out.println("All Rooms:");
+        for(RoomEntity room: rooms){
+            System.out.println(roomSessionBean.viewRoomDetails(room));
         }
     }
     

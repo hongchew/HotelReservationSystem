@@ -14,9 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import util.enumeration.StatusEnum;
 
 /**
@@ -26,6 +24,8 @@ import util.enumeration.StatusEnum;
 @Entity
 public class RoomTypeEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long typeId;
@@ -150,7 +150,13 @@ public class RoomTypeEntity implements Serializable {
         return availabilityRecordEntitiess;
     }
  
-    public void addOneRoom(){
+    public void addRoom(RoomEntity room){
+        rooms.add(room);
         totalRooms++;
+    }
+    
+    public void removeRoom(RoomEntity room){
+        rooms.remove(room);
+        totalRooms--;
     }
 }
