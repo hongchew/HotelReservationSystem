@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.*;
 
@@ -42,6 +41,7 @@ public class GuestEntity implements Serializable {
     private String password;
     
     @Column(nullable = false, unique = true)
+    @Email(message = "Please enter a valid email address")
     private String emailAddress;
     
     @OneToMany(mappedBy = "reservedByGuest")

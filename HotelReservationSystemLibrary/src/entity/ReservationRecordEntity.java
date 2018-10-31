@@ -7,6 +7,8 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -101,17 +103,27 @@ public class ReservationRecordEntity implements Serializable {
     public void setAssignedRoom(RoomEntity assignedRoom) {
         this.assignedRoom = assignedRoom;
     }
-
-    public Date getStartDate() {
+    
+    public Date getStartDate(){
         return startDate;
+    }
+    
+    public String getStartDateAsString() {
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        return dateFormat.format(startDate);
     }
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
-
-    public Date getEndDate() {
+    
+    public Date getEndDate(){
         return endDate;
+    }
+    
+    public String getEndDateAsString() {
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        return dateFormat.format(endDate);
     }
 
     public void setEndDate(Date endDate) {

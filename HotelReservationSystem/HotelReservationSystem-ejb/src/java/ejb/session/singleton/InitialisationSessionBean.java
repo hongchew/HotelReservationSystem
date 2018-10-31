@@ -6,11 +6,14 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import entity.RoomRankingEntity;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import util.exception.EmployeeNotFoundException;
 
 /**
@@ -24,6 +27,10 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
 
     @EJB
     private EmployeeSessionBeanLocal employeeSessionBean;
+    
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager em;
+    
     
     
     public InitialisationSessionBean() {
@@ -39,7 +46,9 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
         }catch(EmployeeNotFoundException ex){
             
             employeeSessionBean.createNewSysAdmin("admin", "admin", "password");
+            em.persist(new RoomRankingEntity(new Long(1)));
             
         }
     }
+
 }

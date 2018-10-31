@@ -16,15 +16,17 @@ import javax.persistence.OneToMany;
 /**
  *
  * @author Hong Chew
- * Room Ranking entity for keeping track of room ranks. Only 1 instance will be created and updated constantly.
+ * Room Ranking entity for keeping track of room ranks. Only 1 instance will be created and updated constantly. id = 1
+ * Rank 0 = most premium, Rank rankings.size()-1 = least premium
  * 
  */
 @Entity
 public class RoomRankingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
     @OneToMany
@@ -33,6 +35,12 @@ public class RoomRankingEntity implements Serializable {
     public RoomRankingEntity() {
         rankings = new ArrayList<>();
     }
+
+    public RoomRankingEntity(Long id) {
+        this.id = id;
+    }
+    
+    
 
     @Override
     public int hashCode() {

@@ -6,7 +6,9 @@
 package ejb.session.stateless;
 
 import entity.RoomEntity;
+import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
@@ -15,6 +17,7 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
+import util.enumeration.IsOccupiedEnum;
 import util.enumeration.StatusEnum;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -39,9 +42,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public void createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities) {
-        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName,  description,  bedType,  capacity,  amenities);
-        em.persist(newRoomType);    
+    public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
+        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
+        em.persist(newRoomType);
+        insertRoomRank(newRoomType, i);
+        return newRoomType.getTypeId();
     }
     
     @Override
@@ -91,18 +96,18 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
       }
         
         try {
-            Query query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.typeName = :typename AND room.occupancy = 'OCCUPIED'");
+            //get a list of rooms of type typeName that is occupied 
+            Query query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.typeName = :typename AND room.occupancy = :occupancy ");
             query.setParameter("typename", typeName);
+            query.setParameter("occupancy", IsOccupiedEnum.OCCUPIED);
             if(query.getResultList().isEmpty()) { //No rooms of the type are occupied
                 em.remove(thisRoomType); 
             }else { //Some room of the type are occupied
-                
                 thisRoomType.setStatus(StatusEnum.DISABLED);
             }
         } catch (Exception e) {
             System.err.println("our query is wrong");
         }
-        
     }
     
     @Override
@@ -179,4 +184,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return "Room Number " + room.getRoomNumber() + ", " + room.getRoomType() + ", " + room.getStatus();
     }
     
+    @Override
+    public ArrayList<RoomTypeEntity> getRoomRanks(){
+        RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
+        ranks.getRankings().size();
+        return ranks.getRankings();
+    }
+    
+    
+    public void insertRoomRank(RoomTypeEntity roomType, int index){
+        RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
+        ranks.getRankings().add(index, roomType);
+    }
 }

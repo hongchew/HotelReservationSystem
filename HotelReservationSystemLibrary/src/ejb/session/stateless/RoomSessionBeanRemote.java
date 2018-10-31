@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.RoomEntity;
 import entity.RoomTypeEntity;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.StatusEnum;
@@ -36,10 +37,12 @@ public interface RoomSessionBeanRemote {
 
     public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
 
-    public void createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities);
-
     public List<RoomEntity> retrieveAllRooms();
 
     public String viewRoomDetails(RoomEntity room);
+
+    public ArrayList<RoomTypeEntity> getRoomRanks();
+
+    public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i);
     
 }

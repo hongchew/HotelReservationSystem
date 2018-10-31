@@ -10,8 +10,6 @@ import entity.EmployeeEntity;
 import entity.RoomEntity;
 import entity.RoomTypeEntity;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.StatusEnum;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -114,7 +112,23 @@ public class HotelOperationModule {
         System.out.println("Enter amenities available in " + newTypeName);
         String newAmenities = sc.nextLine();
         
-        roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities);
+        ArrayList<RoomTypeEntity> roomRanks = roomSessionBean.getRoomRanks();
+        int i = 0;
+        System.out.println("Select the room ranking position to insert the new room in (Smaller number = more premium)");
+        for(RoomTypeEntity r: roomRanks){
+            System.out.println("(" + i + ") " + r.getTypeName());
+            i++;
+        }
+        System.out.println("(" + i + ") Least Premium");
+        int newRank = sc.nextInt();
+        if(newRank >= i){
+            i = roomRanks.size(); //least premium
+        }else if (newRank < 0){
+            i = 0; //most premium
+        }
+        
+        roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities, i);
+        
         System.out.println(newTypeName + " created successfully!");
     }
     
