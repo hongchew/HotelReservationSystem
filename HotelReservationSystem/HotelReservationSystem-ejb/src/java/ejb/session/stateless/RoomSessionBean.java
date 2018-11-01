@@ -5,10 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.AvailabilityRecordEntity;
 import entity.RoomEntity;
 import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
@@ -43,11 +47,36 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     @Override
     public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
-        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
-        em.persist(newRoomType);
-        insertRoomRank(newRoomType, i);
+        RoomTypeEntity newRoomType = returnNewRoomTypeEntity(typeName, description, bedType, capacity, amenities, i);
+        
         return newRoomType.getTypeId();
     }
+    
+    public Date addDays(Date date, int i){
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, i);
+        
+        return cal.getTime();     
+    }
+    
+    @Override
+    public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
+        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
+        em.persist(newRoomType);
+            
+        insertRoomRank(newRoomType, i);
+        
+        Date date;
+        for(int j = 0; j < 365; j++){ //create 1 year of availability record in advance.
+            date = addDays(new Date(), j);
+            AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
+            em.persist(avail);
+        }
+        
+        return newRoomType;
+    }
+    
     
     @Override
     public String viewRoomTypeDetails(String typeName) {
