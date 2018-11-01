@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.RoomEntity;
 import entity.RoomTypeEntity;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
@@ -15,6 +16,7 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
+import util.enumeration.IsOccupiedEnum;
 import util.enumeration.StatusEnum;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -115,7 +117,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException { 
         try {
             RoomTypeEntity thisRoomType = retrieveRoomTypeByTypeName(roomType);
-            RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);
+            RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);          
             em.persist(newRoom);
             thisRoomType.addRoom(newRoom);
         } catch (RoomTypeNotFoundException roomTypeNotFoundException) {
@@ -141,10 +143,18 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
     
-    
-    
-    
-    
+    public void deleteRoom(String roomNumber) throws RoomNotFoundException {
+        RoomEntity thisRoom = retrieveRoomByRoomNumber(roomNumber);
+        RoomTypeEntity thisRoomType = thisRoom.getRoomType();
+        if (thisRoom.getOccupancy().equals(IsOccupiedEnum.UNOCCUPIED)) {
+        thisRoomType.removeRoom(thisRoom);
+        em.remove(thisRoom);
+        } else {
+            thisRoom.setStatus(StatusEnum.DISABLED);
+        }  
+    }
+
+
     @Override
     public RoomTypeEntity retrieveRoomTypeByTypeName(String typeName) throws RoomTypeNotFoundException {
         Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.typeName = :typename");
