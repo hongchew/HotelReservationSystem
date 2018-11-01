@@ -33,8 +33,8 @@ public class RoomRateEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rateId;
-    private String rateName;
     private BigDecimal ratePerNight;
+    private String rateName;
     
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
@@ -54,15 +54,14 @@ public class RoomRateEntity implements Serializable {
     public RoomRateEntity() {
     }
 
-    public RoomRateEntity(Long rateId, String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {
-        this.rateId = rateId;
+    public RoomRateEntity(String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {   
         this.rateName = rateName;
         this.ratePerNight = ratePerNight;
         this.status = status;
         this.rateType = rateType;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.roomType = roomType;
+        this.roomType = roomType;   
     }
 
     public Long getRateId() {
@@ -95,10 +94,6 @@ public class RoomRateEntity implements Serializable {
 
     public RoomTypeEntity getRoomType() {
         return roomType;
-    }
-
-    public void setRateId(Long rateId) {
-        this.rateId = rateId;
     }
 
     public void setRateName(String rateName) {
