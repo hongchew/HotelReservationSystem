@@ -159,4 +159,8 @@ public class RoomTypeEntity implements Serializable {
         rooms.remove(room);
         totalRooms--;
     }
+    
+    public void addNewAvailabilityRecord(AvailabilityRecordEntity avail){
+        this.availabilityRecordEntitiess.add(avail);
+    }
 }

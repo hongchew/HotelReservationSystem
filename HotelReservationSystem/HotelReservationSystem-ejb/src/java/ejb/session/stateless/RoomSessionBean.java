@@ -19,6 +19,7 @@ import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.ejb.Local;
 import javax.ejb.Remote;
+import javax.ejb.Schedule;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
 import util.enumeration.IsOccupiedEnum;
@@ -68,15 +69,26 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         insertRoomRank(newRoomType, i);
         
         Date date;
-        for(int j = 0; j < 365; j++){ //create 1 year of availability record in advance.
+        for(int j = 0; j <= 365; j++){ //create next 365 days of availability record in advance.
             date = addDays(new Date(), j);
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
             em.persist(avail);
+            newRoomType.addNewAvailabilityRecord(avail);
         }
         
         return newRoomType;
     }
     
+    //Generate a new avail record for all room type every day for today + 365 day
+    @Schedule(hour = "0")
+    public void addNewAvailRecordDaily(){
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> roomTypes = q.getResultList();
+        for(RoomTypeEntity r : roomTypes){
+            AvailabilityRecordEntity avail = new AvailabilityRecordEntity(addDays(new Date(),365), r);
+            r.addNewAvailabilityRecord(avail);
+        }
+    }
     
     @Override
     public String viewRoomTypeDetails(String typeName) {
