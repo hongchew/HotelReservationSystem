@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 import entity.GuestEntity;
+import entity.ReservationRecordEntity;
+import java.util.ArrayList;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -36,6 +38,13 @@ public class GuestSessionBean implements GuestSessionBeanRemote, GuestSessionBea
         try{
             GuestEntity guest = (GuestEntity) q.getSingleResult();
             if(guest.getPassword().equals(password)){
+                ArrayList<ReservationRecordEntity> reservations = guest.getReservationRecords();
+                for(ReservationRecordEntity r : reservations){
+                    r.getBill();
+                    r.getStartDate();
+                    r.getEndDate();
+                    r.getRoomType().getTypeName();
+                }
                 return guest;
             }else{
                 throw new InvalidLoginCredentialException("Invalid Login Credential");

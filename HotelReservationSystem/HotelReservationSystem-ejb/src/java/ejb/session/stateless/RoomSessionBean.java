@@ -61,6 +61,15 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return cal.getTime();     
     }
     
+    public Date setHoursMinsToZero(Date date){
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        
+        return cal.getTime();
+    }
+    
     @Override
     public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
         RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
@@ -68,9 +77,10 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             
         insertRoomRank(newRoomType, i);
         
-        Date date;
+        Date date = new Date();
+        date = setHoursMinsToZero(date);
         for(int j = 0; j <= 365; j++){ //create next 365 days of availability record in advance.
-            date = addDays(new Date(), j);
+            date = addDays(date, j);
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
             em.persist(avail);
             newRoomType.addNewAvailabilityRecord(avail);
@@ -127,28 +137,32 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     }
     
+    /**
+     *
+     * @param typeName
+     * @return false if roomType disabled, true if roomType deleted
+     * @throws RoomTypeNotFoundException
+     */
     @Override
-    public void deleteRoomType(String typeName) throws RoomTypeNotFoundException {
+    public Boolean deleteRoomType(String typeName) throws RoomTypeNotFoundException {
         RoomTypeEntity thisRoomType;
         try{
             thisRoomType = retrieveRoomTypeByTypeName(typeName);
-      } catch (RoomTypeNotFoundException e) {
+        } catch (RoomTypeNotFoundException e) {
             throw e;
-      }
-        
-        try {
-            //get a list of rooms of type typeName that is occupied 
-            Query query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.typeName = :typename AND room.occupancy = :occupancy ");
-            query.setParameter("typename", typeName);
-            query.setParameter("occupancy", IsOccupiedEnum.OCCUPIED);
-            if(query.getResultList().isEmpty()) { //No rooms of the type are occupied
-                em.remove(thisRoomType); 
-            }else { //Some room of the type are occupied
-                thisRoomType.setStatus(StatusEnum.DISABLED);
-            }
-        } catch (Exception e) {
-            System.err.println("our query is wrong");
         }
+        
+        //get a list of rooms of type typeName that is occupied 
+        Query query = em.createQuery("SELECT room FROM RoomEntity room WHERE room.roomType.typeName = :typename AND room.occupancy = :occupancy");
+        query.setParameter("typename", typeName);
+        query.setParameter("occupancy", IsOccupiedEnum.OCCUPIED);
+        if(query.getResultList().isEmpty()) { //No rooms of the type are occupied
+            em.remove(thisRoomType); 
+            return true;
+        }else { //Some room of the type are occupied
+            thisRoomType.setStatus(StatusEnum.DISABLED);
+            return false;
+        }        
     }
     
     @Override

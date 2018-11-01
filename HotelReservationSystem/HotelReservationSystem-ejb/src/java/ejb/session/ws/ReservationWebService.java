@@ -13,6 +13,10 @@ import javax.jws.WebService;
 import javax.ejb.Stateless;
 import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateless.ReservationSessionBeanLocal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.exception.EntityMismatchException;
+import util.exception.ReservationRecordNotFoundException;
 
 /**
  *
@@ -59,6 +63,10 @@ public class ReservationWebService {
      * @return return string with details of the reservation requested. 
      */
     public String viewReservationDetail(Long reservationId, Long partnerId){
-        return partnerSessionBean.viewReservationDetail(reservationId, partnerId);
+        try {
+            return partnerSessionBean.viewReservationDetail(reservationId, partnerId);
+        } catch (EntityMismatchException | ReservationRecordNotFoundException ex) {
+            return ex.getMessage();
+        }
     }
 }

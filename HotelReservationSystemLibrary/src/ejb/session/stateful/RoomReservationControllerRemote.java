@@ -5,6 +5,9 @@
  */
 package ejb.session.stateful;
 
+import util.exception.EntityMismatchException;
+import util.exception.ReservationRecordNotFoundException;
+
 
 /**
  *
@@ -12,5 +15,9 @@ package ejb.session.stateful;
  */
 
 public interface RoomReservationControllerRemote {
+
+    public void setGuest(Long guestId);
+
+    public String retrieveReservationDetails(Long resId, Long guestId) throws ReservationRecordNotFoundException, EntityMismatchException;
     
 }

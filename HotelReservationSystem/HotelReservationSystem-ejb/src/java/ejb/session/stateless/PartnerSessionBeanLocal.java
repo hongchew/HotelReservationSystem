@@ -7,7 +7,9 @@ package ejb.session.stateless;
 
 import entity.ReservationRecordEntity;
 import java.util.ArrayList;
+import util.exception.EntityMismatchException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ReservationRecordNotFoundException;
 
 /**
  *
@@ -20,6 +22,6 @@ public interface PartnerSessionBeanLocal {
 
     public ArrayList<ReservationRecordEntity> retrieveAllPartnerReservations(Long partnerId);
 
-    public String viewReservationDetail(Long reservationId, Long partnerId);
+    public String viewReservationDetail(Long reservationId, Long partnerId) throws EntityMismatchException, ReservationRecordNotFoundException;
     
 }

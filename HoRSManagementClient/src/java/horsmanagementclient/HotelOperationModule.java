@@ -153,8 +153,13 @@ public class HotelOperationModule {
                     
                 case "2":
                     try {
-                        roomSessionBean.deleteRoomType(type);
-                    } catch (RoomTypeNotFoundException ex) {  //also catch room occupied exception when you make it
+                        if(roomSessionBean.deleteRoomType(type)){
+                            System.out.println("Room Type Deleted");
+                        }else{
+                            System.out.println("Room Type Currently In Use - Room Type marked as DISABLED");
+                            System.out.println("Please try again when room type is not in use any more");
+                        }
+                    } catch (RoomTypeNotFoundException ex) {
                         System.err.println(ex.getMessage());
                     }
                     break;

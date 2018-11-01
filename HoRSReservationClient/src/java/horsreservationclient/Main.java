@@ -16,7 +16,7 @@ import ejb.session.stateful.RoomReservationControllerRemote;
 public class Main {
 
     @EJB
-    private static RoomReservationControllerRemote roomReservationSessionBean;
+    private static RoomReservationControllerRemote roomReservationController;
 
     @EJB
     private static GuestSessionBeanRemote guestSessionBean;
@@ -26,7 +26,7 @@ public class Main {
     
     public static void main(String[] args) {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(guestSessionBean, roomReservationSessionBean);
+        MainApp mainApp = new MainApp(guestSessionBean, roomReservationController);
         mainApp.runApp();
         
     }

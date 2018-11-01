@@ -10,6 +10,12 @@ import entity.GuestEntity;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateful.RoomReservationControllerRemote;
+import entity.ReservationRecordEntity;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.exception.EntityMismatchException;
+import util.exception.ReservationRecordNotFoundException;
 
 /**
  *
@@ -18,16 +24,16 @@ import ejb.session.stateful.RoomReservationControllerRemote;
 public class MainApp {
     
     private GuestSessionBeanRemote guestSessionBean;
-    private RoomReservationControllerRemote roomReservationSessionBean;
+    private RoomReservationControllerRemote roomReservationController;
     private GuestEntity guest;
     private Scanner sc = new Scanner(System.in);
     
     public MainApp() {
     }
 
-    public MainApp(GuestSessionBeanRemote guestSessionBean, RoomReservationControllerRemote roomReservationSessionBean) {
+    public MainApp(GuestSessionBeanRemote guestSessionBean, RoomReservationControllerRemote roomReservationController) {
         this.guestSessionBean = guestSessionBean;
-        this.roomReservationSessionBean = roomReservationSessionBean;
+        this.roomReservationController = roomReservationController;
     }
     
     public void runApp(){
@@ -81,7 +87,8 @@ public class MainApp {
         String password = sc.next();
         
         try{
-            guestSessionBean.guestLogin(username, password);
+            guest = guestSessionBean.guestLogin(username, password);
+            roomReservationController.setGuest(guest.getId());
             System.out.println("Login Successful");
             guestMenu();
         }catch(InvalidLoginCredentialException e){
@@ -93,18 +100,58 @@ public class MainApp {
         System.out.println("****Welcome to the Hotel Reservation client****");
         while(true){
             System.out.println("(1) Search/Reserve Hotel Room");
-            System.out.println("(2) Log Out");
+            System.out.println("(2) View My Reservation Detail");
+            System.out.println("(3) View All Reservations");
+            System.out.println("(4) Log Out");
             String response = sc.next();
             switch(response){
                 case "1":
                     break;
+                    
                 case "2":
+                    viewReservationDetail();
+                    break;
+                
+                case "3":
+                    viewAllReservations();
+                    break;
+                    
+                case "4":
                     guestLogOut();
                     return;
+                    
                 default:
                     System.out.println("Please enter a valid command");
             }
         }
+    }
+    
+    private void viewReservationDetail(){
+        System.out.println("Enter reservation ID");
+        Long resId = new Long(sc.nextInt());
+        try {
+            String details = roomReservationController.retrieveReservationDetails(resId,guest.getId());
+            System.out.println(details);
+        } catch (ReservationRecordNotFoundException | EntityMismatchException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        
+    }
+    
+    private void viewAllReservations(){
+        System.out.println("Viewing all Reservation Records:");
+        ArrayList<ReservationRecordEntity> reservations = guest.getReservationRecords();
+        for(ReservationRecordEntity r: reservations){
+            System.out.println( "Reservation ID: " + r.getId().toString() + "\n" +
+                                "Start Date: " + r.getStartDateAsString() + "\n" +
+                                "End Date: " + r.getEndDateAsString() + "\n" +
+                                "Room Type Reserved: " + r.getRoomType().getTypeName() + "\n" +
+                                "Bill: $" + r.getBill());
+            System.out.println();
+        }
+        System.out.println("****End of Reservation Records****");
+        
     }
     
     private void guestLogOut(){

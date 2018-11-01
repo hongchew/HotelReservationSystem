@@ -16,8 +16,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.*;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.EntityMismatchException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PartnerNotFoundException;
+import util.exception.ReservationRecordNotFoundException;
 
 /**
  *
@@ -93,10 +95,10 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
     }
     
     @Override
-    public String viewReservationDetail(Long reservationId, Long partnerId){
+    public String viewReservationDetail(Long reservationId, Long partnerId) throws EntityMismatchException, ReservationRecordNotFoundException{
         ReservationRecordEntity reservation = em.find(ReservationRecordEntity.class, reservationId);
         if(reservation == null){
-            return "No such reservation";
+            throw new ReservationRecordNotFoundException("Reservation not found");
         }else if(!reservation.getReservedByPartner().getPartnerId().equals(partnerId)){
             String details = "Reservation id: " + reservationId +
                             "\nReserved by: " + reservation.getReservedByPartner() +
@@ -104,7 +106,7 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
                             "\nEnd date: " + reservation.getEndDateAsString();
             return details;
         }else{
-            return "Reservation not made by this partner.";
+            throw new EntityMismatchException("Partner ID Provided does not match with Partner ID of Reservation Record.");
         }
     }
     

@@ -52,6 +52,9 @@ public class ReservationRecordEntity implements Serializable {
     @Column(scale = 2)
     private BigDecimal bill;
     
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date reservedOn;
+    
     @ManyToOne
     private GuestEntity reservedByGuest;
     
@@ -62,8 +65,9 @@ public class ReservationRecordEntity implements Serializable {
     private ExceptionReportEntity exception;
 
     public ReservationRecordEntity() {
+        this.reservedOn = new Date(); //current timestamp
     }
-
+    
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, GuestEntity reservedByGuest) {
         this.roomType = roomType;
         this.startDate = startDate;
@@ -71,7 +75,7 @@ public class ReservationRecordEntity implements Serializable {
         this.reservedByGuest = reservedByGuest;
     }
     
-        public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, PartnerEntity reservedByPartner) {
+    public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, PartnerEntity reservedByPartner) {
         this.roomType = roomType;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -130,6 +134,11 @@ public class ReservationRecordEntity implements Serializable {
         this.endDate = endDate;
     }
 
+    public String getReservedOnAsString(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy, hh:mm");
+        return dateFormat.format(reservedOn);
+    }
+    
     public Date getCheckInTime() {
         return checkInTime;
     }

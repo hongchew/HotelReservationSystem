@@ -25,7 +25,7 @@ public interface RoomSessionBeanRemote {
 
     public void updateRoomType(String typeName, String newDescription, String newBedType, Integer newCapacity, String newAmenities) throws RoomTypeNotFoundException;
     
-    public void deleteRoomType(String typeName) throws RoomTypeNotFoundException;
+    public Boolean deleteRoomType(String typeName) throws RoomTypeNotFoundException;
 
     public List<RoomTypeEntity> retrieveListOfRoomTypes();
 
