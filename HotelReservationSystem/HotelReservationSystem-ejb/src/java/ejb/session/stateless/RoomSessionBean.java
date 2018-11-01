@@ -8,7 +8,9 @@ package ejb.session.stateless;
 import entity.AvailabilityRecordEntity;
 import entity.RoomEntity;
 import entity.RoomRankingEntity;
+import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,6 +25,7 @@ import javax.ejb.Schedule;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
 import util.enumeration.IsOccupiedEnum;
+import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -46,12 +49,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public RoomSessionBean() {
     }
     
-    @Override
-    public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
-        RoomTypeEntity newRoomType = returnNewRoomTypeEntity(typeName, description, bedType, capacity, amenities, i);
-        
-        return newRoomType.getTypeId();
-    }
     
     public Date addDays(Date date, int i){
         Calendar cal = new GregorianCalendar();
@@ -71,9 +68,10 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
+    public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i, String roomRate) {
         RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
         em.persist(newRoomType);
+        
             
         insertRoomRank(newRoomType, i);
         
@@ -175,7 +173,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException { 
         try {
             RoomTypeEntity thisRoomType = retrieveRoomTypeByTypeName(roomType);
-            RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);
+            RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);          
             em.persist(newRoom);
             thisRoomType.addRoom(newRoom);
         } catch (RoomTypeNotFoundException roomTypeNotFoundException) {
@@ -201,10 +199,18 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
     
-    
-    
-    
-    
+    public void deleteRoom(String roomNumber) throws RoomNotFoundException {
+        RoomEntity thisRoom = retrieveRoomByRoomNumber(roomNumber);
+        RoomTypeEntity thisRoomType = thisRoom.getRoomType();
+        if (thisRoom.getOccupancy().equals(IsOccupiedEnum.UNOCCUPIED)) {
+        thisRoomType.removeRoom(thisRoom);
+        em.remove(thisRoom);
+        } else {
+            thisRoom.setStatus(StatusEnum.DISABLED);
+        }  
+    }
+
+
     @Override
     public RoomTypeEntity retrieveRoomTypeByTypeName(String typeName) throws RoomTypeNotFoundException {
         Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.typeName = :typename");
@@ -214,6 +220,31 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }catch(NoResultException | NonUniqueResultException e) {  
             throw new RoomTypeNotFoundException("No such room type found");
         }
+    }
+    
+    public void createNewPublishedRate(String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {
+        RoomRateEntity newPublishedRate = new RoomRateEntity(rateName, ratePerNight, status, rateType, startDate, endDate, roomType);
+        roomType.addNewRoomRate(newPublishedRate);
+        em.persist(newPublishedRate);
+        
+    }
+    
+    public void createNewNormalRate(String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {
+        RoomRateEntity newNormalRate = new RoomRateEntity(rateName, ratePerNight, status, rateType, startDate, endDate, roomType);
+        roomType.addNewRoomRate(newNormalRate);
+        em.persist(newNormalRate);  
+    }
+    
+    public void createNewPeakRate(String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {
+        RoomRateEntity newPeakRate = new RoomRateEntity(rateName, ratePerNight, status, rateType, startDate, endDate, roomType);
+        roomType.addNewRoomRate(newPeakRate);
+        em.persist(newPeakRate);
+    }
+    
+    public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {
+        RoomRateEntity newPromotionRate = new RoomRateEntity(rateName, ratePerNight, status, rateType, startDate, endDate, roomType);
+        roomType.addNewRoomRate(newPromotionRate);
+        em.persist(newPromotionRate);  
     }
     
     @Override
