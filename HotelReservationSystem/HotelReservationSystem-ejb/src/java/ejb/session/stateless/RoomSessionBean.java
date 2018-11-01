@@ -5,15 +5,24 @@
  */
 package ejb.session.stateless;
 
+import entity.AvailabilityRecordEntity;
 import entity.RoomEntity;
+import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
 import java.util.ArrayList;
+<<<<<<< HEAD
+=======
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+>>>>>>> 471116f9763f58a6e67935390a00b4e629e42639
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.ejb.Local;
 import javax.ejb.Remote;
+import javax.ejb.Schedule;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
 import util.enumeration.IsOccupiedEnum;
@@ -40,10 +49,42 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public RoomSessionBean() {
     }
     
+    
+    public Date addDays(Date date, int i){
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, i);
+        
+        return cal.getTime();     
+    }
+    
     @Override
-    public void createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities) {
-        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName,  description,  bedType,  capacity,  amenities);
-        em.persist(newRoomType);    
+    public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
+        RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
+        em.persist(newRoomType);
+            
+        insertRoomRank(newRoomType, i);
+        
+        Date date;
+        for(int j = 0; j <= 365; j++){ //create next 365 days of availability record in advance.
+            date = addDays(new Date(), j);
+            AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
+            em.persist(avail);
+            newRoomType.addNewAvailabilityRecord(avail);
+        }
+        
+        return newRoomType;
+    }
+    
+    //Generate a new avail record for all room type every day for today + 365 day
+    @Schedule(hour = "0")
+    public void addNewAvailRecordDaily(){
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> roomTypes = q.getResultList();
+        for(RoomTypeEntity r : roomTypes){
+            AvailabilityRecordEntity avail = new AvailabilityRecordEntity(addDays(new Date(),365), r);
+            r.addNewAvailabilityRecord(avail);
+        }
     }
     
     @Override
@@ -93,18 +134,18 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
       }
         
         try {
-            Query query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.typeName = :typename AND room.occupancy = 'OCCUPIED'");
+            //get a list of rooms of type typeName that is occupied 
+            Query query = em.createQuery("SELECT room FROM RoomTypeEntity roomType, IN (roomType.rooms) room WHERE roomType.typeName = :typename AND room.occupancy = :occupancy ");
             query.setParameter("typename", typeName);
+            query.setParameter("occupancy", IsOccupiedEnum.OCCUPIED);
             if(query.getResultList().isEmpty()) { //No rooms of the type are occupied
                 em.remove(thisRoomType); 
             }else { //Some room of the type are occupied
-                
                 thisRoomType.setStatus(StatusEnum.DISABLED);
             }
         } catch (Exception e) {
             System.err.println("our query is wrong");
         }
-        
     }
     
     @Override
@@ -189,4 +230,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return "Room Number " + room.getRoomNumber() + ", " + room.getRoomType() + ", " + room.getStatus();
     }
     
+    @Override
+    public ArrayList<RoomTypeEntity> getRoomRanks(){
+        RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
+        ranks.getRankings().size();
+        return ranks.getRankings();
+    }
+    
+    
+    public void insertRoomRank(RoomTypeEntity roomType, int index){
+        RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
+        ranks.getRankings().add(index, roomType);
+    }
 }

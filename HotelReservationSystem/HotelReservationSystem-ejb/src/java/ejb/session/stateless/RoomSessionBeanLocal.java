@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.RoomTypeEntity;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +14,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface RoomSessionBeanLocal {
-    
+    public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i);
+            
 }

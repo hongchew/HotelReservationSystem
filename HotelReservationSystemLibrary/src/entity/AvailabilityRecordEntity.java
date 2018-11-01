@@ -38,14 +38,23 @@ public class AvailabilityRecordEntity implements Serializable {
     public AvailabilityRecordEntity() {
     }
 
-    public AvailabilityRecordEntity(Date date, Integer totalReservations, RoomTypeEntity roomType) {
+    public AvailabilityRecordEntity(Date date, RoomTypeEntity roomType) {
         this.availabiltyRecordDate = date;
-        this.totalReservations = totalReservations;
+        this.totalReservations = 0;
         this.roomType = roomType;
     }
     
     public Integer getAvailableRooms(){
         return roomType.getTotalRooms() - totalReservations;
+    }
+    
+    public Boolean getAvailability(){
+        int i = roomType.getTotalRooms() - totalReservations;
+        if(i <= 0){
+            return false;
+        }else{
+        return true;
+        }
     }
     
     public Long getId() {
@@ -97,4 +106,7 @@ public class AvailabilityRecordEntity implements Serializable {
         this.roomType = roomType;
     }
     
+    public void addOneReservation(){
+        this.totalReservations++;
+    }
 }

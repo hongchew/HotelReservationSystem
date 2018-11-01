@@ -14,14 +14,14 @@ import javax.persistence.PersistenceContext;
  * @author Hong Chew
  */
 @Stateful
-@Local(RoomReservationSessionBeanLocal.class)
-@Remote(RoomReservationSessionBeanRemote.class)
-public class RoomReservationSessionBean implements RoomReservationSessionBeanRemote, RoomReservationSessionBeanLocal {
+@Local(RoomReservationControllerLocal.class)
+@Remote(RoomReservationControllerRemote.class)
+public class RoomReservationController implements RoomReservationControllerRemote, RoomReservationControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
     
-    public RoomReservationSessionBean() {
+    public RoomReservationController() {
     }
 
     
