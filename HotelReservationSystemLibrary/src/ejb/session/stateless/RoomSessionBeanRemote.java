@@ -51,14 +51,14 @@ public interface RoomSessionBeanRemote {
 
     public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i);
     
-    public void createNewPublishedRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+    public void createNewPublishedRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException;
 
-    public void createNewNormalRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+    public void createNewNormalRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException;
 
-    public void createNewPeakRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+    public void createNewPeakRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException;
 
-    public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
-
+    public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException;
+ 
     public List<ExceptionReportEntity> getListOfExceptionReportsByDate(Date date);
 
     public Boolean deleteRoom(String roomNumber) throws RoomNotFoundException;
@@ -66,6 +66,8 @@ public interface RoomSessionBeanRemote {
     public List<RoomRateEntity> retrieveAllRoomRates();
 
     public Boolean deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException;
+
+    public void updateRoomRate(Long roomRateId, BigDecimal ratePerNight, Date startDate, Date endDate, StatusEnum status) throws RoomRateNotFoundException;
 
     
 }

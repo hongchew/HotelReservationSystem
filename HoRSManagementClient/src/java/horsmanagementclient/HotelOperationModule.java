@@ -138,13 +138,17 @@ public class HotelOperationModule {
         
         Long roomTypeId = roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities, i);
         
-        System.out.print("Enter Normal Rate per night for " + newTypeName + " $");
-        double normalRate = sc.nextDouble();
-        roomSessionBean.createNewNormalRate(newTypeName + " Normal Rate", new BigDecimal(normalRate), new Date(), null, roomTypeId);
-        
-        System.out.print("Enter Published Rate per night for " + newTypeName + " $");
-        double publishedRate = sc.nextDouble();               
-        roomSessionBean.createNewPublishedRate(newTypeName + " Published Rate", new BigDecimal(publishedRate), new Date(), null, roomTypeId);
+        try {
+            System.out.print("Enter Normal Rate per night for " + newTypeName + " $");
+            double normalRate = sc.nextDouble();
+            roomSessionBean.createNewNormalRate(newTypeName + " Normal Rate", new BigDecimal(normalRate), new Date(), null, roomTypeId);
+            
+            System.out.print("Enter Published Rate per night for " + newTypeName + " $");
+            double publishedRate = sc.nextDouble();            
+            roomSessionBean.createNewPublishedRate(newTypeName + " Published Rate", new BigDecimal(publishedRate), new Date(), null, roomTypeId);
+        } catch (RoomTypeNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
         
         System.out.println(newTypeName + " created successfully!");
     }
@@ -428,18 +432,22 @@ public class HotelOperationModule {
         }
         
         System.out.println("Enter Room Rate Type: \n(1)Published Rate \n(2)Normal Rate \n(3)Promotion Rate \n(4)Peak Rate");
-        switch(sc.next()){
-            case "1":
-                roomSessionBean.createNewPublishedRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
-                break;
-            case "2":
-                roomSessionBean.createNewNormalRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
-                break;
-            case "3":
-                roomSessionBean.createNewPromotionRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
-                break;
-            case "4":
-                roomSessionBean.createNewPeakRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+        try {
+            switch (sc.next()) {
+                case "1":
+                    roomSessionBean.createNewPublishedRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+                    break;
+                case "2":
+                    roomSessionBean.createNewNormalRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+                    break;
+                case "3":
+                    roomSessionBean.createNewPromotionRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+                    break;
+                case "4":
+                    roomSessionBean.createNewPeakRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+            }
+        } catch (RoomTypeNotFoundException e) {
+            System.err.println(e.getMessage());
         }
         System.out.println("New Room Rate Created");
     }
@@ -459,7 +467,7 @@ public class HotelOperationModule {
         System.out.println("(1)Update Room Rate\n(2)Delete Room Rate\n(3)Return");
         switch(sc.next()){
             case "1":
-                updateRoomRate();
+                updateRoomRate(roomRate);
                 break;
                 
             case "2":
@@ -475,7 +483,42 @@ public class HotelOperationModule {
         }
     }
     
-    public void updateRoomRate(){
+    public void updateRoomRate(RoomRateEntity roomRate){
+        try {
+            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            System.out.print("Enter new rate per night: \n$");
+            BigDecimal newRatePerNight = new BigDecimal(sc.nextDouble());
+            System.out.println("Enter new start date (dd/mm/yyyy)");
+            Date newStartDate = df.parse(sc.next());
+            System.out.println("Enter new end date (dd/mm/yyyy OR \"-\" if no end date ");
+            String endDateString = sc.next();
+            Date endDate;
+            if(endDateString.equals("-")){
+                endDate = null;
+            }else{
+                endDate = df.parse(endDateString);
+            }
+            System.out.println("Select Room Rate Status: \n(1)Disable Room \n(2)Make Room Available");
+            StatusEnum status;
+            switch(sc.next()){
+                case "1":
+                    status = StatusEnum.DISABLED;
+                    break;
+                case "2":
+                    status = StatusEnum.AVAILABLE;
+                    break;
+                default:
+                    System.err.println("Invalid status");
+                    return;
+            }
+            roomSessionBean.updateRoomRate(roomRate.getRateId(), newRatePerNight, newStartDate, endDate, status);
+            
+        } catch (ParseException ex) {
+            System.err.println("Invalid date entered");
+            return;
+        } catch (RoomRateNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        }
         
     }
     

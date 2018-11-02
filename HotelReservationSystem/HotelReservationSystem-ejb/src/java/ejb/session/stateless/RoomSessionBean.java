@@ -239,8 +239,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public void createNewPublishedRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) {
+    public void createNewPublishedRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException {
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        if(roomType == null){
+            throw new RoomTypeNotFoundException("Room Type Not Found");
+        }        
         RoomRateEntity newPublishedRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PUBLISHED, startDate, endDate);
         roomType.addNewRoomRate(newPublishedRate);
         em.persist(newPublishedRate);
@@ -249,8 +252,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public void createNewNormalRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) {
+    public void createNewNormalRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException {
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        if(roomType == null){
+            throw new RoomTypeNotFoundException("Room Type Not Found");
+        }
         RoomRateEntity newNormalRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.NORMAL, startDate, endDate);
         roomType.addNewRoomRate(newNormalRate);
         em.persist(newNormalRate);  
@@ -258,8 +264,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public void createNewPeakRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) {
+    public void createNewPeakRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException {
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        if(roomType == null){
+            throw new RoomTypeNotFoundException("Room Type Not Found");
+        }        
         RoomRateEntity newPeakRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PEAK, startDate, endDate);
         roomType.addNewRoomRate(newPeakRate);
         em.persist(newPeakRate);
@@ -267,8 +276,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) {
+    public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException {
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        if(roomType == null){
+            throw new RoomTypeNotFoundException("Room Type Not Found");
+        }
         RoomRateEntity newPromotionRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PROMOTION, startDate, endDate);
         roomType.addNewRoomRate(newPromotionRate);
         em.persist(newPromotionRate);  
@@ -340,6 +352,17 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             em.remove(rate);
             return true;
         }
+    }
     
+    @Override
+    public void updateRoomRate(Long roomRateId, BigDecimal ratePerNight, Date startDate, Date endDate, StatusEnum status) throws RoomRateNotFoundException{
+        RoomRateEntity roomRate = em.find(RoomRateEntity.class, roomRateId);
+        if(roomRate == null){
+            throw new RoomRateNotFoundException("Room Rate not found.");
+        }
+        roomRate.setRatePerNight(ratePerNight);
+        roomRate.setStartDate(startDate);
+        roomRate.setEndDate(endDate);
+        
     }
 }
