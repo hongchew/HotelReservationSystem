@@ -17,4 +17,10 @@ public interface EmployeeSessionBeanLocal {
     public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
 
     public void createNewSysAdmin(String name, String username, String password);
+    
+    public void createNewOpsManager(String name, String username, String password);
+    
+    public void createNewSalesManager(String name, String username, String password);
+    
+    public void createNewGuestRelationsOffr(String name, String username, String password);
 }

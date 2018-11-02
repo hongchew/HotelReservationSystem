@@ -70,6 +70,12 @@ public class RoomRankingEntity implements Serializable {
     public ArrayList<RoomTypeEntity> getRankings() {
         return rankings;
     }
+    public void addMostPremium(RoomTypeEntity type){
+        rankings.add(type);
+    }
     
+    public void addLeastPremium(RoomTypeEntity type){
+        rankings.add(rankings.size() ,type);
+    }
     
 }

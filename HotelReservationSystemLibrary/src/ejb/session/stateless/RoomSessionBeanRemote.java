@@ -5,13 +5,19 @@
  */
 package ejb.session.stateless;
 
+import entity.ExceptionReportEntity;
 import entity.RoomEntity;
+import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
 import util.exception.RoomNotFoundException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
 /**
@@ -44,5 +50,22 @@ public interface RoomSessionBeanRemote {
     public ArrayList<RoomTypeEntity> getRoomRanks();
 
     public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i);
+    
+    public void createNewPublishedRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+
+    public void createNewNormalRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+
+    public void createNewPeakRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+
+    public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId);
+
+    public List<ExceptionReportEntity> getListOfExceptionReportsByDate(Date date);
+
+    public Boolean deleteRoom(String roomNumber) throws RoomNotFoundException;
+
+    public List<RoomRateEntity> retrieveAllRoomRates();
+
+    public Boolean deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException;
+
     
 }

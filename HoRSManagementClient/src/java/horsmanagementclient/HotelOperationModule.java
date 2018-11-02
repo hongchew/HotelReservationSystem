@@ -7,11 +7,20 @@ package horsmanagementclient;
 
 import ejb.session.stateless.RoomSessionBeanRemote;
 import entity.EmployeeEntity;
+import entity.ExceptionReportEntity;
 import entity.RoomEntity;
+import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.StatusEnum;
 import util.exception.RoomNotFoundException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
 /**
@@ -127,7 +136,15 @@ public class HotelOperationModule {
             i = 0; //most premium
         }
         
-        roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities, i);
+        Long roomTypeId = roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities, i);
+        
+        System.out.print("Enter Normal Rate per night for " + newTypeName + " $");
+        double normalRate = sc.nextDouble();
+        roomSessionBean.createNewNormalRate(newTypeName + " Normal Rate", new BigDecimal(normalRate), new Date(), null, roomTypeId);
+        
+        System.out.print("Enter Published Rate per night for " + newTypeName + " $");
+        double publishedRate = sc.nextDouble();               
+        roomSessionBean.createNewPublishedRate(newTypeName + " Published Rate", new BigDecimal(publishedRate), new Date(), null, roomTypeId);
         
         System.out.println(newTypeName + " created successfully!");
     }
@@ -136,24 +153,24 @@ public class HotelOperationModule {
         List<RoomTypeEntity> roomTypes = viewAllRoomTypes();
         System.out.println("Input Room Type number to view/edit details or to delete");
         int typeNum = sc.nextInt();
-        if(typeNum >= roomTypes.size()){
+        if(typeNum < 0 || typeNum >= roomTypes.size()){
             System.out.println("Invalid number, returning to main menu");
             return;
         }else{
-            String type = roomTypes.get(typeNum).getTypeName();
-            System.out.println(roomSessionBean.viewRoomTypeDetails(type));
+            String typeName = roomTypes.get(typeNum).getTypeName();
+            System.out.println(roomSessionBean.viewRoomTypeDetails(typeName));
             
             System.out.println("(1) Edit Details");
             System.out.println("(2) Delete Room Type");
             String response = sc.next();
             switch(response){
                 case "1":
-                    updateRoomType(type);
+                    updateRoomType(typeName);
                     break;
                     
                 case "2":
                     try {
-                        if(roomSessionBean.deleteRoomType(type)){
+                        if(roomSessionBean.deleteRoomType(typeName)){
                             System.out.println("Room Type Deleted");
                         }else{
                             System.out.println("Room Type Currently In Use - Room Type marked as DISABLED");
@@ -167,18 +184,18 @@ public class HotelOperationModule {
         }
     }
     
-    private void updateRoomType(String type){
-        System.out.println("Enter updated description for " + type);
+    private void updateRoomType(String typeName){
+        System.out.println("Enter updated description for " + typeName);
         String newDescription = sc.nextLine();
-        System.out.println("Enter updated amenities for " + type);
+        System.out.println("Enter updated amenities for " + typeName);
         String newAmenities = sc.nextLine();
-        System.out.println("Enter updated bed types for " + type);
+        System.out.println("Enter updated bed types for " + typeName);
         String newBeds = sc.nextLine();
-        System.out.println("Enter updated capacity for " + type);
+        System.out.println("Enter updated capacity for " + typeName);
         Integer newCap = sc.nextInt();
 
         try{
-            roomSessionBean.updateRoomType(type, newDescription, newBeds, newCap, newAmenities);
+            roomSessionBean.updateRoomType(typeName, newDescription, newBeds, newCap, newAmenities);
         }catch(RoomTypeNotFoundException e){
             System.err.println(e.getMessage());
         }        
@@ -217,7 +234,7 @@ public class HotelOperationModule {
                     break;
                     
                 case "3":
-                    
+                    deleteRoom();
                     break;
                     
                 case "4":
@@ -285,9 +302,26 @@ public class HotelOperationModule {
             System.err.println(e.getMessage());
             return;
         }
+    }
+    
+    private void deleteRoom(){
+        System.out.println("Enter room floor number");
+        String floor = sc.next();
+        System.out.println("Enter room unit number");
+        String unit = sc.next();
         
+        String roomNumber = floor + "-" + unit;
         
-        
+        try{
+            if(roomSessionBean.deleteRoom(roomNumber)){
+                System.out.println(roomNumber + " deleted successfully.");
+            }else{
+                System.out.println(roomNumber + " is currently in use. The room had been disabled instead.");
+            }
+        }catch(RoomNotFoundException e){
+            System.err.println(e.getMessage());
+            return;
+        }
     }
     
     private void viewAllRooms(){
@@ -299,6 +333,176 @@ public class HotelOperationModule {
     }
     
     private void viewExceptionReport(){
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+            System.out.println("Enter Date of Report to generate (DD/MM/YYYY)");
+            String dateString = sc.next();
+            Date date = dateFormat.parse(dateString);
+            
+            List<ExceptionReportEntity> report = roomSessionBean.getListOfExceptionReportsByDate(date);
+            if(report.isEmpty()){
+                System.out.println("No Exception Report. ");
+            }else{
+                for(ExceptionReportEntity e:report){
+                    System.out.println(e.getErrorReport());
+                }
+            }            
+        } catch (ParseException ex) {
+            System.err.println("Invalid date format. Please try again.");
+        }
+    }
+    
+    
+    public void runHotelOperationModuleSalesManager(){
+        System.out.println("****Welcome to the Hotel Operations Module (Sales)****");
+        while(true){
+            System.out.println("(1) Create new Room Rate");
+            System.out.println("(2) View/Delete/Update Room Rate Details");
+            System.out.println("(3) View All Room Rates");
+            System.out.println("(4) Return");
+            String response = sc.next();
+            switch(response){
+                case "1":
+                    createNewRate();
+                    break;
+                    
+                case "2":
+                    viewRoomRateDetails();
+                    break;
+                    
+                case "3":
+                    viewAllRoomRates();
+                    break;
+                    
+                case "4":
+                    return;
+ 
+                default:
+                    System.err.println("Please enter a valid command");
+            }           
+        }
+    }    
+    
+    public void createNewRate(){
+        DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+        
+        System.out.println("****Create New Room Rate****");
+        List<RoomTypeEntity> roomTypesList = viewAllRoomTypes();
+        System.out.println("Select Room type");
+        int roomTypeIndex = sc.nextInt();
+        RoomTypeEntity roomType;
+        if(roomTypeIndex < 0 || roomTypeIndex >= roomTypesList.size()){
+            System.err.println("Invalid Room Type.");
+            return;
+        }else{
+            roomType = roomTypesList.get(roomTypeIndex);
+        }
+        
+        System.out.println("Enter name of new rate:");
+        String rateName = sc.nextLine();
+        
+        System.out.print("Enter rate per night: \n$");
+        BigDecimal ratePerNight = new BigDecimal(sc.nextDouble());
+        
+        System.out.println("Enter Start Date (dd/mm/yyyy): ");
+        Date startDate;
+        try {
+            startDate = dateFormat.parse(sc.next());
+        } catch (ParseException ex) {
+            System.err.println("Invalid date.");
+            return;
+        }
+        
+        System.out.println("Enter End Date (dd/mm/yyyy OR \"-\" if no end date): ");
+        String endDateString = sc.next();
+        Date endDate;
+        if(endDateString.equals("-")){
+            endDate = null;
+        }else{
+            try{
+                endDate = dateFormat.parse(endDateString);
+            }catch(ParseException ex){
+                System.err.println("Invalid date.");
+                return;
+            }
+        }
+        
+        System.out.println("Enter Room Rate Type: \n(1)Published Rate \n(2)Normal Rate \n(3)Promotion Rate \n(4)Peak Rate");
+        switch(sc.next()){
+            case "1":
+                roomSessionBean.createNewPublishedRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+                break;
+            case "2":
+                roomSessionBean.createNewNormalRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+                break;
+            case "3":
+                roomSessionBean.createNewPromotionRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+                break;
+            case "4":
+                roomSessionBean.createNewPeakRate(rateName, ratePerNight, startDate, endDate, roomType.getTypeId());
+        }
+        System.out.println("New Room Rate Created");
+    }
+    
+    public void viewRoomRateDetails(){
+        List<RoomRateEntity> roomRates = viewAllRoomRates();
+        System.out.println("Select number of Room Rate to view details");
+        int rateIndex = sc.nextInt();
+        if(rateIndex < 0 || rateIndex >= roomRates.size()){
+            System.err.println("Invalid number. Please try again");
+            return;
+        }
+        RoomRateEntity roomRate = roomRates.get(rateIndex);
+        System.out.println(roomRate.getDetails());
+        
+        System.out.println();
+        System.out.println("(1)Update Room Rate\n(2)Delete Room Rate\n(3)Return");
+        switch(sc.next()){
+            case "1":
+                updateRoomRate();
+                break;
+                
+            case "2":
+                deleteRoomRate(roomRate);
+                break;
+            
+            case "3":
+                return;
+            
+            default:
+                System.err.println("Invalid command");
+                return;           
+        }
+    }
+    
+    public void updateRoomRate(){
         
     }
+    
+    public void deleteRoomRate(RoomRateEntity roomRate){
+        try {
+            if(roomSessionBean.deleteRoomRate(roomRate.getRateId())){
+                System.out.println("Room rate deleted.");
+            }else{
+                System.out.println("Room rate is currently in use and had been disabled instead.");
+            }
+        } catch (RoomRateNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+    
+    
+    public List<RoomRateEntity> viewAllRoomRates(){
+        System.out.println("All Room Rates :");
+        List<RoomRateEntity> roomRates = roomSessionBean.retrieveAllRoomRates();
+        int i = 0;
+        for(RoomRateEntity r: roomRates){
+            System.out.println("(" + i + ")" + r.getRateName());
+            i++;
+        }
+        
+        return roomRates;
+    }
+    
+    
 }

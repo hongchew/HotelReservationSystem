@@ -55,6 +55,9 @@ public class ReservationRecordEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date reservedOn;
     
+    @Email
+    private String guestEmail;
+    
     @ManyToOne
     private GuestEntity reservedByGuest;
     
@@ -72,17 +75,17 @@ public class ReservationRecordEntity implements Serializable {
         this.roomType = roomType;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.guestEmail = reservedByGuest.getEmailAddress();
         this.reservedByGuest = reservedByGuest;
     }
     
-    public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, PartnerEntity reservedByPartner) {
+    public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, String guestEmail, PartnerEntity reservedByPartner) {
         this.roomType = roomType;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.guestEmail = guestEmail;
         this.reservedByPartner = reservedByPartner;
     }
-
-    
     
     public Long getId() {
         return id;

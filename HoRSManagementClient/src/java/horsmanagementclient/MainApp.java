@@ -109,7 +109,7 @@ public class MainApp {
                     response = sc.next();
                     if(response.equals("1")){
                         HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, currentEmployee);
-                        
+                        opsMod.runHotelOperationModuleSalesManager();
                     }else if(response.equals("2")){
                         doLogout();
                         break;

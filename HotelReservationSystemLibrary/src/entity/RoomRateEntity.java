@@ -7,7 +7,8 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,7 +16,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import util.enumeration.RateTypeEnum;
@@ -54,14 +54,13 @@ public class RoomRateEntity implements Serializable {
     public RoomRateEntity() {
     }
 
-    public RoomRateEntity(String rateName, BigDecimal ratePerNight, StatusEnum status, RateTypeEnum rateType, Date startDate, Date endDate, RoomTypeEntity roomType) {   
+    public RoomRateEntity(String rateName, BigDecimal ratePerNight, RateTypeEnum rateType, Date startDate, Date endDate) {   
         this.rateName = rateName;
         this.ratePerNight = ratePerNight;
-        this.status = status;
+        this.status = StatusEnum.AVAILABLE;
         this.rateType = rateType;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.roomType = roomType;   
     }
 
     public Long getRateId() {
@@ -123,5 +122,26 @@ public class RoomRateEntity implements Serializable {
     public void setRoomType(RoomTypeEntity roomType) {
         this.roomType = roomType;
     }
+    
+    public Boolean checkIfAvailable(Date onDate){
+        
+        //no end date or bookingdate is after startDate and before endDate
+        if(endDate == null || startDate.before(onDate) && endDate.after(onDate)) {
+            return true;
+        }
+        return false;
+        
+    }
+    
+    public String getDetails(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        
+        return "Rate name: " + rateName + "\n" +
+                "Rate per Night: " + ratePerNight.toString() + "\n" +
+                "Rate Type: " + rateType.toString() + "\n" +
+                "Start Date: " + dateFormat.format(startDate) + "\n" + 
+                "End Date: " + dateFormat.format(endDate);
+    }
+    
       
 }
