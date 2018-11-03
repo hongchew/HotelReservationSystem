@@ -30,5 +30,7 @@ public interface RoomReservationControllerRemote {
     public ArrayList<ReservationRecordEntity> retrieveAllReservation();
 
     public ReservationTicket searchRooms(Date startDate, Date endDate);
+
+    public ArrayList<ReservationRecordEntity> reserveRoom(ReservationTicket ticket);
     
 }

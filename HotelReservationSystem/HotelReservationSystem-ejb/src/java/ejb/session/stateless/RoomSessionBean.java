@@ -427,6 +427,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
     
+    @Override
     public List<RoomRateEntity> getValidRateList(RoomTypeEntity roomType, Date date, RateTypeEnum rateType){
         Query q = em.createQuery("SELECT r FROM RoomRateEntity r WHERE r.startDate <= :date AND r.endDate >= :date "
                                 + "AND r.status = :status AND r.rateType = :rateType AND r.roomType = :roomType");
@@ -438,6 +439,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return q.getResultList();
     }
     
+    @Override
     public BigDecimal getPrevailingRatePerNight(List<RoomRateEntity> rateList){
         BigDecimal prevailingRate = rateList.get(0).getRatePerNight();
         
@@ -445,5 +447,17 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             prevailingRate = prevailingRate.min(rate.getRatePerNight());
         }
         return prevailingRate;
+    }
+    
+    @Override
+    public BigDecimal getPublishedRatePerNight(RoomTypeEntity roomType, Date date) throws RoomRateNotFoundException{
+        
+        List<RoomRateEntity> publishedRates = getValidRateList(roomType, date, RateTypeEnum.PUBLISHED);
+        if(publishedRates.isEmpty()){
+            throw new RoomRateNotFoundException("No valid room rates found.");
+        }
+        
+        return getPrevailingRatePerNight(publishedRates);
+        
     }
 }

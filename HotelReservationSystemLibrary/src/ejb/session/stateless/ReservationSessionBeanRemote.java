@@ -5,6 +5,9 @@
  */
 package ejb.session.stateless;
 
+import java.util.Date;
+import util.objects.ReservationTicket;
+
 
 /**
  *
@@ -12,5 +15,7 @@ package ejb.session.stateless;
  */
 
 public interface ReservationSessionBeanRemote {
+
+    public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate);
     
 }

@@ -87,7 +87,12 @@ public class ReservationRecordEntity implements Serializable {
         this.reservedByPartner = reservedByPartner;
     }
     
-    
+    public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, String guestEmail) {
+        this.roomType = roomType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.guestEmail = guestEmail;
+    }
     
     public Long getId() {
         return id;

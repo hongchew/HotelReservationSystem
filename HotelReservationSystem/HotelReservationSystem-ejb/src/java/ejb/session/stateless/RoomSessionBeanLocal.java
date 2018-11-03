@@ -5,9 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.RateTypeEnum;
 import util.exception.RoomRateNotFoundException;
@@ -33,5 +35,11 @@ public interface RoomSessionBeanLocal {
     public Integer getNumberOfRoomsAvailable(RoomTypeEntity type, Date date) throws RoomTypeUnavailableException;
 
     public BigDecimal getRatePerNight(RoomTypeEntity roomType, Date date) throws RoomRateNotFoundException;
+
+    public List<RoomRateEntity> getValidRateList(RoomTypeEntity roomType, Date date, RateTypeEnum rateType);
+
+    public BigDecimal getPrevailingRatePerNight(List<RoomRateEntity> rateList);
+
+    public BigDecimal getPublishedRatePerNight(RoomTypeEntity roomType, Date date) throws RoomRateNotFoundException;
 
 }

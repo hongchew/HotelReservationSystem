@@ -6,16 +6,19 @@
 package horsreservationclient;
 
 import ejb.session.stateless.GuestSessionBeanRemote;
-import entity.GuestEntity;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateful.RoomReservationControllerRemote;
 import entity.ReservationRecordEntity;
+import entity.RoomTypeEntity;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Date;
 import util.exception.EntityMismatchException;
 import util.exception.ReservationRecordNotFoundException;
+import util.objects.ReservationTicket;
 
 /**
  *
@@ -25,6 +28,7 @@ public class MainApp {
     
     private GuestSessionBeanRemote guestSessionBean;
     private RoomReservationControllerRemote roomReservationController;
+    private boolean loggedIn;
     private Scanner sc = new Scanner(System.in);
     
     public MainApp() {
@@ -52,6 +56,7 @@ public class MainApp {
                     guestLogin();
                     break;
                 case "3":
+                    searchHotelRoom();
                     break;
                 case "4":
                     System.out.println("Exiting system");
@@ -88,6 +93,7 @@ public class MainApp {
         try{
             guestSessionBean.guestLogin(username, password);
             System.out.println("Login Successful");
+            loggedIn = true;
             guestMenu();
         }catch(InvalidLoginCredentialException e){
             System.out.println(e.getMessage());
@@ -104,6 +110,7 @@ public class MainApp {
             String response = sc.next();
             switch(response){
                 case "1":
+                    searchHotelRoom();
                     break;
                     
                 case "2":
@@ -122,6 +129,69 @@ public class MainApp {
                     System.out.println("Please enter a valid command");
             }
         }
+    }
+    
+    private ReservationTicket searchHotelRoom(){
+        
+        try {
+            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            System.out.println("Kindly note that our hotel only accepts reservations a maximum of 1 year in advance.");
+            System.out.println("Enter check in date (dd/mm/yyyy):");
+            Date startDate = df.parse(sc.next());
+            System.out.println("Enter check out date (dd/mm/yyyy):");
+            Date endDate = df.parse(sc.next());
+
+            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
+            if(ticket.getAvailableRoomTypes().isEmpty()){
+                System.err.println("There are no available rooms for your desired check in and check out date.");
+                return null;
+            }
+            System.out.println("****Available Rooms****");
+            for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
+                RoomTypeEntity type = ticket.getAvailableRoomTypes().get(i);
+                System.out.println("(" + i + ")" + type.getTypeName());
+                System.out.println(type.getDescription());
+                System.out.println("Amenities: " + type.getAmenities());
+                System.out.println("Capacity: " + type.getCapacity());
+                System.out.println("Rooms Available: " + ticket.getRespectiveNumberOfRoomsRemaining().get(i) );
+                System.out.println("Cost: " + ticket.getRespectiveTotalBill().get(i));
+                System.out.println();
+            }
+            while(loggedIn){
+                System.out.println("Reserve a room? (Y/N)");
+                String resp = sc.next();
+                switch(resp){
+                    case "Y":
+                        reserveHotelRoom(ticket);
+                        return ticket;
+                    case "N":
+                        break;
+                    default:
+                        System.out.println("Please choose a valid option");
+                        break;
+                }
+            }
+            return ticket;
+        } catch (ParseException ex) {
+            System.err.println("Please enter valid date format");
+            return null;
+        }
+    }
+    
+    private void reserveHotelRoom(ReservationTicket ticket){
+        for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
+            RoomTypeEntity type = ticket.getAvailableRoomTypes().get(i);
+            System.out.println("Enter number of " + type.getTypeName() + " to reserve:");
+            int num = sc.nextInt();
+            if(num < 0 || num > ticket.getRespectiveNumberOfRoomsRemaining().get(i)){
+                System.out.println("Invalid Number, 0 rooms of this type will be reserved");
+            }else{
+                System.out.println(num + " of " + type.getTypeName() + " added to cart");
+            }
+        }
+        
+        roomReservationController.reserveRoom(ticket);
+        System.out.println("Reservation Successful.");
     }
     
     private void viewReservationDetail(){
@@ -154,6 +224,7 @@ public class MainApp {
     
     private void guestLogOut(){
         roomReservationController.guestLogout();
+        loggedIn = false;
         System.out.println("Logout successful");
     }
 }

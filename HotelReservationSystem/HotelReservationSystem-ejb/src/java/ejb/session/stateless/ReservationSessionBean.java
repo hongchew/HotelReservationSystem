@@ -5,14 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.GuestEntity;
 import entity.ReservationRecordEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -60,6 +60,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
     }
     
+    @Override
     public ReservationTicket searchRooms(Date startDate, Date endDate){
         ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
         Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
@@ -97,6 +98,57 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
         
         return reservationTicket;
+    }
+    
+    @Override
+    public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate){
+        ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> typeList = q.getResultList();
+        for(RoomTypeEntity type : typeList){
+            Calendar start = Calendar.getInstance();
+            start.setTime(startDate);
+            Calendar end = Calendar.getInstance();
+            end.setTime(endDate);
+            
+            BigDecimal totalBill = new BigDecimal(0);
+            Integer numRoomsRemaining = Integer.MAX_VALUE;
+            boolean flag = false;
+            for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+                try{
+                    Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
+                    if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
+                        flag = false;
+                        break;
+                    }else{
+                        numRoomsRemaining = Math.min(numAvail, numRoomsRemaining);
+                        totalBill = totalBill.add(roomSessionBean.getPublishedRatePerNight(type, date));
+                        flag = true;
+                    }
+                }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag){
+                reservationTicket.getAvailableRoomTypes().add(type);
+                reservationTicket.getRespectiveNumberOfRoomsRemaining().add(numRoomsRemaining);
+                reservationTicket.getRespectiveTotalBill().add(totalBill);
+            }
+        }
+        
+        return reservationTicket;
+    }
+    
+    @Override
+    public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest){
+        ArrayList<ReservationRecordEntity> reservations = new ArrayList<>();
+        for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
+            ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guest);
+            em.persist(record);
+            reservations.add(record);
+        }
+        return reservations;
     }
     
 }

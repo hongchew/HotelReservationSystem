@@ -67,7 +67,14 @@ public class RoomReservationController implements RoomReservationControllerRemot
         return reservationSessionBean.retrieveReservationDetails(resId, guest.getId());
     }
 
+    @Override
     public ReservationTicket searchRooms(Date startDate, Date endDate){
         return reservationSessionBean.searchRooms(startDate, endDate);
+    }
+    
+    @Override
+    public ArrayList<ReservationRecordEntity> reserveRoom(ReservationTicket ticket){
+        return reservationSessionBean.guestReserveRooms(ticket, guest);
+        
     }
 }
