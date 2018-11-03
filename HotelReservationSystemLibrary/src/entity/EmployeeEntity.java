@@ -36,11 +36,11 @@ public abstract class EmployeeEntity implements Serializable {
     @Column(nullable = false)
     private String employeeName;
     
-    @Size(min = 6, max = 32)
+    @Size(min = 5, max = 32)
     @Column(nullable = false, unique = true)
     private String username;
     
-    @Size(min = 6, max = 32)
+    @Size(min = 5, max = 32)
     @Column(nullable = false)
     private String password;
     

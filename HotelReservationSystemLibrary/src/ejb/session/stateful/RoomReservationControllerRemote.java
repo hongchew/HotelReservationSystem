@@ -5,8 +5,13 @@
  */
 package ejb.session.stateful;
 
+import entity.ReservationRecordEntity;
+import java.util.ArrayList;
+import java.util.Date;
 import util.exception.EntityMismatchException;
+import util.exception.InvalidLoginCredentialException;
 import util.exception.ReservationRecordNotFoundException;
+import util.objects.ReservationTicket;
 
 
 /**
@@ -16,8 +21,14 @@ import util.exception.ReservationRecordNotFoundException;
 
 public interface RoomReservationControllerRemote {
 
-    public void setGuest(Long guestId);
+    public String retrieveReservationDetails(Long resId) throws ReservationRecordNotFoundException, EntityMismatchException;
 
-    public String retrieveReservationDetails(Long resId, Long guestId) throws ReservationRecordNotFoundException, EntityMismatchException;
+    public void guestLogin(String username, String password) throws InvalidLoginCredentialException;
+
+    public void guestLogout();
+
+    public ArrayList<ReservationRecordEntity> retrieveAllReservation();
+
+    public ReservationTicket searchRooms(Date startDate, Date endDate);
     
 }

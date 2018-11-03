@@ -7,11 +7,13 @@ package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
 import ejb.session.stateless.RoomSessionBeanLocal;
+import entity.EmployeeEntity;
 import entity.RoomRankingEntity;
-import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import entity.SystemAdminEntity;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -19,7 +21,8 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import util.enumeration.RateTypeEnum;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
@@ -56,13 +59,12 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
             employeeSessionBean.retrieveEmployeeByUsername("admin"); //first startup, no default admin account
             
         }catch(EmployeeNotFoundException ex){
-            
             employeeSessionBean.createNewSysAdmin("admin", "admin", "password");
             employeeSessionBean.createNewOpsManager("operationmanager", "operationsmanager", "password");
             employeeSessionBean.createNewSalesManager("salesmanager", "salesmanager", "pssword");
             employeeSessionBean.createNewGuestRelationsOffr("guestrelationsofficer", "guestrelationsofficer", "password");
             
-            RoomRankingEntity ranks = new RoomRankingEntity(new Long(1));
+            RoomRankingEntity ranks = new RoomRankingEntity("rankings");
             em.persist(ranks);
             
             Date today = new Date();
@@ -89,6 +91,11 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
                 roomSessionBean.createNewPublishedRate("Grand Suite Published Rate", new BigDecimal(250.00), today, null, grandSuite.getTypeId());                
             } catch (RoomTypeNotFoundException roomTypeNotFoundException) {
                 System.err.println(roomTypeNotFoundException.getMessage());
+            } catch(ConstraintViolationException e){
+                Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+                for(ConstraintViolation<?> v : violations){
+                    System.err.println(v.getMessage());
+                }
             }
            
         }

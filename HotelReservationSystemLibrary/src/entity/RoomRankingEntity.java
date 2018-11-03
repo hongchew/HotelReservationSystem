@@ -27,7 +27,10 @@ public class RoomRankingEntity implements Serializable {
     
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    private String name;
     
     @OneToMany
     private ArrayList<RoomTypeEntity> rankings;
@@ -36,8 +39,8 @@ public class RoomRankingEntity implements Serializable {
         rankings = new ArrayList<>();
     }
 
-    public RoomRankingEntity(Long id) {
-        this.id = id;
+    public RoomRankingEntity(String name) {
+        this.name = name;
     }
     
     
@@ -76,6 +79,27 @@ public class RoomRankingEntity implements Serializable {
     
     public void addLeastPremium(RoomTypeEntity type){
         rankings.add(rankings.size() ,type);
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @param rankings the rankings to set
+     */
+    public void setRankings(ArrayList<RoomTypeEntity> rankings) {
+        this.rankings = rankings;
     }
     
 }

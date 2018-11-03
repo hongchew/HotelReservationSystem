@@ -5,6 +5,11 @@
  */
 package ejb.session.stateless;
 
+import java.util.Date;
+import util.exception.EntityMismatchException;
+import util.exception.ReservationRecordNotFoundException;
+import util.objects.ReservationTicket;
+
 
 /**
  *
@@ -12,5 +17,9 @@ package ejb.session.stateless;
  */
 
 public interface ReservationSessionBeanLocal {
+
+    public String retrieveReservationDetails(Long resId, Long guestId) throws ReservationRecordNotFoundException, EntityMismatchException;
+
+    public ReservationTicket searchRooms(Date startDate, Date endDate);
     
 }

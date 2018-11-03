@@ -39,11 +39,11 @@ public class RoomTypeEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
     
-    @OneToMany(mappedBy = "roomTypeEntity")
+    @OneToMany(mappedBy = "roomType")
     private ArrayList<RoomEntity> rooms;
     
-    @OneToMany(mappedBy = "roomTypeEntity")
-    public ArrayList<RoomRateEntity> roomRate;
+    @OneToMany(mappedBy = "roomType")
+    private ArrayList<RoomRateEntity> roomRate;
     
     @OneToMany(mappedBy = "roomType")
     private ArrayList<AvailabilityRecordEntity> availabilityRecordEntitiess;

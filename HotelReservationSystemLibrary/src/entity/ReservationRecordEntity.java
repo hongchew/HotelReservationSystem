@@ -87,6 +87,8 @@ public class ReservationRecordEntity implements Serializable {
         this.reservedByPartner = reservedByPartner;
     }
     
+    
+    
     public Long getId() {
         return id;
     }
@@ -139,7 +141,7 @@ public class ReservationRecordEntity implements Serializable {
 
     public String getReservedOnAsString(){
         DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy, hh:mm");
-        return dateFormat.format(reservedOn);
+        return dateFormat.format(getReservedOn());
     }
     
     public Date getCheckInTime() {
@@ -213,6 +215,34 @@ public class ReservationRecordEntity implements Serializable {
 
     public void setException(ExceptionReportEntity exception) {
         this.exception = exception;
+    }
+
+    /**
+     * @return the reservedOn
+     */
+    public Date getReservedOn() {
+        return reservedOn;
+    }
+
+    /**
+     * @param reservedOn the reservedOn to set
+     */
+    public void setReservedOn(Date reservedOn) {
+        this.reservedOn = reservedOn;
+    }
+
+    /**
+     * @return the guestEmail
+     */
+    public String getGuestEmail() {
+        return guestEmail;
+    }
+
+    /**
+     * @param guestEmail the guestEmail to set
+     */
+    public void setGuestEmail(String guestEmail) {
+        this.guestEmail = guestEmail;
     }
     
     

@@ -5,6 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.GuestEntity;
+import util.exception.InvalidLoginCredentialException;
+
 
 /**
  *
@@ -12,5 +15,7 @@ package ejb.session.stateless;
  */
 
 public interface GuestSessionBeanLocal {
-    
+    public void registerNewGuest(String name, String username, String password, String emailAddress);
+
+    public GuestEntity guestLogin(String username, String password) throws InvalidLoginCredentialException;
 }

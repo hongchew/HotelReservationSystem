@@ -16,9 +16,11 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
+import util.exception.LastAvailableRateException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
+import util.exception.RoomTypeUnavailableException;
 
 /**
  *
@@ -65,9 +67,11 @@ public interface RoomSessionBeanRemote {
 
     public List<RoomRateEntity> retrieveAllRoomRates();
 
-    public Boolean deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException;
+    public Boolean deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException, LastAvailableRateException;
 
     public void updateRoomRate(Long roomRateId, BigDecimal ratePerNight, Date startDate, Date endDate, StatusEnum status) throws RoomRateNotFoundException;
+
+    public Integer getNumberOfRoomsAvailable(RoomTypeEntity type, Date date) throws RoomTypeUnavailableException;
 
     
 }

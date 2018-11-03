@@ -25,7 +25,6 @@ public class MainApp {
     
     private GuestSessionBeanRemote guestSessionBean;
     private RoomReservationControllerRemote roomReservationController;
-    private GuestEntity guest;
     private Scanner sc = new Scanner(System.in);
     
     public MainApp() {
@@ -87,8 +86,7 @@ public class MainApp {
         String password = sc.next();
         
         try{
-            guest = guestSessionBean.guestLogin(username, password);
-            roomReservationController.setGuest(guest.getId());
+            guestSessionBean.guestLogin(username, password);
             System.out.println("Login Successful");
             guestMenu();
         }catch(InvalidLoginCredentialException e){
@@ -130,7 +128,7 @@ public class MainApp {
         System.out.println("Enter reservation ID");
         Long resId = new Long(sc.nextInt());
         try {
-            String details = roomReservationController.retrieveReservationDetails(resId,guest.getId());
+            String details = roomReservationController.retrieveReservationDetails(resId);
             System.out.println(details);
         } catch (ReservationRecordNotFoundException | EntityMismatchException ex) {
             System.out.println(ex.getMessage());
@@ -141,7 +139,7 @@ public class MainApp {
     
     private void viewAllReservations(){
         System.out.println("Viewing all Reservation Records:");
-        ArrayList<ReservationRecordEntity> reservations = guest.getReservationRecords();
+        ArrayList<ReservationRecordEntity> reservations = roomReservationController.retrieveAllReservation();
         for(ReservationRecordEntity r: reservations){
             System.out.println( "Reservation ID: " + r.getId().toString() + "\n" +
                                 "Start Date: " + r.getStartDateAsString() + "\n" +
@@ -155,7 +153,7 @@ public class MainApp {
     }
     
     private void guestLogOut(){
-        guest = null;
+        roomReservationController.guestLogout();
         System.out.println("Logout successful");
     }
 }

@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.ejb.Local;
 import util.enumeration.RateTypeEnum;
+import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
+import util.exception.RoomTypeUnavailableException;
 
 /**
  *
@@ -28,5 +30,8 @@ public interface RoomSessionBeanLocal {
 
     public void createNewPromotionRate(String rateName, BigDecimal ratePerNight, Date startDate, Date endDate, Long roomTypeId) throws RoomTypeNotFoundException;
 
-            
+    public Integer getNumberOfRoomsAvailable(RoomTypeEntity type, Date date) throws RoomTypeUnavailableException;
+
+    public BigDecimal getRatePerNight(RoomTypeEntity roomType, Date date) throws RoomRateNotFoundException;
+
 }

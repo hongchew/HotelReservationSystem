@@ -28,9 +28,11 @@ import javax.persistence.*;
 import util.enumeration.IsOccupiedEnum;
 import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
+import util.exception.LastAvailableRateException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
+import util.exception.RoomTypeUnavailableException;
 
 /**
  *
@@ -320,7 +322,10 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     
     public void insertRoomRank(RoomTypeEntity roomType, int index){
-        RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
+        //RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
+        Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
+        query.setParameter("name", "rankings");
+        RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
         ranks.getRankings().add(index, roomType);
     }
     
@@ -338,12 +343,35 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return q.getResultList();
     }
     
-    public Boolean deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException{
+    @Override
+    public Boolean deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException, LastAvailableRateException{
         RoomRateEntity rate = em.find(RoomRateEntity.class, roomRateId);
         if (rate == null){
             throw new RoomRateNotFoundException("Room Rate Not Found");
         }
+        
         Date today = new Date();
+        if(rate.getRateType().equals(RateTypeEnum.NORMAL) || rate.getRateType().equals(RateTypeEnum.PUBLISHED)){
+            Query q = em.createQuery("SELECT r FROM RoomRateEntity r WHERE r.rateType = :rateType");
+            q.setParameter("rateType", rate.getRateType());
+            
+            List<RoomRateEntity> rates = q.getResultList();
+            int validRates = 0;
+            if(rates.size() == 1){
+                throw new LastAvailableRateException("You cannot delete the last valid Normal or Published rate");
+            }else{
+                for(RoomRateEntity r :rates){
+                    if(r.getStartDate().before(today)){
+                        validRates++;
+                    }
+                }
+                if(validRates <= 1){
+                    throw new LastAvailableRateException("You cannot delete the last valid Normal or Published rate");
+                }
+            }
+        }
+        
+
         if(today.after(rate.getStartDate()) && ((rate.getEndDate() == null) || today.before(rate.getEndDate()))){ //rate still valid
             rate.setStatus(StatusEnum.DISABLED);
             return false;
@@ -364,5 +392,58 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         roomRate.setStartDate(startDate);
         roomRate.setEndDate(endDate);
         
+    }
+    
+    @Override
+    public Integer getNumberOfRoomsAvailable(RoomTypeEntity type, Date date) throws RoomTypeUnavailableException{
+        Query query = em.createQuery("SELECT a FROM AvailabilityRecordEntity a WHERE a.roomType = :type AND a.availabiltyRecordDate =:date");
+        query.setParameter("roomType", type);
+        query.setParameter("date", date);
+        
+        try{
+            AvailabilityRecordEntity avail = (AvailabilityRecordEntity) query.getSingleResult();
+            return avail.getAvailableRooms();
+        }catch(NoResultException e){
+            throw new RoomTypeUnavailableException("Availability Record not found");
+        }
+        
+    }
+    
+    @Override
+    public BigDecimal getRatePerNight(RoomTypeEntity roomType, Date date) throws RoomRateNotFoundException{
+        List<RoomRateEntity> normalList, peakList, promoList;
+        normalList = getValidRateList(roomType, date, RateTypeEnum.NORMAL);
+        peakList = getValidRateList(roomType, date, RateTypeEnum.PEAK);
+        promoList = getValidRateList(roomType, date, RateTypeEnum.PROMOTION);
+        
+        if(!promoList.isEmpty()){
+            return getPrevailingRatePerNight(promoList);
+        }else if(!peakList.isEmpty()){
+            return getPrevailingRatePerNight(peakList);
+        }else if(!normalList.isEmpty()){
+            return getPrevailingRatePerNight(normalList);
+        }else{
+            throw new RoomRateNotFoundException("No valid room rates found");
+        }
+    }
+    
+    public List<RoomRateEntity> getValidRateList(RoomTypeEntity roomType, Date date, RateTypeEnum rateType){
+        Query q = em.createQuery("SELECT r FROM RoomRateEntity r WHERE r.startDate <= :date AND r.endDate >= :date "
+                                + "AND r.status = :status AND r.rateType = :rateType AND r.roomType = :roomType");
+        q.setParameter("date", date);
+        q.setParameter("status", StatusEnum.AVAILABLE);
+        q.setParameter("rateType", rateType);
+        q.setParameter("roomType", roomType);
+        
+        return q.getResultList();
+    }
+    
+    public BigDecimal getPrevailingRatePerNight(List<RoomRateEntity> rateList){
+        BigDecimal prevailingRate = rateList.get(0).getRatePerNight();
+        
+        for(RoomRateEntity rate : rateList){
+            prevailingRate = prevailingRate.min(rate.getRatePerNight());
+        }
+        return prevailingRate;
     }
 }

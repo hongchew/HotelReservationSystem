@@ -18,7 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
+import util.exception.LastAvailableRateException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -490,14 +492,21 @@ public class HotelOperationModule {
             BigDecimal newRatePerNight = new BigDecimal(sc.nextDouble());
             System.out.println("Enter new start date (dd/mm/yyyy)");
             Date newStartDate = df.parse(sc.next());
-            System.out.println("Enter new end date (dd/mm/yyyy OR \"-\" if no end date ");
-            String endDateString = sc.next();
             Date endDate;
-            if(endDateString.equals("-")){
+            
+            //Normal / Published rates will always have no end date
+            if(roomRate.getRateType().equals(RateTypeEnum.NORMAL) || roomRate.getRateType().equals(RateTypeEnum.PUBLISHED)){
                 endDate = null;
             }else{
-                endDate = df.parse(endDateString);
+                System.out.println("Enter new end date (dd/mm/yyyy OR \"-\" if no end date ");
+                String endDateString = sc.next();
+                if(endDateString.equals("-")){
+                    endDate = null;
+                }else{
+                    endDate = df.parse(endDateString);
+                }
             }
+            
             System.out.println("Select Room Rate Status: \n(1)Disable Room \n(2)Make Room Available");
             StatusEnum status;
             switch(sc.next()){
@@ -511,6 +520,7 @@ public class HotelOperationModule {
                     System.err.println("Invalid status");
                     return;
             }
+            
             roomSessionBean.updateRoomRate(roomRate.getRateId(), newRatePerNight, newStartDate, endDate, status);
             
         } catch (ParseException ex) {
@@ -529,7 +539,7 @@ public class HotelOperationModule {
             }else{
                 System.out.println("Room rate is currently in use and had been disabled instead.");
             }
-        } catch (RoomRateNotFoundException ex) {
+        } catch (RoomRateNotFoundException | LastAvailableRateException ex) {
             System.err.println(ex.getMessage());
         }
     }

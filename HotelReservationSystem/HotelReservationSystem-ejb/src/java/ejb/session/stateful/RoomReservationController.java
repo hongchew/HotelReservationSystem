@@ -5,13 +5,20 @@
  */
 package ejb.session.stateful;
 
+import ejb.session.stateless.GuestSessionBeanLocal;
+import ejb.session.stateless.ReservationSessionBeanLocal;
 import entity.GuestEntity;
 import entity.ReservationRecordEntity;
+import entity.RoomTypeEntity;
+import java.util.*;
 import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.EntityMismatchException;
+import util.exception.InvalidLoginCredentialException;
 import util.exception.ReservationRecordNotFoundException;
+import util.objects.ReservationTicket;
 
 /**
  *
@@ -22,6 +29,12 @@ import util.exception.ReservationRecordNotFoundException;
 @Remote(RoomReservationControllerRemote.class)
 public class RoomReservationController implements RoomReservationControllerRemote, RoomReservationControllerLocal {
 
+    @EJB
+    private GuestSessionBeanLocal guestSessionBean;
+
+    @EJB
+    private ReservationSessionBeanLocal reservationSessionBean;
+
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
     
@@ -30,31 +43,31 @@ public class RoomReservationController implements RoomReservationControllerRemot
     public RoomReservationController() {
     }
     
+    @Override
+    public void guestLogin(String username, String password) throws InvalidLoginCredentialException {
+        guest = guestSessionBean.guestLogin(username, password);
+    }
     
     @Override
+    public void guestLogout(){
+        guest = null;
+    }
+    
     public void setGuest(Long guestId){
        this.guest = em.find(GuestEntity.class, guestId);
     }
     
     @Override
-    public String retrieveReservationDetails(Long resId, Long guestId) throws ReservationRecordNotFoundException, EntityMismatchException{
-        ReservationRecordEntity res =  em.find(ReservationRecordEntity.class, resId);
-        if(res == null){
-            throw new ReservationRecordNotFoundException("Reservation Record not found");
-        }else if(!res.getReservedByGuest().getId().equals(guestId)){
-            throw new EntityMismatchException("Guest Id provided does not match Guest Id in reservation record");
-        }else{
-            String details = "Reservation Id: " + res.getId() + "\n" +
-                             "Start Date: " + res.getStartDateAsString() + "\n" +
-                             "End Date: " + res.getEndDateAsString() + "\n" +
-                             "Bill: $" + res.getBill() + "\n";
-            
-            return details;
-        }
-        
+    public ArrayList<ReservationRecordEntity> retrieveAllReservation(){
+        return guest.getReservationRecords();
     }
     
-    
-    
-    
+    @Override
+    public String retrieveReservationDetails(Long resId) throws ReservationRecordNotFoundException, EntityMismatchException{
+        return reservationSessionBean.retrieveReservationDetails(resId, guest.getId());
+    }
+
+    public ReservationTicket searchRooms(Date startDate, Date endDate){
+        return reservationSessionBean.searchRooms(startDate, endDate);
+    }
 }
