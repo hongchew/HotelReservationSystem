@@ -52,6 +52,8 @@ public class GuestEntity implements Serializable {
     }
 
     public GuestEntity(String guestName, String username, String password, String emailAddress) {
+        this();
+        
         this.guestName = guestName;
         this.username = username;
         this.password = password;

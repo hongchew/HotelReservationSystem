@@ -10,11 +10,9 @@ import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
-import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
 import util.exception.LastAvailableRateException;
 import util.exception.RoomNotFoundException;
@@ -49,7 +47,7 @@ public interface RoomSessionBeanRemote {
 
     public String viewRoomDetails(RoomEntity room);
 
-    public ArrayList<RoomTypeEntity> getRoomRanks();
+    public List<RoomTypeEntity> getRoomRanks();
 
     public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i);
     

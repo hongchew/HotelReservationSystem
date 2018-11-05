@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,8 +17,8 @@ import javax.persistence.OneToMany;
 /**
  *
  * @author Hong Chew
- * Room Ranking entity for keeping track of room ranks. Only 1 instance will be created and updated constantly. id = 1
- * Rank 0 = most premium, Rank rankings.size()-1 = least premium
+ Room Ranking entity for keeping track of room ranks. Only 1 instance will be created and updated constantly. id = 1
+ Rank 0 = most premium, Rank roomTypeEntities.size()-1 = least premium
  * 
  */
 @Entity
@@ -33,13 +34,16 @@ public class RoomRankingEntity implements Serializable {
     private String name;
     
     @OneToMany
-    private ArrayList<RoomTypeEntity> rankings;
+    private List<RoomTypeEntity> roomTypeEntities;
 
+    
     public RoomRankingEntity() {
-        rankings = new ArrayList<>();
+        roomTypeEntities = new ArrayList<>();
     }
 
     public RoomRankingEntity(String name) {
+        this();
+        
         this.name = name;
     }
     
@@ -70,15 +74,15 @@ public class RoomRankingEntity implements Serializable {
         return "entity.RoomRankingEntity[ id=" + id + " ]";
     }
 
-    public ArrayList<RoomTypeEntity> getRankings() {
-        return rankings;
+    public List<RoomTypeEntity> getRoomTypeEntities() {
+        return roomTypeEntities;
     }
     public void addMostPremium(RoomTypeEntity type){
-        rankings.add(type);
+        roomTypeEntities.add(type);
     }
     
     public void addLeastPremium(RoomTypeEntity type){
-        rankings.add(rankings.size() ,type);
+        roomTypeEntities.add(roomTypeEntities.size() ,type);
     }
 
     /**
@@ -96,10 +100,10 @@ public class RoomRankingEntity implements Serializable {
     }
 
     /**
-     * @param rankings the rankings to set
+     * @param roomTypeEntities the roomTypeEntities to set
      */
-    public void setRankings(ArrayList<RoomTypeEntity> rankings) {
-        this.rankings = rankings;
+    public void setRoomTypeEntities(List<RoomTypeEntity> roomTypeEntities) {
+        this.roomTypeEntities = roomTypeEntities;
     }
     
 }

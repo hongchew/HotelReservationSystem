@@ -123,7 +123,7 @@ public class HotelOperationModule {
         System.out.println("Enter amenities available in " + newTypeName);
         String newAmenities = sc.nextLine();
         
-        ArrayList<RoomTypeEntity> roomRanks = roomSessionBean.getRoomRanks();
+        List<RoomTypeEntity> roomRanks = roomSessionBean.getRoomRanks();
         int i = 0;
         System.out.println("Select the room ranking position to insert the new room in (Smaller number = more premium)");
         for(RoomTypeEntity r: roomRanks){

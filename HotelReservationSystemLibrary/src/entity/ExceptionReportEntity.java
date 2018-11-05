@@ -40,6 +40,16 @@ public class ExceptionReportEntity implements Serializable {
     @OneToOne
     private ReservationRecordEntity reservation;
 
+    public ExceptionReportEntity() {
+    }
+
+    public ExceptionReportEntity(Date exceptionDate, String errorReport, ReservationRecordEntity reservation) {
+        this.exceptionDate = exceptionDate;
+        this.errorReport = errorReport;
+        this.reservation = reservation;
+    }
+
+        
     public Long getId() {
         return reportId;
     }

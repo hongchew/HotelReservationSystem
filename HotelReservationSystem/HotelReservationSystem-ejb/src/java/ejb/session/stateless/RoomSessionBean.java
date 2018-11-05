@@ -12,7 +12,6 @@ import entity.RoomRankingEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -63,7 +62,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     
     public Date addDays(Date date, int i){
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, i);
         
@@ -86,10 +85,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             
         insertRoomRank(newRoomType, i);
         
-        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
         date = setHoursMinsToZero(date);
         for(int j = 0; j <= 365; j++){ //create next 365 days of availability record in advance.
-            date = addDays(date, j);
+            date = addDays(date, 1);
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
             em.persist(avail);
             newRoomType.addNewAvailabilityRecord(avail);
@@ -314,10 +314,10 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public ArrayList<RoomTypeEntity> getRoomRanks(){
+    public List<RoomTypeEntity> getRoomRanks(){
         RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
-        ranks.getRankings().size();
-        return ranks.getRankings();
+        ranks.getRoomTypeEntities().size();
+        return ranks.getRoomTypeEntities();
     }
 
     
@@ -326,7 +326,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
         query.setParameter("name", "rankings");
         RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
-        ranks.getRankings().add(index, roomType);
+        ranks.getRoomTypeEntities().add(index, roomType);
     }
     
     @Override

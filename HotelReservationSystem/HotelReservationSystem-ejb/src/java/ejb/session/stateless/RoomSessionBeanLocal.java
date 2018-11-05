@@ -41,5 +41,7 @@ public interface RoomSessionBeanLocal {
     public BigDecimal getPrevailingRatePerNight(List<RoomRateEntity> rateList);
 
     public BigDecimal getPublishedRatePerNight(RoomTypeEntity roomType, Date date) throws RoomRateNotFoundException;
+    
+    public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException;
 
 }

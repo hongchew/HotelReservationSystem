@@ -56,6 +56,8 @@ public class RoomTypeEntity implements Serializable {
     }
 
     public RoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities) {
+        this();
+        
         this.typeName = typeName;
         this.totalRooms = 0;
         this.description = description;

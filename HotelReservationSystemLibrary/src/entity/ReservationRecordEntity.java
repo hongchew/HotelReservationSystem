@@ -72,6 +72,8 @@ public class ReservationRecordEntity implements Serializable {
     }
     
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, GuestEntity reservedByGuest) {
+        this();
+        
         this.roomType = roomType;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -80,6 +82,8 @@ public class ReservationRecordEntity implements Serializable {
     }
     
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, String guestEmail, PartnerEntity reservedByPartner) {
+        this();
+        
         this.roomType = roomType;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -88,6 +92,8 @@ public class ReservationRecordEntity implements Serializable {
     }
     
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, String guestEmail) {
+        this();
+        
         this.roomType = roomType;
         this.startDate = startDate;
         this.endDate = endDate;
