@@ -62,7 +62,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
     }
     
     @Override
-    public void setGuestEmail(@Email String email){
+    public void setGuestEmail(String email){
         this.email = email;
     }
     
@@ -92,7 +92,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
     }
     
     @Override
-    public List<ReservationRecordEntity> getReservationListByEmail(@Email String email){
+    public List<ReservationRecordEntity> getReservationListByEmail(String email){
         Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
         Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.guestEmail = :email AND r.startDate = :date");

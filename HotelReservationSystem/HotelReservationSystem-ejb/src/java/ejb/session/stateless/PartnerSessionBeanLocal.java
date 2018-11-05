@@ -27,4 +27,6 @@ public interface PartnerSessionBeanLocal {
 
     public PartnerEntity retrievePartnerById(Long id);
     
+    public void createNewPartner(String partnerName, String username, String password);
+    
 }

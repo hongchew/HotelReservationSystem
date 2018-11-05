@@ -8,6 +8,7 @@ package ejb.session.stateful;
 import entity.ReservationRecordEntity;
 import java.util.ArrayList;
 import java.util.*;
+import javax.validation.constraints.Email;
 import util.exception.EarlyCheckInUnavailableException;
 import util.exception.EntityMismatchException;
 import util.exception.InvalidLoginCredentialException;

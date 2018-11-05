@@ -6,6 +6,7 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.PartnerSessionBeanLocal;
 import ejb.session.stateless.RoomSessionBeanLocal;
 import entity.EmployeeEntity;
 import entity.RoomRankingEntity;
@@ -36,6 +37,9 @@ import util.exception.RoomTypeNotFoundException;
 public class InitialisationSessionBean implements InitialisationSessionBeanLocal {
 
     @EJB
+    private PartnerSessionBeanLocal partnerSessionBean;
+
+    @EJB
     private RoomSessionBeanLocal roomSessionBean;
 
     @EJB
@@ -63,6 +67,7 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
             employeeSessionBean.createNewOpsManager("operationmanager", "operationsmanager", "password");
             employeeSessionBean.createNewSalesManager("salesmanager", "salesmanager", "pssword");
             employeeSessionBean.createNewGuestRelationsOffr("guestrelationsofficer", "guestrelationsofficer", "password");
+            partnerSessionBean.createNewPartner("Holiday.com", "holidaycom", "password");
             
             RoomRankingEntity ranks = new RoomRankingEntity("rankings");
             em.persist(ranks);
