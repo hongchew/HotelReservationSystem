@@ -5,6 +5,7 @@
  */
 package horsmanagementclient;
 
+import ejb.session.stateful.RoomReservationControllerRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
@@ -20,6 +21,7 @@ public class MainApp {
     private RoomSessionBeanRemote roomSessionBean;
     private EmployeeSessionBeanRemote employeeSessionBean;
     private PartnerSessionBeanRemote partnerSessionBean;
+    private RoomReservationControllerRemote roomReservationController;
     private EmployeeEntity currentEmployee;
     private Scanner sc;
     
@@ -27,10 +29,13 @@ public class MainApp {
         this.sc = new Scanner(System.in);
     }
 
-    public MainApp(RoomSessionBeanRemote roomSessionBean, EmployeeSessionBeanRemote employeeSessionBean, PartnerSessionBeanRemote partnerSessionBean) {
+    public MainApp(RoomSessionBeanRemote roomSessionBean, EmployeeSessionBeanRemote employeeSessionBean, PartnerSessionBeanRemote partnerSessionBean, RoomReservationControllerRemote roomReservationController) {
+        this();
+        
         this.roomSessionBean = roomSessionBean;
         this.employeeSessionBean = employeeSessionBean;
         this.partnerSessionBean = partnerSessionBean;
+        this.roomReservationController = roomReservationController;
     }
     
     
@@ -124,9 +129,8 @@ public class MainApp {
                     System.out.println("(1)Front Office Module \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
-                        /*
-                        ADD RELEVANT METHOD
-                        */
+                        FrontOfficeModule front = new FrontOfficeModule(roomReservationController);
+                        front.runFrontOfficeModule();
                     }else if(response.equals("2")){
                         doLogout();
                         break;

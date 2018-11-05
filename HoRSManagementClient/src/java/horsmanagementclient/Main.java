@@ -5,6 +5,7 @@
  */
 package horsmanagementclient;
 
+import ejb.session.stateful.RoomReservationControllerRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
@@ -15,6 +16,9 @@ import javax.ejb.EJB;
  * @author Hong Chew
  */
 public class Main {
+
+    @EJB
+    private static RoomReservationControllerRemote roomReservationController;
 
     @EJB
     private static RoomSessionBeanRemote roomSessionBean;
@@ -32,7 +36,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(roomSessionBean, employeeSessionBean, partnerSessionBean);
+        MainApp mainApp = new MainApp(roomSessionBean, employeeSessionBean, partnerSessionBean, roomReservationController);
         mainApp.runApp();
         
     }

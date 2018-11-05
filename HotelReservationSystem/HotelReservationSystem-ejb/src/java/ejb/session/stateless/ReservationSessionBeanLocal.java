@@ -26,5 +26,7 @@ public interface ReservationSessionBeanLocal {
     public ReservationTicket searchRooms(Date startDate, Date endDate);
 
     public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest);
+
+    public ArrayList<ReservationRecordEntity> frontOfficeReserveRooms(ReservationTicket ticket, String guestEmail);
     
 }

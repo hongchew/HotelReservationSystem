@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.AvailabilityRecordEntity;
 import entity.GuestEntity;
+import entity.PartnerEntity;
 import entity.ReservationRecordEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
@@ -143,12 +145,58 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @Override
     public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest){
         ArrayList<ReservationRecordEntity> reservations = new ArrayList<>();
-        for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
-            ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guest);
-            em.persist(record);
-            reservations.add(record);
+        for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){ //for each room types
+            for(int j = 0; j < ticket.getRespectiveNumberReserved().get(i); j++){ //for each room booked
+                ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guest);
+                em.persist(record);
+                reservations.add(record);
+                updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
+                
+            }
         }
         return reservations;
     }
     
+    
+    @Override
+    public ArrayList<ReservationRecordEntity> frontOfficeReserveRooms(ReservationTicket ticket, String guestEmail){
+        ArrayList<ReservationRecordEntity> reservations = new ArrayList<>();
+        for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){ //for each room types
+            for(int j = 0; j < ticket.getRespectiveNumberReserved().get(i); j++){ //for each room booked
+                ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guestEmail);
+                em.persist(record);
+                reservations.add(record);
+                updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
+            }
+        }
+        return reservations;
+    }
+
+    public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicket ticket, PartnerEntity partner, String guestEmail){
+        ArrayList<ReservationRecordEntity> reservations = new ArrayList<>();
+        for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){ //for each room types
+            for(int j = 0; j < ticket.getRespectiveNumberReserved().get(i); j++){ //for each room booked
+                ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guestEmail, partner);
+                em.persist(record);
+                reservations.add(record);
+                updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
+            }
+        }
+        return reservations;
+    } 
+    
+    private void updateAvailabilityRecord(RoomTypeEntity type, Date startDate, Date endDate){
+        Calendar start = Calendar.getInstance();
+        start.setTime(startDate);
+        Calendar end = Calendar.getInstance();
+        end.setTime(endDate);
+        for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()){
+            Query q = em.createQuery("SELECT a FROM AvailabilityRecordEntity a WHERE a.availabiltyRecordDate = :date AND a.roomType = :type");
+            q.setParameter("date", date);
+            q.setParameter("type", type);
+            AvailabilityRecordEntity avail = (AvailabilityRecordEntity) q.getSingleResult();
+            avail.addOneReservation();
+        }
+        
+    }
 }

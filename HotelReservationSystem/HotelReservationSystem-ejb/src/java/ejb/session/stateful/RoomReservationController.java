@@ -9,15 +9,22 @@ import ejb.session.stateless.GuestSessionBeanLocal;
 import ejb.session.stateless.ReservationSessionBeanLocal;
 import entity.GuestEntity;
 import entity.ReservationRecordEntity;
-import entity.RoomTypeEntity;
+import entity.RoomEntity;
 import java.util.*;
 import javax.ejb.*;
 import javax.persistence.EntityManager;
+import javax.persistence.*;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.hibernate.validator.constraints.*;
+import util.enumeration.IsOccupiedEnum;
+import util.exception.EarlyCheckInUnavailableException;
 import util.exception.EntityMismatchException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ReservationRecordNotFoundException;
+import util.exception.RoomNotAssignedException;
+import util.exception.RoomUpgradeException;
+import util.exception.UnoccupiedRoomException;
 import util.objects.ReservationTicket;
 
 /**
@@ -39,6 +46,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
     private EntityManager em;
     
     private GuestEntity guest;
+    private String email;
     
     public RoomReservationController() {
     }
@@ -53,8 +61,9 @@ public class RoomReservationController implements RoomReservationControllerRemot
         guest = null;
     }
     
-    public void setGuest(Long guestId){
-       this.guest = em.find(GuestEntity.class, guestId);
+    @Override
+    public void setGuestEmail(@Email String email){
+        this.email = email;
     }
     
     @Override
@@ -74,7 +83,110 @@ public class RoomReservationController implements RoomReservationControllerRemot
     
     @Override
     public ArrayList<ReservationRecordEntity> reserveRoom(ReservationTicket ticket){
-        return reservationSessionBean.guestReserveRooms(ticket, guest);
         
+        if(guest != null){
+            return reservationSessionBean.guestReserveRooms(ticket, guest);
+        }else{
+            return reservationSessionBean.frontOfficeReserveRooms(ticket, email);
+        }
+    }
+    
+    @Override
+    public List<ReservationRecordEntity> getReservationListByEmail(@Email String email){
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.guestEmail = :email AND r.startDate = :date");
+        q.setParameter("email", email);
+        q.setParameter("date", date);
+
+        List<ReservationRecordEntity> list = q.getResultList();
+        for(ReservationRecordEntity r : list){
+            r.getRoomType();
+            r.getAssignedRoom();
+            r.getException();
+        }
+        return list;
+    }
+    
+    @Override
+    public String checkInRoom(Long reservationId) throws EarlyCheckInUnavailableException, RoomNotAssignedException, RoomUpgradeException{
+
+        ReservationRecordEntity reservation = em.find(ReservationRecordEntity.class, reservationId);
+        //no room allocated
+        if(reservation.getAssignedRoom() == null){
+            throw new RoomNotAssignedException("Room was not allocated. Please check Room Allocation Exception Report.");
+        }
+        
+        RoomEntity room = reservation.getAssignedRoom();
+        
+        Calendar cal = Calendar.getInstance();
+        Date now = cal.getTime();
+        cal.set(Calendar.HOUR, 14);
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.SECOND,0);
+        
+        //currently before 2pm standard check in time
+        if(now.before(cal.getTime())){
+            if(!checkValidEarlyCheckIn(reservation)){
+                throw new EarlyCheckInUnavailableException("Early check in unavailable, please check in after 2pm");
+            }
+        }
+
+        //Room type reserved != room typed allocataed -> free upgrade
+        if(!room.getRoomType().equals(reservation.getRoomType())){
+            reservation.setCheckInTime(now);
+            room.setOccupancy(IsOccupiedEnum.OCCUPIED);
+            throw new RoomUpgradeException("Assigned to Room" + room.getRoomNumber() + "Room upgraded to " + room.getRoomType().getTypeName());
+        }
+                  
+        reservation.setCheckInTime(now);
+        room.setOccupancy(IsOccupiedEnum.OCCUPIED);
+        
+        return "Assigned to Room " + room.getRoomNumber();
+    }
+    
+    private boolean checkValidEarlyCheckIn(ReservationRecordEntity r){
+        Date today = r.getStartDate();
+        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.assignedRoom.roomNumber = :roomNumber AND r.endDate = :today");
+        q.setParameter("roomNumber", r.getAssignedRoom().getRoomNumber());
+        q.setParameter("today", today);
+        try{
+            q.getSingleResult();
+        }catch(NoResultException e){
+            //No booking that ended today -> can do early check in
+            return true;
+        }
+        
+        //There exist a booking that just ended today -> no early check in
+        return false;
+    }
+    
+    @Override
+    public String checkOutRoom(String roomNumber) throws UnoccupiedRoomException, ReservationRecordNotFoundException{    
+        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.assignedRoom.roomNumber = :roomNumber");
+        q.setParameter("roomNumber", roomNumber);
+        
+        try{
+            ReservationRecordEntity r = (ReservationRecordEntity) q.getSingleResult();
+            if(r.getAssignedRoom().getOccupancy().equals(IsOccupiedEnum.UNOCCUPIED)){
+                throw new UnoccupiedRoomException("Room not occupied - unable to check out.");
+            }
+            Calendar cal = Calendar.getInstance();
+            Date now = cal.getTime();
+            r.setCheckOutTime(now);
+            r.getAssignedRoom().setOccupancy(IsOccupiedEnum.UNOCCUPIED);
+            return "Room " + roomNumber +   "checked out successfully";
+        }catch(NoResultException | NonUniqueResultException e){
+            throw new ReservationRecordNotFoundException("No reservation records for this room is found");
+        }
+    }
+    
+    @Override
+    public void assignWalkInRoom(ArrayList<ReservationRecordEntity> reservations){
+        for(ReservationRecordEntity r : reservations){
+            Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.occupancy = :notOccupied AND r.roomType = :type");
+            List<RoomEntity> rooms = q.getResultList();
+            r.setAssignedRoom(rooms.get(0)); //assign first available room
+        }
     }
 }

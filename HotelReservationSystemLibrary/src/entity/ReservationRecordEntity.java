@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -68,9 +69,11 @@ public class ReservationRecordEntity implements Serializable {
     private ExceptionReportEntity exception;
 
     public ReservationRecordEntity() {
-        this.reservedOn = new Date(); //current timestamp
+        Calendar cal = Calendar.getInstance();
+        this.reservedOn = cal.getTime(); //current timestamp
     }
     
+    //HORS Reservation client
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, GuestEntity reservedByGuest) {
         this();
         
@@ -81,6 +84,7 @@ public class ReservationRecordEntity implements Serializable {
         this.reservedByGuest = reservedByGuest;
     }
     
+    //Holiday Reservation System
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, String guestEmail, PartnerEntity reservedByPartner) {
         this();
         
@@ -91,6 +95,7 @@ public class ReservationRecordEntity implements Serializable {
         this.reservedByPartner = reservedByPartner;
     }
     
+    //Front Office Module
     public ReservationRecordEntity(RoomTypeEntity roomType, Date startDate, Date endDate, String guestEmail) {
         this();
         
