@@ -102,45 +102,45 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return reservationTicket;
     }
     
-    @Override
+    /*    @Override
     public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate){
-        ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
-        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
-        List<RoomTypeEntity> typeList = q.getResultList();
-        for(RoomTypeEntity type : typeList){
-            Calendar start = Calendar.getInstance();
-            start.setTime(startDate);
-            Calendar end = Calendar.getInstance();
-            end.setTime(endDate);
-            
-            BigDecimal totalBill = new BigDecimal(0);
-            Integer numRoomsRemaining = Integer.MAX_VALUE;
-            boolean flag = false;
-            for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
-                try{
-                    Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
-                    if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
-                        flag = false;
-                        break;
-                    }else{
-                        numRoomsRemaining = Math.min(numAvail, numRoomsRemaining);
-                        totalBill = totalBill.add(roomSessionBean.getPublishedRatePerNight(type, date));
-                        flag = true;
-                    }
-                }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
-                    flag = false;
-                    break;
-                }
-            }
-            if(flag){
-                reservationTicket.getAvailableRoomTypes().add(type);
-                reservationTicket.getRespectiveNumberOfRoomsRemaining().add(numRoomsRemaining);
-                reservationTicket.getRespectiveTotalBill().add(totalBill);
-            }
-        }
-        
-        return reservationTicket;
+    ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
+    Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+    List<RoomTypeEntity> typeList = q.getResultList();
+    for(RoomTypeEntity type : typeList){
+    Calendar start = Calendar.getInstance();
+    start.setTime(startDate);
+    Calendar end = Calendar.getInstance();
+    end.setTime(endDate);
+    
+    BigDecimal totalBill = new BigDecimal(0);
+    Integer numRoomsRemaining = Integer.MAX_VALUE;
+    boolean flag = false;
+    for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+    try{
+    Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
+    if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
+    flag = false;
+    break;
+    }else{
+    numRoomsRemaining = Math.min(numAvail, numRoomsRemaining);
+    totalBill = totalBill.add(roomSessionBean.getPublishedRatePerNight(type, date));
+    flag = true;
     }
+    }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
+    flag = false;
+    break;
+    }
+    }
+    if(flag){
+    reservationTicket.getAvailableRoomTypes().add(type);
+    reservationTicket.getRespectiveNumberOfRoomsRemaining().add(numRoomsRemaining);
+    reservationTicket.getRespectiveTotalBill().add(totalBill);
+    }
+    }
+    
+    return reservationTicket;
+    }*/
     
     @Override
     public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest){
@@ -172,6 +172,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return reservations;
     }
 
+    @Override
     public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicket ticket, PartnerEntity partner, String guestEmail){
         ArrayList<ReservationRecordEntity> reservations = new ArrayList<>();
         for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){ //for each room types

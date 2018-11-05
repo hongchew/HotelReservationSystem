@@ -70,7 +70,8 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
         }
     }
     
-    public PartnerEntity retrievePartnerByUsername(String username) throws PartnerNotFoundException{
+
+    private PartnerEntity retrievePartnerByUsername(String username) throws PartnerNotFoundException{
         Query q = em.createQuery("SELECT p FROM PartnerEntity p WHERE p.username = :username");
         q.setParameter("username", username);
         
@@ -79,6 +80,11 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
         }catch(NonUniqueResultException | NoResultException e){
             throw new PartnerNotFoundException("Partner not found.");
         }
+    }
+    
+    @Override
+    public PartnerEntity retrievePartnerById(Long id){
+        return em.find(PartnerEntity.class, id); 
     }
     
     @Override

@@ -13,10 +13,11 @@ import javax.jws.WebService;
 import javax.ejb.Stateless;
 import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateless.ReservationSessionBeanLocal;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import entity.PartnerEntity;
+import java.util.Date;
 import util.exception.EntityMismatchException;
 import util.exception.ReservationRecordNotFoundException;
+import util.objects.ReservationTicket;
 
 /**
  *
@@ -46,6 +47,29 @@ public class ReservationWebService {
             throw e;
         }
     }
+    
+    /**
+     *
+     * @param startDate
+     * @param endDate
+     * @return ReservationTicket with information of available room types
+     */
+    public ReservationTicket searchRoom(Date startDate, Date endDate){
+        return reservationSessionBean.searchRooms(startDate, endDate);
+    }
+    
+    /**
+     *
+     * @param ticket
+     * @param partnerId
+     * @param guestEmail
+     * @return ArrayList of ReservationRecordEntity created during reservation
+     */
+    public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicket ticket, Long partnerId, String guestEmail){
+        PartnerEntity partner = partnerSessionBean.retrievePartnerById(partnerId);
+        return reservationSessionBean.partnerReserveRooms(ticket, partner, guestEmail);
+    }
+    
     
     /**
      *

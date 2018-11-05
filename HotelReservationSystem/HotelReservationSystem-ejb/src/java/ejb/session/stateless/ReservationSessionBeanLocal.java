@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.GuestEntity;
+import entity.PartnerEntity;
 import entity.ReservationRecordEntity;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,5 +29,7 @@ public interface ReservationSessionBeanLocal {
     public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest);
 
     public ArrayList<ReservationRecordEntity> frontOfficeReserveRooms(ReservationTicket ticket, String guestEmail);
+
+    public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicket ticket, PartnerEntity partner, String guestEmail);
     
 }

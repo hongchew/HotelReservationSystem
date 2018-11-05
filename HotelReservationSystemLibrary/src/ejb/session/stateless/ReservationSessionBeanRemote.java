@@ -16,6 +16,6 @@ import util.objects.ReservationTicket;
 
 public interface ReservationSessionBeanRemote {
 
-    public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate);
+    //public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate);
     
 }
