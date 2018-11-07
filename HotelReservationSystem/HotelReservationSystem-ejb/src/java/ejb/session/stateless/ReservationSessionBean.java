@@ -6,23 +6,32 @@
 package ejb.session.stateless;
 
 import entity.AvailabilityRecordEntity;
+import entity.ExceptionReportEntity;
 import entity.GuestEntity;
 import entity.PartnerEntity;
 import entity.ReservationRecordEntity;
+import entity.RoomEntity;
+import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.IsOccupiedEnum;
 import util.exception.EntityMismatchException;
+import util.exception.NoAvailableRoomException;
+import util.exception.NoHigherRankException;
 import util.exception.ReservationRecordNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeUnavailableException;
@@ -199,5 +208,85 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             avail.addOneReservation();
         }
         
+    }
+    
+    @Schedule(hour = "2")
+    private void allocateRoomDaily(){
+        List<ReservationRecordEntity> reservationsForToday = getAllReservationToday();
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        for(ReservationRecordEntity r : reservationsForToday){
+            RoomTypeEntity type = r.getRoomType();
+            ExceptionReportEntity report = new ExceptionReportEntity(today, "", r);
+            report = allocateRoom(r, type, report);
+            //Save the report if its filled in
+            if(!report.getErrorReport().isEmpty()){
+                em.persist(report);
+            }
+        }
+    }
+    
+    private ExceptionReportEntity allocateRoom(ReservationRecordEntity reservation, RoomTypeEntity type, ExceptionReportEntity report){
+        try{
+            RoomEntity room = getAvailableRoom(type);
+            setAssignedRoom(room, reservation);
+            return report;
+        } catch (NoAvailableRoomException ex) {
+            try {
+                RoomTypeEntity nextType = getNextRank(type);
+                String error = "Allocation Exception : Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
+                report.setErrorReport(error);
+                return allocateRoom(reservation, nextType, report);
+            } catch (NoHigherRankException ex1) {
+                String error = "Allocation Exception : No rooms available.";
+                report.setErrorReport(error);
+                return report;
+            }
+        }
+    }
+    
+    private RoomEntity getAvailableRoom(RoomTypeEntity type) throws NoAvailableRoomException{
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.occupancy = :unoccupied AND r.roomType = :type");
+        q.setParameter("unoccupied", IsOccupiedEnum.UNOCCUPIED);
+        q.setParameter("type", type);
+        List<RoomEntity> list = q.getResultList();
+        if(list.isEmpty()){
+            throw new NoAvailableRoomException("No room of this type available currently");
+        }
+        
+        return list.get(0);
+    }
+    
+    private List<ReservationRecordEntity> getAllReservationToday(){
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        
+        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.startDate = :today");
+        q.setParameter("today", today);
+        
+        return q.getResultList();
+    }
+    
+    private RoomTypeEntity getNextRank(RoomTypeEntity currentType) throws NoHigherRankException{
+        Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
+        query.setParameter("name", "rankings");
+        RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
+        int currentIndex = ranks.getRoomTypeEntities().indexOf(currentType);
+        currentIndex--;
+        
+        try{
+            return ranks.getRoomTypeEntities().get(currentIndex);
+        }catch(IndexOutOfBoundsException e){
+            throw new NoHigherRankException("No Higher Ranks Available.");
+        }
+    }
+    
+    @Override
+    public void setAssignedRoom(RoomEntity room, ReservationRecordEntity res){
+        res.setAssignedRoom(room);
+        room.setOccupancy(IsOccupiedEnum.OCCUPIED);
+        room.setIsOccupiedTo(res.getEndDate());
     }
 }

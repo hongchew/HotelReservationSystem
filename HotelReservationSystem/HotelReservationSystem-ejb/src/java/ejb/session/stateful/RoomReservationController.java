@@ -175,6 +175,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
             Date now = cal.getTime();
             r.setCheckOutTime(now);
             r.getAssignedRoom().setOccupancy(IsOccupiedEnum.UNOCCUPIED);
+            r.getAssignedRoom().setIsOccupiedTo(null);
             return "Room " + roomNumber +   "checked out successfully";
         }catch(NoResultException | NonUniqueResultException e){
             throw new ReservationRecordNotFoundException("No reservation records for this room is found");
@@ -186,7 +187,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
         for(ReservationRecordEntity r : reservations){
             Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.occupancy = :notOccupied AND r.roomType = :type");
             List<RoomEntity> rooms = q.getResultList();
-            r.setAssignedRoom(rooms.get(0)); //assign first available room
+            reservationSessionBean.setAssignedRoom(rooms.get(0), r);
         }
     }
 }
