@@ -110,47 +110,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         
         return reservationTicket;
     }
-    
-    /*    @Override
-    public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate){
-    ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
-    Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
-    List<RoomTypeEntity> typeList = q.getResultList();
-    for(RoomTypeEntity type : typeList){
-    Calendar start = Calendar.getInstance();
-    start.setTime(startDate);
-    Calendar end = Calendar.getInstance();
-    end.setTime(endDate);
-    
-    BigDecimal totalBill = new BigDecimal(0);
-    Integer numRoomsRemaining = Integer.MAX_VALUE;
-    boolean flag = false;
-    for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
-    try{
-    Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
-    if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
-    flag = false;
-    break;
-    }else{
-    numRoomsRemaining = Math.min(numAvail, numRoomsRemaining);
-    totalBill = totalBill.add(roomSessionBean.getPublishedRatePerNight(type, date));
-    flag = true;
-    }
-    }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
-    flag = false;
-    break;
-    }
-    }
-    if(flag){
-    reservationTicket.getAvailableRoomTypes().add(type);
-    reservationTicket.getRespectiveNumberOfRoomsRemaining().add(numRoomsRemaining);
-    reservationTicket.getRespectiveTotalBill().add(totalBill);
-    }
-    }
-    
-    return reservationTicket;
-    }*/
-    
+     
     @Override
     public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest){
         ArrayList<ReservationRecordEntity> reservations = new ArrayList<>();
@@ -210,8 +170,55 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         
     }
     
-    @Schedule(hour = "2")
-    private void allocateRoomDaily(){
+    @Override
+    public void setAssignedRoom(RoomEntity room, ReservationRecordEntity res){
+        res.setAssignedRoom(room);
+        room.setOccupancy(IsOccupiedEnum.OCCUPIED);
+        room.setIsOccupiedTo(res.getEndDate());
+    }
+    
+    /*@Override
+    public ReservationTicket frontOfficeSearchRooms(Date startDate, Date endDate){
+        ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> typeList = q.getResultList();
+        for(RoomTypeEntity type : typeList){
+            Calendar start = Calendar.getInstance();
+            start.setTime(startDate);
+            Calendar end = Calendar.getInstance();
+            end.setTime(endDate);
+
+            BigDecimal totalBill = new BigDecimal(0);
+            Integer numRoomsRemaining = Integer.MAX_VALUE;
+            boolean flag = false;
+            for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+                try{
+                    Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
+                    if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
+                        flag = false;
+                        break;
+                    }else{
+                        numRoomsRemaining = Math.min(numAvail, numRoomsRemaining);
+                        totalBill = totalBill.add(roomSessionBean.getPublishedRatePerNight(type, date));
+                        flag = true;
+                    }
+                }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag){
+                reservationTicket.getAvailableRoomTypes().add(type);
+                reservationTicket.getRespectiveNumberOfRoomsRemaining().add(numRoomsRemaining);
+                reservationTicket.getRespectiveTotalBill().add(totalBill);
+            }
+        }
+        return reservationTicket;
+    }*/
+    
+
+    /*@Schedule(hour = "2")
+    private void allocateRoomsDaily(){
         List<ReservationRecordEntity> reservationsForToday = getAllReservationToday();
         Calendar cal = Calendar.getInstance();
         Date today = cal.getTime();
@@ -231,13 +238,13 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             RoomEntity room = getAvailableRoom(type);
             setAssignedRoom(room, reservation);
             return report;
-        } catch (NoAvailableRoomException ex) {
+        } catch (NoAvailableRoomException e) {
             try {
                 RoomTypeEntity nextType = getNextRank(type);
                 String error = "Allocation Exception : Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
                 report.setErrorReport(error);
                 return allocateRoom(reservation, nextType, report);
-            } catch (NoHigherRankException ex1) {
+            } catch (NoHigherRankException ex) {
                 String error = "Allocation Exception : No rooms available.";
                 report.setErrorReport(error);
                 return report;
@@ -281,12 +288,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }catch(IndexOutOfBoundsException e){
             throw new NoHigherRankException("No Higher Ranks Available.");
         }
-    }
+    }*/
     
-    @Override
-    public void setAssignedRoom(RoomEntity room, ReservationRecordEntity res){
-        res.setAssignedRoom(room);
-        room.setOccupancy(IsOccupiedEnum.OCCUPIED);
-        room.setIsOccupiedTo(res.getEndDate());
-    }
+
 }

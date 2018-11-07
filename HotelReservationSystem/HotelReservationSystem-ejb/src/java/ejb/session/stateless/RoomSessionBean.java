@@ -97,18 +97,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         
         return newRoomType;
     }
-    
-    //Generate a new avail record for all room type every day for today + 365 day
-    @Schedule(hour = "0")
-    public void addNewAvailRecordDaily(){
-        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
-        List<RoomTypeEntity> roomTypes = q.getResultList();
-        for(RoomTypeEntity r : roomTypes){
-            AvailabilityRecordEntity avail = new AvailabilityRecordEntity(addDays(new Date(),365), r);
-            r.addNewAvailabilityRecord(avail);
-        }
-    }
-    
+      
     @Override
     public String viewRoomTypeDetails(String typeName) {
         RoomTypeEntity roomType;
@@ -460,4 +449,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return getPrevailingRatePerNight(publishedRates);
         
     }
+    
+    
+    //Generate a new avail record for all room type every day for today + 365 day
+    /*@Schedule(hour = "0")
+    public void addNewAvailRecordDaily(){
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> roomTypes = q.getResultList();
+        for(RoomTypeEntity r : roomTypes){
+            AvailabilityRecordEntity avail = new AvailabilityRecordEntity(addDays(new Date(),365), r);
+            r.addNewAvailabilityRecord(avail);
+        }
+    }*/
 }
