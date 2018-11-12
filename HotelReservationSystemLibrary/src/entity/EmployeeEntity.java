@@ -36,7 +36,7 @@ public class EmployeeEntity implements Serializable {
     @Column(nullable = false)
     private String employeeName;
     
-    @Size(min = 5, max = 32)
+    @Size(min = 5, max = 16)
     @Column(nullable = false, unique = true)
     private String username;
     
