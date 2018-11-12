@@ -27,7 +27,7 @@ import util.exception.RoomTypeUnavailableException;
 @Remote
 public interface RoomSessionBeanRemote {
 
-    public String viewRoomTypeDetails(String typeName);
+    public String viewRoomTypeDetails(String typeName) throws RoomTypeNotFoundException;
 
     public void updateRoomType(String typeName, String newDescription, String newBedType, Integer newCapacity, String newAmenities) throws RoomTypeNotFoundException;
     

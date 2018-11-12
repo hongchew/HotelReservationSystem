@@ -32,12 +32,11 @@ public class ExceptionReportEntity implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date exceptionDate;
     
-    @NotNull
     @Column(length = 140)
     private String errorReport;    
     
     
-    @OneToOne
+    @OneToOne(optional = false)
     private ReservationRecordEntity reservation;
 
     public ExceptionReportEntity() {

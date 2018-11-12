@@ -36,7 +36,7 @@ public abstract class EmployeeEntity implements Serializable {
     @Column(nullable = false)
     private String employeeName;
     
-    @Size(min = 5, max = 32)
+    @Size(min = 5, max = 16)
     @Column(nullable = false, unique = true)
     private String username;
     
@@ -45,6 +45,7 @@ public abstract class EmployeeEntity implements Serializable {
     private String password;
     
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EmployeeAccessRightsEnum accessRights;
             
     

@@ -7,12 +7,16 @@ package entity;
 
 import java.io.Serializable;
 import java.util.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -33,26 +37,32 @@ public class RoomEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
     
-    @NotNull
+    @Column(nullable = false)
     private Integer floor;
-    @NotNull
+    
+    @Column(nullable = false)
     private Integer unit;
+    
+    @Column(unique = true)
     private String roomNumber;
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date isOccupiedTo;
     
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatusEnum status;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private IsOccupiedEnum occupancy;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 
     
-    @OneToMany(mappedBy = "assignedRoom")
+    @OneToMany(mappedBy = "assignedRoom", cascade ={CascadeType.REMOVE})
     private ArrayList<ReservationRecordEntity> reservationRecords;
             
     //default no argument constructor

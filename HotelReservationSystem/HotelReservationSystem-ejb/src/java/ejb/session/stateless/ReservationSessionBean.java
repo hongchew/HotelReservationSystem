@@ -6,32 +6,26 @@
 package ejb.session.stateless;
 
 import entity.AvailabilityRecordEntity;
-import entity.ExceptionReportEntity;
 import entity.GuestEntity;
 import entity.PartnerEntity;
 import entity.ReservationRecordEntity;
 import entity.RoomEntity;
-import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.IsOccupiedEnum;
+import util.enumeration.StatusEnum;
 import util.exception.EntityMismatchException;
-import util.exception.NoAvailableRoomException;
-import util.exception.NoHigherRankException;
 import util.exception.ReservationRecordNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeUnavailableException;
@@ -74,7 +68,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @Override
     public ReservationTicket searchRooms(Date startDate, Date endDate){
         ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
-        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.status = :available");
+        q.setParameter("available", StatusEnum.AVAILABLE);
         List<RoomTypeEntity> typeList = q.getResultList();
         for(RoomTypeEntity type : typeList){
             Calendar start = Calendar.getInstance();

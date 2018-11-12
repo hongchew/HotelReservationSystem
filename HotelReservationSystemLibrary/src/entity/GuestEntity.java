@@ -33,11 +33,11 @@ public class GuestEntity implements Serializable {
     private String guestName;
     
     @Column(nullable = false, unique = true)
-    @Size(min = 6, max = 32, message = "Username should be between 1 and 32 characters.")
+    @Size(min = 5, max = 32, message = "Username should be between 1 and 32 characters.")
     private String username;
             
     @Column(nullable = false)
-    @Size(min = 6, max = 32, message = "Password should be between 1 and 32 characters.")
+    @Size(min = 5, max = 32, message = "Password should be between 1 and 32 characters.")
     private String password;
     
     @Column(nullable = false, unique = true)

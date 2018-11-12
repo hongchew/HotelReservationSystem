@@ -36,25 +36,29 @@ public class RoomRateEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rateId;
     
-    
+    @Column(unique = true, scale = 2)
     private BigDecimal ratePerNight;
     
     @Column(unique = true, nullable = false)
     private String rateName;
     
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatusEnum status;
     
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RateTypeEnum rateType;
     
     @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(nullable = false)
     private Date startDate;
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
     
     @ManyToOne
+    @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 
     public RoomRateEntity() {
