@@ -35,9 +35,9 @@ public class MainApp {
         System.out.println("****Welcome to Holiday.com****");
 
         while(true){
-            System.out.println("(1)Log In"
-                        + "(2)Search Rooms "
-                        + "(*)Exit");
+            System.out.println("(1)Log In\n"
+                        + "(2)Search Rooms \n"
+                        + "(*)Exit\n");
             String resp = sc.next();
             switch(resp){
                 case "1":

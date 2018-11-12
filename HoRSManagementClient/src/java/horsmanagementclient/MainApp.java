@@ -74,11 +74,12 @@ public class MainApp {
     
     public void employeeMenu(){
 
-        System.out.println("****Welcome to the Hotel Management Client****");
+        
         String response;
         switch(currentEmployee.getAccessRights()){
             case SYSADMIN:
                 while(true){
+                    System.out.println("\n****Welcome to the Hotel Management Client****");
                     System.out.println("(1)System Administrator Module \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
@@ -95,6 +96,7 @@ public class MainApp {
                 
             case OPERATIONS:
                 while(true){
+                    System.out.println("\n****Welcome to the Hotel Management Client****");
                     System.out.println("(1)Hotel Operation (Operation Manager) Module \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
@@ -111,6 +113,7 @@ public class MainApp {
                 
             case SALES:
                 while(true){
+                    System.out.println("\n****Welcome to the Hotel Management Client****");
                     System.out.println("(1)Hotel Operation Module (Sales Manager) \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
@@ -127,6 +130,7 @@ public class MainApp {
                 
             case GUESTRELATIONS:
                 while(true){
+                    System.out.println("\n****Welcome to the Hotel Management Client****");
                     System.out.println("(1)Front Office Module \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){

@@ -288,9 +288,10 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @Override
     public RoomEntity retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException {
         
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomNumber = :roomnumber");
+        Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomNumber = :roomnumber");
+        q.setParameter("roomnumber", roomNumber);
             try{
-               return (RoomEntity) query.getSingleResult();
+               return (RoomEntity) q.getSingleResult();
             } catch (NoResultException | NonUniqueResultException e) {
                   throw new RoomNotFoundException("No such room found");
                 }        
@@ -306,7 +307,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     @Override
     public String viewRoomDetails(RoomEntity room){
-        return "Room Number " + room.getRoomNumber() + ", " + room.getRoomType() + ", " + room.getStatus();
+        return "Room Number " + room.getRoomNumber() + ", " + room.getRoomType().getTypeName() + ", " + room.getStatus();
     }
     
     @Override

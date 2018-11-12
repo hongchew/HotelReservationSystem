@@ -38,8 +38,9 @@ public class FrontOfficeModule {
     }
     
     public void runFrontOfficeModule(){
-        System.out.println("****Welcome to the front office module****");
+        
         while(true){
+            System.out.println("\n****Welcome to the front office module****");
             System.out.println("(1)Search/Reserve Room \n" +
                             "(2)Check-in Guest \n" +
                             "(3)Check-out Guest \n" +
@@ -65,7 +66,7 @@ public class FrontOfficeModule {
     
     private ReservationTicket searchRoom(){
         try {
-            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             Calendar cal = Calendar.getInstance();
             Date startDate = cal.getTime();
             System.out.println("Enter check out date (dd/mm/yyyy):");

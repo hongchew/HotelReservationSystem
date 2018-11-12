@@ -16,8 +16,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
 import util.exception.LastAvailableRateException;
@@ -35,6 +33,7 @@ public class HotelOperationModule {
     
     private EmployeeEntity currentEmployee;
     private final Scanner sc = new Scanner(System.in);
+    private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     
     public HotelOperationModule() {
     }
@@ -46,8 +45,9 @@ public class HotelOperationModule {
     
     
     public void runHotelOperationModuleOperationsManager(){
-        System.out.println("****Welcome to the Hotel Operations Module****");
+        
         while(true){
+            System.out.println("\n****Welcome to the Hotel Operations Module****");
             System.out.println("(1) Room Type Management");
             System.out.println("(2) Room Management");
             System.out.println("(3) View Room Allocation Exception Report");
@@ -78,6 +78,7 @@ public class HotelOperationModule {
     
     private void roomTypeManagement(){
         while(true){
+            System.out.println("\n****Room Type Management****");
             System.out.println("(1) Create new Room Type");
             System.out.println("(2) View/Update/Delete Room Type Details");
             System.out.println("(3) View All Room Types");
@@ -98,7 +99,7 @@ public class HotelOperationModule {
                     break;
                     
                 case "4":
-                    System.out.println("***Returning to home page***");
+                    System.out.println("\n***Returning to home page***\n");
                     return;
                                       
                 default:
@@ -110,6 +111,7 @@ public class HotelOperationModule {
     
     private void createNewRoomType(){
         System.out.println("Enter name of new Room Type");
+        sc.nextLine();
         String newTypeName = sc.nextLine();
         
         System.out.println("Enter 140 characters description for " + newTypeName);
@@ -122,15 +124,20 @@ public class HotelOperationModule {
         Integer capacity = sc.nextInt();
         
         System.out.println("Enter amenities available in " + newTypeName);
+        sc.nextLine();
         String newAmenities = sc.nextLine();
         
         List<RoomTypeEntity> roomRanks = roomSessionBean.getRoomRanks();
         int i = 0;
         System.out.println("Select the room ranking position to insert the new room in (Smaller number = more premium)");
-        for(RoomTypeEntity r: roomRanks){
+        for(i = 0; i < roomRanks.size(); i++){
+            System.out.println("(" + i + ") " + roomRanks.get(i).getTypeName());
+        }
+        
+        /*for(RoomTypeEntity r: roomRanks){
             System.out.println("(" + i + ") " + r.getTypeName());
             i++;
-        }
+        }*/
         System.out.println("(" + i + ") Least Premium");
         int newRank = sc.nextInt();
         if(newRank >= i){
@@ -153,7 +160,7 @@ public class HotelOperationModule {
             System.out.println(e.getMessage());
         }
         
-        System.out.println(newTypeName + " created successfully!");
+        System.out.println("\n" + newTypeName + " created successfully!\n");
     }
     
     private void viewRoomTypeDetails(){
@@ -183,7 +190,7 @@ public class HotelOperationModule {
                     case "2":
                         try {
                             if(roomSessionBean.deleteRoomType(typeName)){
-                                System.out.println("Room Type Deleted");
+                                System.out.println("\n****Room Type Deleted****\n");
                             }else{
                                 System.out.println("Room Type Currently In Use - Room Type marked as DISABLED");
                                 System.out.println("Please try again when room type is not in use any more");
@@ -201,6 +208,7 @@ public class HotelOperationModule {
     
     private void updateRoomType(String typeName){
         System.out.println("Enter updated description for " + typeName);
+        sc.nextLine();
         String newDescription = sc.nextLine();
         System.out.println("Enter updated amenities for " + typeName);
         String newAmenities = sc.nextLine();
@@ -211,20 +219,21 @@ public class HotelOperationModule {
 
         try{
             roomSessionBean.updateRoomType(typeName, newDescription, newBeds, newCap, newAmenities);
+            System.out.println("\n****Room Type Successfully Updated****\n");
         }catch(RoomTypeNotFoundException e){
             System.err.println(e.getMessage());
         }        
     }
     
     private List<RoomTypeEntity> viewAllRoomTypes(){
-        System.out.println("****All Room Types****");
+        System.out.println("\n****All Room Types****");
         List<RoomTypeEntity> roomTypes = roomSessionBean.retrieveListOfRoomTypes();
         int i = 0;
         for(RoomTypeEntity r: roomTypes){
             System.out.println("(" + i + ")" + r.getTypeName());
             i++;
         }
-        System.out.println("\n****End of list****\n");
+        System.out.println("****End of list****\n");
         return roomTypes;
     }
     
@@ -232,6 +241,7 @@ public class HotelOperationModule {
     
     private void roomManagement(){
         while(true){
+            System.out.println("\n****Room Type Management****");
             System.out.println("(1) Create new Room");
             System.out.println("(2) Update Room");
             System.out.println("(3) Delete Room");
@@ -277,7 +287,7 @@ public class HotelOperationModule {
             int typeSelection = sc.nextInt();
             String typeName = roomTypes.get(typeSelection).getTypeName();
             roomSessionBean.createNewRoom(floor, unit, typeName);
-            System.out.println("New Room " + floor + "-" + unit +" Created");
+            System.out.println("\n****New Room " + floor + "-" + unit +" Created****");
         } catch (RoomTypeNotFoundException | NullPointerException ex) {
             System.err.println(ex.getMessage());
         }
@@ -350,7 +360,6 @@ public class HotelOperationModule {
     
     private void viewExceptionReport(){
         try {
-            DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
             System.out.println("Enter Date of Report to generate (DD/MM/YYYY)");
             String dateString = sc.next();
             Date date = dateFormat.parse(dateString);
@@ -403,7 +412,6 @@ public class HotelOperationModule {
     }    
     
     private void createNewRate(){
-        DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
         
         System.out.println("\n****Create New Room Rate****");
         List<RoomTypeEntity> roomTypesList = viewAllRoomTypes();
@@ -502,12 +510,12 @@ public class HotelOperationModule {
     
     private void updateRoomRate(RoomRateEntity roomRate){
         try {
-            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+
             System.out.println("\n****Update Room Rate****");
             System.out.print("Enter new rate per night: \n$");
             BigDecimal newRatePerNight = new BigDecimal(sc.nextDouble());
             System.out.println("Enter new start date (dd/mm/yyyy)");
-            Date newStartDate = df.parse(sc.next());
+            Date newStartDate = dateFormat.parse(sc.next());
             Date endDate;
             
             //Normal / Published rates will always have no end date
@@ -519,7 +527,7 @@ public class HotelOperationModule {
                 if(endDateString.equals("-")){
                     endDate = null;
                 }else{
-                    endDate = df.parse(endDateString);
+                    endDate = dateFormat.parse(endDateString);
                 }
             }
             

@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
 /**
  *
@@ -34,6 +35,7 @@ public class RoomRankingEntity implements Serializable {
     private String name;
     
     @OneToMany
+    @OrderColumn
     private List<RoomTypeEntity> roomTypeEntities;
 
     
