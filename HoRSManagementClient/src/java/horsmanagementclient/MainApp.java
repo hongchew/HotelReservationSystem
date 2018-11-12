@@ -64,10 +64,10 @@ public class MainApp {
         
         try {
             currentEmployee = employeeSessionBean.login(username, password);
-            System.out.println("Login successful.");
+            System.out.println("\nLogin successful.\n");
             employeeMenu();
         }catch (InvalidLoginCredentialException ex) {
-            System.err.println("Invalid Credentials. Please Try Again.");
+            System.err.println("\nInvalid Credentials. Please Try Again.\n");
         } 
     }
     

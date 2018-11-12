@@ -6,10 +6,6 @@
 package ejb.session.stateless;
 
 import entity.EmployeeEntity;
-import entity.GuestRelationOfficerEntity;
-import entity.OperationManagerEntity;
-import entity.SalesManagerEntity;
-import entity.SystemAdminEntity;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -19,6 +15,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.EmployeeAccessRightsEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
@@ -70,7 +67,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public void createNewSysAdmin(String name, String username, String password){
         
-        SystemAdminEntity sysAdmin = new SystemAdminEntity(name, username, password);
+        EmployeeEntity sysAdmin = new EmployeeEntity(name, username, password, EmployeeAccessRightsEnum.SYSADMIN);
         em.persist(sysAdmin);
         
     }
@@ -78,7 +75,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public void createNewOpsManager(String name, String username, String password){
         
-        OperationManagerEntity opManager = new OperationManagerEntity(name, username, password);
+        EmployeeEntity opManager = new EmployeeEntity(name, username, password, EmployeeAccessRightsEnum.OPERATIONS);
         em.persist(opManager);
         
     }
@@ -86,14 +83,14 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     @Override
     public void createNewSalesManager(String name, String username, String password){
         
-        SalesManagerEntity salesManager = new SalesManagerEntity(name, username, password);
+        EmployeeEntity salesManager = new EmployeeEntity(name, username, password, EmployeeAccessRightsEnum.SALES);
         em.persist(salesManager);
         
     }
     @Override
     public void createNewGuestRelationsOffr(String name, String username, String password){
         
-        GuestRelationOfficerEntity grOffr = new GuestRelationOfficerEntity(name, username, password);
+        EmployeeEntity grOffr = new EmployeeEntity(name, username, password, EmployeeAccessRightsEnum.GUESTRELATIONS);
         em.persist(grOffr);
         
     }

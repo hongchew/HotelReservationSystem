@@ -40,7 +40,7 @@ public class SystemAdministrationModule {
     Allows sysadmins to access methods to create employee & partners, and view all employess & partners
     */
     public void runSysAdminModule(){
-        System.out.println("****Welcome to the System Administration Module****\n");
+        System.out.println("\n****Welcome to the System Administration Module****");
         while(true){
             System.out.println("(1) Create New Employee \n(2) View All Employee \n(3) Create New Partner \n(4) View All Partners \n(5) Return");
             String response = sc.next();
@@ -71,38 +71,38 @@ public class SystemAdministrationModule {
     public void createEmployee(){
         System.out.println("**** Create a new Employee Account****");
         System.out.println("Enter employee's name:");
+        sc.nextLine();
         String name = sc.nextLine();
         System.out.println("Enter username:");
         String username = sc.nextLine();
         System.out.println("Enter password:");
         String password = sc.nextLine();
         
-        while(true){
-            System.out.println("Create new employee as:\n(1)System Administrator \n(2)Operation Manager \n(3)Sales Manager \n(4)Guest Relation Officer \n(5)Cancel");
-            String response = sc.next();
-            switch(response){
-                case "1":
-                    employeeSessionBean.createNewSysAdmin(name, username, password);
-                    System.out.println("New System Administrator created.");                    
-                    break;
-                case "2":
-                    employeeSessionBean.createNewOpsManager(name, username, password);
-                    System.out.println("New Operation Manager created.");
-                    break;
-                case "3":
-                    employeeSessionBean.createNewSalesManager(name, username, password);
-                    System.out.println("New Sales Manager created.");
-                    break;
-                case "4":
-                    employeeSessionBean.createNewGuestRelationsOffr(name, username, password);
-                    System.out.println("New Guest Relations Officer created.");
-                    break;
-                case "5":
-                    return;
-                default:
-                    System.err.println("Invalid input please try again.");
-            }
+        System.out.println("Create new employee as:\n(1)System Administrator \n(2)Operation Manager \n(3)Sales Manager \n(4)Guest Relation Officer \n(5)Cancel");
+        String response = sc.next();
+        switch(response){
+            case "1":
+                employeeSessionBean.createNewSysAdmin(name, username, password);
+                System.out.println("New System Administrator created.\n");                    
+                break;
+            case "2":
+                employeeSessionBean.createNewOpsManager(name, username, password);
+                System.out.println("New Operation Manager created.\n");
+                break;
+            case "3":
+                employeeSessionBean.createNewSalesManager(name, username, password);
+                System.out.println("New Sales Manager created.\n");
+                break;
+            case "4":
+                employeeSessionBean.createNewGuestRelationsOffr(name, username, password);
+                System.out.println("New Guest Relations Officer created.\n");
+                break;
+            case "5":
+                return;
+            default:
+                System.err.println("Invalid input please try again.\n");
         }
+
     }
     
     /*
@@ -110,9 +110,11 @@ public class SystemAdministrationModule {
     */
     public void viewAllEmployees(){
         List<EmployeeEntity> list = employeeSessionBean.retrieveAllEmployees();
+        System.out.println("\n****Viewing All Employees****");
         for(EmployeeEntity e: list){
             System.out.println(e.toString());
         }
+        System.out.println("****End of List****\n");
     }
     
     /*

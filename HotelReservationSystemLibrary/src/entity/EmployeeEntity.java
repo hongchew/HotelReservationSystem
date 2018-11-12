@@ -24,7 +24,7 @@ import util.enumeration.EmployeeAccessRightsEnum;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class EmployeeEntity implements Serializable {
+public class EmployeeEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -36,7 +36,7 @@ public abstract class EmployeeEntity implements Serializable {
     @Column(nullable = false)
     private String employeeName;
     
-    @Size(min = 5, max = 16)
+    @Size(min = 5, max = 32)
     @Column(nullable = false, unique = true)
     private String username;
     
@@ -90,7 +90,8 @@ public abstract class EmployeeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return accessRights + "     " + employeeName;
+        return "Employee Name: " + employeeName +
+                "\nEmployee Role: " + accessRights + "\n";
     }
 
     /**

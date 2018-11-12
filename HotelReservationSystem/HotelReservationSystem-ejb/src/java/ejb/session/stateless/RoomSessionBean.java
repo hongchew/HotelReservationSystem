@@ -240,7 +240,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }        
         RoomRateEntity newPublishedRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PUBLISHED, startDate, endDate);
         em.persist(newPublishedRate);
-        em.flush();
         roomType.addNewRoomRate(newPublishedRate);
         newPublishedRate.setRoomType(roomType);
         
@@ -254,7 +253,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
         RoomRateEntity newNormalRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.NORMAL, startDate, endDate);
         em.persist(newNormalRate);
-        em.flush();
         roomType.addNewRoomRate(newNormalRate);
         newNormalRate.setRoomType(roomType);
     }
@@ -267,7 +265,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }        
         RoomRateEntity newPeakRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PEAK, startDate, endDate);
         em.persist(newPeakRate);
-        em.flush();
         roomType.addNewRoomRate(newPeakRate);
         newPeakRate.setRoomType(roomType);
     }
@@ -280,7 +277,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
         RoomRateEntity newPromotionRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PROMOTION, startDate, endDate);
         em.persist(newPromotionRate);  
-        em.flush();
         roomType.addNewRoomRate(newPromotionRate);
         newPromotionRate.setRoomType(roomType);
     }
@@ -331,7 +327,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
         
         ranks.getRoomTypeEntities().remove(roomType);
-        em.flush();
         
     }
     
