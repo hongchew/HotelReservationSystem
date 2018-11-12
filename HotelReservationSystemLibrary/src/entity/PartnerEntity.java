@@ -113,7 +113,7 @@ public class PartnerEntity implements Serializable {
 
     @Override
     public String toString() {
-        return partnerId + "    " + partnerName;
+        return "Partner Id: " + partnerId + "\nParter Name: " + partnerName + "\n";
     }
     
 }

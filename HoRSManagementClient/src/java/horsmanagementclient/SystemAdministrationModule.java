@@ -40,8 +40,9 @@ public class SystemAdministrationModule {
     Allows sysadmins to access methods to create employee & partners, and view all employess & partners
     */
     public void runSysAdminModule(){
-        System.out.println("\n****Welcome to the System Administration Module****");
+        
         while(true){
+            System.out.println("\n****Welcome to the System Administration Module****");
             System.out.println("(1) Create New Employee \n(2) View All Employee \n(3) Create New Partner \n(4) View All Partners \n(5) Return");
             String response = sc.next();
             switch(response){
@@ -58,9 +59,10 @@ public class SystemAdministrationModule {
                     viewAllPartners();
                     break;
                 case "5":
+                    System.out.println("\n****Logging Out****\n");
                     return;
                 default:
-                    System.err.println("Invalid input please try again.");
+                    System.err.println("\nInvalid input please try again.\n");
             }
         }
     }
@@ -123,6 +125,7 @@ public class SystemAdministrationModule {
     public void createPartner(){
         System.out.println("**** Create a new Partner Account****");
         System.out.println("Enter partners's name:");
+        sc.nextLine();
         String name = sc.nextLine();
         System.out.println("Enter username:");
         String username = sc.nextLine();
@@ -138,8 +141,10 @@ public class SystemAdministrationModule {
     */
     public void viewAllPartners(){
         List<PartnerEntity> list = partnerSessionBean.retrieveAllPartners();
+        System.out.println("\n****Viewing All Partners****");
         for(PartnerEntity p: list){
             System.out.println(p.toString());
         }
+        System.out.println("****End of List****\n");
     }
 }

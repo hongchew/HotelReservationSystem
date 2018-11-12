@@ -63,7 +63,7 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
         }catch(EmployeeNotFoundException ex){
             employeeSessionBean.createNewSysAdmin("admin", "admin", "password");
             employeeSessionBean.createNewOpsManager("operationmanager", "operationmanager", "password");
-            employeeSessionBean.createNewSalesManager("salesmanager", "salesmanager", "pssword");
+            employeeSessionBean.createNewSalesManager("salesmanager", "salesmanager", "password");
             employeeSessionBean.createNewGuestRelationsOffr("guestrelationsofficer", "guestrelationsofficer", "password");
             partnerSessionBean.createNewPartner("Holiday.com", "holidaycom", "password");
             
@@ -75,7 +75,7 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
             try {
                 RoomTypeEntity deluxeRoom = roomSessionBean.returnNewRoomTypeEntity("Deluxe Room", "A comfortable room that will satisfy any", "1 Queen Size", 1, "Mini fridge, bathroom, television, internet", 0);
                 roomSessionBean.createNewNormalRate("Deluxe Room Normal Rate", new BigDecimal(50.00), today, null, deluxeRoom.getTypeId());
-                roomSessionBean.createNewPublishedRate("Delux Room Published Rate", new BigDecimal(60.00), today, null, deluxeRoom.getTypeId());
+                roomSessionBean.createNewPublishedRate("Deluxe Room Published Rate", new BigDecimal(60.00), today, null, deluxeRoom.getTypeId());
                 for(int i  = 1; i <= 100; i++){
                     roomSessionBean.createNewRoom(1, i, "Deluxe Room");
                 }

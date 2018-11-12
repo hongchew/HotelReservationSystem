@@ -36,7 +36,7 @@ public class RoomRateEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rateId;
     
-    @Column(unique = true, scale = 2)
+    @Column(scale = 2)
     private BigDecimal ratePerNight;
     
     @Column(unique = true, nullable = false)
@@ -145,12 +145,19 @@ public class RoomRateEntity implements Serializable {
     
     public String getDetails(){
         DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String endDateString;
+        if(endDate == null){
+            endDateString = "-";
+        }else{
+            endDateString = dateFormat.format(endDate);
+        }
         
         return "Rate name: " + rateName + "\n" +
                 "Rate per Night: " + ratePerNight.toString() + "\n" +
                 "Rate Type: " + rateType.toString() + "\n" +
                 "Start Date: " + dateFormat.format(startDate) + "\n" + 
-                "End Date: " + dateFormat.format(endDate);
+                "End Date: " + endDateString + "\n" +
+                "Status: " + status;
     }
     
       

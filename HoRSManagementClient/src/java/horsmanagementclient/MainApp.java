@@ -40,8 +40,9 @@ public class MainApp {
     
     
     public void runApp(){
-        System.out.println("****Welcome to Merlion Hotel****");
+        
         while(true){
+            System.out.println("****Welcome to Merlion Hotel****");
             System.out.println("(1) Login \n(2) Exit");
             String response = sc.next();
             switch(response){

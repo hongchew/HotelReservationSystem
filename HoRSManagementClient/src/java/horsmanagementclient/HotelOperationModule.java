@@ -372,8 +372,9 @@ public class HotelOperationModule {
     
     
     public void runHotelOperationModuleSalesManager(){
-        System.out.println("****Welcome to the Hotel Operations Module (Sales)****");
+        
         while(true){
+            System.out.println("\n****Welcome to the Hotel Operations Module (Sales)****");
             System.out.println("(1) Create new Room Rate");
             System.out.println("(2) View/Delete/Update Room Rate Details");
             System.out.println("(3) View All Room Rates");
@@ -404,7 +405,7 @@ public class HotelOperationModule {
     private void createNewRate(){
         DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
         
-        System.out.println("****Create New Room Rate****");
+        System.out.println("\n****Create New Room Rate****");
         List<RoomTypeEntity> roomTypesList = viewAllRoomTypes();
         System.out.println("Select Room type");
         int roomTypeIndex = sc.nextInt();
@@ -417,6 +418,7 @@ public class HotelOperationModule {
         }
         
         System.out.println("Enter name of new rate:");
+        sc.nextLine();
         String rateName = sc.nextLine();
         
         System.out.print("Enter rate per night: \n$");
@@ -463,7 +465,7 @@ public class HotelOperationModule {
         } catch (RoomTypeNotFoundException e) {
             System.err.println(e.getMessage());
         }
-        System.out.println("New Room Rate Created");
+        System.out.println("\n****New Room Rate Created****\n");
     }
     
     private void viewRoomRateDetails(){
@@ -475,6 +477,7 @@ public class HotelOperationModule {
             return;
         }
         RoomRateEntity roomRate = roomRates.get(rateIndex);
+        System.out.println("****Room Rate Details****");
         System.out.println(roomRate.getDetails());
         
         System.out.println();
@@ -500,6 +503,7 @@ public class HotelOperationModule {
     private void updateRoomRate(RoomRateEntity roomRate){
         try {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            System.out.println("\n****Update Room Rate****");
             System.out.print("Enter new rate per night: \n$");
             BigDecimal newRatePerNight = new BigDecimal(sc.nextDouble());
             System.out.println("Enter new start date (dd/mm/yyyy)");
