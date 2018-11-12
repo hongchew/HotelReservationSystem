@@ -33,15 +33,19 @@ public class ReservationRecordEntity implements Serializable {
     
     @NotNull
     @OneToOne
+    @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
     
     @ManyToOne
+    @JoinColumn(nullable = false)
     private RoomEntity assignedRoom;
     
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date startDate;
     
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date endDate;
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -57,6 +61,7 @@ public class ReservationRecordEntity implements Serializable {
     private Date reservedOn;
     
     @Email
+    @Column(nullable = false)
     private String guestEmail;
     
     @ManyToOne
@@ -65,7 +70,7 @@ public class ReservationRecordEntity implements Serializable {
     @ManyToOne
     private PartnerEntity reservedByPartner;
     
-    @OneToOne(mappedBy = "reservation")
+    @OneToOne(mappedBy = "reservation", cascade = {CascadeType.REMOVE})
     private ExceptionReportEntity exception;
 
     public ReservationRecordEntity() {

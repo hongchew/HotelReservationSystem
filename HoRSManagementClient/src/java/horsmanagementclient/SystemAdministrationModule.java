@@ -27,6 +27,8 @@ public class SystemAdministrationModule {
     }
 
     public SystemAdministrationModule(EmployeeEntity sysAdmin, EmployeeSessionBeanRemote employeeSessionBean, PartnerSessionBeanRemote partnerSessionBean) {
+        this();
+        
         this.sysAdmin = sysAdmin;
         this.employeeSessionBean = employeeSessionBean;
         this.partnerSessionBean = partnerSessionBean;

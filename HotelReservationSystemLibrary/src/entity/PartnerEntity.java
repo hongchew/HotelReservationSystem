@@ -31,10 +31,10 @@ public class PartnerEntity implements Serializable {
     private String partnerName;
     
     @Column(unique = true, nullable = false)
-    @Size(min = 6, max = 32)
+    @Size(min = 5, max = 32)
     private String username;
     
-    @Size(min = 6, max = 32)
+    @Size(min = 5, max = 32)
     @Column(nullable = false)
     private String password;
     

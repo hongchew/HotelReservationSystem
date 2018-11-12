@@ -21,9 +21,9 @@ import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import javax.ejb.Schedule;
 import javax.persistence.EntityManager;
 import javax.persistence.*;
+import javax.validation.ConstraintViolationException;
 import util.enumeration.IsOccupiedEnum;
 import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
@@ -92,6 +92,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             date = addDays(date, 1);
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
             em.persist(avail);
+            em.flush();
             newRoomType.addNewAvailabilityRecord(avail);
         }
         
@@ -99,13 +100,12 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
       
     @Override
-    public String viewRoomTypeDetails(String typeName) {
+    public String viewRoomTypeDetails(String typeName) throws RoomTypeNotFoundException {
         RoomTypeEntity roomType;
         try{
             roomType = retrieveRoomTypeByTypeName(typeName);
         }catch (RoomTypeNotFoundException e) {
-            System.err.println("No such roomType found");
-            return null;
+            throw e;
         }
         
         String details = ("Type Name: " + roomType.getTypeName() +
@@ -128,7 +128,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             thisRoomType.setDescription(newDescription);
             thisRoomType.setBedType(newBedType);
             thisRoomType.setCapacity(newCapacity);
-        }catch (RoomTypeNotFoundException e) {
+        }catch (RoomTypeNotFoundException | ConstraintViolationException  e) {
             eJBContext.setRollbackOnly();
             throw e;
         }
@@ -155,6 +155,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         query.setParameter("typename", typeName);
         query.setParameter("occupancy", IsOccupiedEnum.OCCUPIED);
         if(query.getResultList().isEmpty()) { //No rooms of the type are occupied
+            deleteRoomRank(thisRoomType);
             em.remove(thisRoomType); 
             return true;
         }else { //Some room of the type are occupied
@@ -162,6 +163,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             return false;
         }        
     }
+    
     
     @Override
     public List<RoomTypeEntity> retrieveListOfRoomTypes() {
@@ -175,6 +177,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             RoomTypeEntity thisRoomType = retrieveRoomTypeByTypeName(roomType);
             RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);          
             em.persist(newRoom);
+            em.flush();
             thisRoomType.addRoom(newRoom);
         } catch (RoomTypeNotFoundException roomTypeNotFoundException) {
             eJBContext.setRollbackOnly();
@@ -195,7 +198,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             thisRoom.setStatus(status);            
         } catch (RoomNotFoundException | RoomTypeNotFoundException e) {
             eJBContext.setRollbackOnly();
-            System.out.println(e.getMessage());
+            throw e;
         }
     }
     
@@ -236,8 +239,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomTypeNotFoundException("Room Type Not Found");
         }        
         RoomRateEntity newPublishedRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PUBLISHED, startDate, endDate);
-        roomType.addNewRoomRate(newPublishedRate);
         em.persist(newPublishedRate);
+        em.flush();
+        roomType.addNewRoomRate(newPublishedRate);
         newPublishedRate.setRoomType(roomType);
         
     }
@@ -249,8 +253,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomTypeNotFoundException("Room Type Not Found");
         }
         RoomRateEntity newNormalRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.NORMAL, startDate, endDate);
+        em.persist(newNormalRate);
+        em.flush();
         roomType.addNewRoomRate(newNormalRate);
-        em.persist(newNormalRate);  
         newNormalRate.setRoomType(roomType);
     }
     
@@ -261,8 +266,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomTypeNotFoundException("Room Type Not Found");
         }        
         RoomRateEntity newPeakRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PEAK, startDate, endDate);
-        roomType.addNewRoomRate(newPeakRate);
         em.persist(newPeakRate);
+        em.flush();
+        roomType.addNewRoomRate(newPeakRate);
         newPeakRate.setRoomType(roomType);
     }
     
@@ -273,8 +279,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomTypeNotFoundException("Room Type Not Found");
         }
         RoomRateEntity newPromotionRate = new RoomRateEntity(rateName, ratePerNight, RateTypeEnum.PROMOTION, startDate, endDate);
-        roomType.addNewRoomRate(newPromotionRate);
         em.persist(newPromotionRate);  
+        em.flush();
+        roomType.addNewRoomRate(newPromotionRate);
         newPromotionRate.setRoomType(roomType);
     }
     
@@ -318,6 +325,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         ranks.getRoomTypeEntities().add(index, roomType);
     }
     
+    private void deleteRoomRank(RoomTypeEntity roomType){
+        Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
+        query.setParameter("name", "rankings");
+        RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
+        
+        ranks.getRoomTypeEntities().remove(roomType);
+        em.flush();
+        
+    }
+    
     @Override
     public List<ExceptionReportEntity> getListOfExceptionReportsByDate(Date date){
         Query q = em.createQuery("SELECT e FROM ExceptionReportEntity e WHERE e.exceptionDate = :date");
@@ -328,7 +345,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     @Override
     public List<RoomRateEntity> retrieveAllRoomRates(){
-        Query q = em.createQuery("SELECT r  FROM RoomRateEntity r");
+        Query q = em.createQuery("SELECT r FROM RoomRateEntity r");
         return q.getResultList();
     }
     

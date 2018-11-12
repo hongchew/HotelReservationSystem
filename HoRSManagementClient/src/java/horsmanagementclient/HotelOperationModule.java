@@ -16,6 +16,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
 import util.exception.LastAvailableRateException;
@@ -32,7 +34,7 @@ public class HotelOperationModule {
     private RoomSessionBeanRemote roomSessionBean;
     
     private EmployeeEntity currentEmployee;
-    private Scanner sc = new Scanner(System.in);
+    private final Scanner sc = new Scanner(System.in);
     
     public HotelOperationModule() {
     }
@@ -96,10 +98,11 @@ public class HotelOperationModule {
                     break;
                     
                 case "4":
+                    System.out.println("***Returning to home page***");
                     return;
                                       
                 default:
-                    System.err.println("Please input a valid command.");
+                    System.err.println("\nPlease input a valid command.\n");
             }
             
         }
@@ -155,35 +158,43 @@ public class HotelOperationModule {
     
     private void viewRoomTypeDetails(){
         List<RoomTypeEntity> roomTypes = viewAllRoomTypes();
+        if(roomTypes.isEmpty()){
+            System.out.println("\nNo Room Types Available\n");
+            return;
+        }
         System.out.println("Input Room Type number to view/edit details or to delete");
         int typeNum = sc.nextInt();
         if(typeNum < 0 || typeNum >= roomTypes.size()){
             System.out.println("Invalid number, returning to main menu");
             return;
         }else{
-            String typeName = roomTypes.get(typeNum).getTypeName();
-            System.out.println(roomSessionBean.viewRoomTypeDetails(typeName));
-            
-            System.out.println("(1) Edit Details");
-            System.out.println("(2) Delete Room Type");
-            String response = sc.next();
-            switch(response){
-                case "1":
-                    updateRoomType(typeName);
-                    break;
-                    
-                case "2":
-                    try {
-                        if(roomSessionBean.deleteRoomType(typeName)){
-                            System.out.println("Room Type Deleted");
-                        }else{
-                            System.out.println("Room Type Currently In Use - Room Type marked as DISABLED");
-                            System.out.println("Please try again when room type is not in use any more");
+            try {
+                String typeName = roomTypes.get(typeNum).getTypeName();
+                System.out.println(roomSessionBean.viewRoomTypeDetails(typeName));
+                
+                System.out.println("(1) Edit Details");
+                System.out.println("(2) Delete Room Type");
+                String response = sc.next();
+                switch(response){
+                    case "1":
+                        updateRoomType(typeName);
+                        break;
+                        
+                    case "2":
+                        try {
+                            if(roomSessionBean.deleteRoomType(typeName)){
+                                System.out.println("Room Type Deleted");
+                            }else{
+                                System.out.println("Room Type Currently In Use - Room Type marked as DISABLED");
+                                System.out.println("Please try again when room type is not in use any more");
+                            }
+                        } catch (RoomTypeNotFoundException ex) {
+                            System.err.println(ex.getMessage());
                         }
-                    } catch (RoomTypeNotFoundException ex) {
-                        System.err.println(ex.getMessage());
-                    }
-                    break;
+                        break;
+                }
+            } catch (RoomTypeNotFoundException ex) {
+                System.out.println(ex.getMessage());
             }
         }
     }

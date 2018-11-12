@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.IsOccupiedEnum;
+import util.enumeration.StatusEnum;
 import util.exception.NoAvailableRoomException;
 import util.exception.NoHigherRankException;
 
@@ -104,9 +105,10 @@ public class SystemHelper {
     private RoomEntity getAvailableRoom(RoomTypeEntity type) throws NoAvailableRoomException{
         Calendar cal = Calendar.getInstance();
         Date today = cal.getTime();
-        Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.occupancy = :unoccupied AND r.roomType = :type");
+        Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.occupancy = :unoccupied AND r.roomType = :type AND r.status = :available");
         q.setParameter("unoccupied", IsOccupiedEnum.UNOCCUPIED);
         q.setParameter("type", type);
+        q.setParameter("available", StatusEnum.AVAILABLE);
         List<RoomEntity> list = q.getResultList();
         if(list.isEmpty()){
             throw new NoAvailableRoomException("No room of this type available currently");
