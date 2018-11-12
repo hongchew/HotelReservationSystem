@@ -24,7 +24,7 @@ import ws.client.reservation.RoomTypeEntity;
 public class MainApp {
     private final Scanner sc = new Scanner(System.in);
     private long loggedInId;
-    private DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+    private DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
     private ReservationTicket ticket;
     
     public MainApp(){

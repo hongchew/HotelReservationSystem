@@ -6,6 +6,7 @@
 package util.objects;
 
 import entity.RoomTypeEntity;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +15,7 @@ import java.util.Date;
  *
  * @author Hong Chew
  */
-public class ReservationTicket {
+public class ReservationTicket implements Serializable {
     
     	private Date startDate;
 	private Date endDate;

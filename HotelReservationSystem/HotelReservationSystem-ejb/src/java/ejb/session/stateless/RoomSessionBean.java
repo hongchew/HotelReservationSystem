@@ -404,7 +404,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @Override
     public Integer getNumberOfRoomsAvailable(RoomTypeEntity type, Date date) throws RoomTypeUnavailableException{
         Query query = em.createQuery("SELECT a FROM AvailabilityRecordEntity a WHERE a.roomType = :type AND a.availabiltyRecordDate =:date");
-        query.setParameter("roomType", type);
+        query.setParameter("type", type);
         query.setParameter("date", date);
         
         try{
