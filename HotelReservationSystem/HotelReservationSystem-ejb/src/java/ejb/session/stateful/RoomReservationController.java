@@ -68,6 +68,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
     
     @Override
     public ArrayList<ReservationRecordEntity> retrieveAllReservation(){
+        System.err.println("guest id: " + guest.getId());
         return guest.getReservationRecords();
     }
     

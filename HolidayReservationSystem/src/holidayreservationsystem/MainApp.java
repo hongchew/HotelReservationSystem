@@ -32,12 +32,13 @@ public class MainApp {
     }
     
     public void runApp(){
-        System.out.println("****Welcome to Holiday.com****");
+        
 
         while(true){
+            System.out.println("\n****Welcome to Holiday.com****");
             System.out.println("(1)Log In\n"
                         + "(2)Search Rooms \n"
-                        + "(*)Exit\n");
+                        + "(*)Exit");
             String resp = sc.next();
             switch(resp){
                 case "1":
@@ -47,7 +48,7 @@ public class MainApp {
                     search();
                     break;
                 default:
-                    System.out.println("Exiting system");
+                    System.out.println("\n****Exiting system****\n");
                     System.exit(0);
             }
         }       
@@ -60,16 +61,16 @@ public class MainApp {
             System.out.println("Enter password: ");
             String password = sc.next();
             loggedInId = partnerLogin(username, password);
-            System.out.println("\nLogin successful\n!");
+            System.out.println("\nLogin successful\n");
             loggedInMenu();
         } catch (InvalidLoginCredentialException_Exception ex) {
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
         }
     }
 
     private void search() {
         try {
-            System.out.println("***Search Hotel Room****");
+            System.out.println("\n***Search Hotel Room****");
             System.out.println("Enter desired check in date (dd/mm/yyyy)");
             String dateString = sc.next();
             Date startDate = df.parse(dateString);
@@ -117,26 +118,23 @@ public class MainApp {
     }
 
      private void loggedInMenu() {
-        System.out.println("****Welcome to Holiday.com ****");
+        
 
         while(true){
-            System.out.println("(1)Search Rooms"
-                        + "(2)Reserve Room"
-                        + "(3)View Reservation Detail"
-                        + "(4)View All Reservations"
-                        + "(*)Exit");
+            System.out.println("\n****Welcome to Holiday.com ****");
+            System.out.println("(1)Search/Reserve Rooms\n"
+                        + "(2)View Reservation Detail\n"
+                        + "(3)View All Reservations\n"
+                        + "(*)Exit\n");
             String resp = sc.next();
             switch(resp){
                 case "1":
                     search();
                     break;
                 case "2":
-                    reserve();
-                    break;
-                case "3":
                     viewDetail();
                     break;
-                case "4":
+                case "3":
                     viewAll();
                     break;
                 default:
@@ -166,14 +164,17 @@ public class MainApp {
     }
 
     private void viewDetail() {
-        System.out.println("****View Reservation Detail****");
+        System.out.println("\n****View Reservation Detail****");
         System.out.println("Enter reservation ID: ");
         Long resId = sc.nextLong();
-        System.out.println(viewReservationDetail(resId, loggedInId));
+        System.out.println("\n" + viewReservationDetail(resId, loggedInId) + "\n");
     }
 
     private void viewAll() {
         List<ReservationRecordEntity> reservations = viewAllPartnerReservation(loggedInId);
+        if(reservations.isEmpty()){
+            System.err.println("\nNo reservation records available");
+        }
         System.out.println("\n****Reservation List****");
         for(ReservationRecordEntity r :reservations){
             System.out.println("Res Id:" + r.getId() + "\n Reserved by Guest Email:" + r.getGuestEmail());

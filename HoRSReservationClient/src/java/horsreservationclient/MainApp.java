@@ -40,8 +40,9 @@ public class MainApp {
     }
     
     public void runApp(){
-        System.out.println("****Welcome to the Hotel Reservation client****");
+        
         while(true){
+            System.out.println("****Welcome to the Hotel Reservation client****");
             System.out.println("(1) Register as Guest");
             System.out.println("(2) Guest Login");
             System.out.println("(3) Search Hotel Room");
@@ -59,7 +60,7 @@ public class MainApp {
                     searchHotelRoom();
                     break;
                 case "4":
-                    System.out.println("Exiting system");
+                    System.out.println("\n****Exiting system****");
                     System.exit(0);
                     break;
                 default:
@@ -71,6 +72,7 @@ public class MainApp {
     private void registerGuest(){
         System.out.println("****Register New Guest****");
         System.out.println("Enter name");
+        sc.nextLine();
         String name = sc.nextLine();
         System.out.println("Enter username");
         String username = sc.next();
@@ -80,7 +82,7 @@ public class MainApp {
         String email = sc.next();
         
         guestSessionBean.registerNewGuest(name, username, password, email);
-        System.out.println("New Guest Created!");
+        System.out.println("New Guest Created!\n");
     }
     
     private void guestLogin(){
@@ -91,18 +93,19 @@ public class MainApp {
         String password = sc.next();
         
         try{
-            guestSessionBean.guestLogin(username, password);
+            roomReservationController.guestLogin(username, password);
             System.out.println("Login Successful");
             loggedIn = true;
             guestMenu();
         }catch(InvalidLoginCredentialException e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
     
     private void guestMenu(){
-        System.out.println("****Welcome to the Hotel Reservation client****");
+        
         while(true){
+            System.out.println("\n****Welcome to the Hotel Reservation client****");
             System.out.println("(1) Search/Reserve Hotel Room");
             System.out.println("(2) View My Reservation Detail");
             System.out.println("(3) View All Reservations");
@@ -126,7 +129,7 @@ public class MainApp {
                     return;
                     
                 default:
-                    System.out.println("Please enter a valid command");
+                    System.err.println("Please enter a valid command");
             }
         }
     }
@@ -134,7 +137,7 @@ public class MainApp {
     private ReservationTicket searchHotelRoom(){
         
         try {
-            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println("Kindly note that our hotel only accepts reservations a maximum of 1 year in advance.");
             System.out.println("Enter check in date (dd/mm/yyyy):");
             Date startDate = df.parse(sc.next());
@@ -201,15 +204,20 @@ public class MainApp {
             String details = roomReservationController.retrieveReservationDetails(resId);
             System.out.println(details);
         } catch (ReservationRecordNotFoundException | EntityMismatchException ex) {
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
         }
         
         
     }
     
     private void viewAllReservations(){
-        System.out.println("Viewing all Reservation Records:");
+        System.out.println("\n****Viewing all Reservation Records****");
         ArrayList<ReservationRecordEntity> reservations = roomReservationController.retrieveAllReservation();
+        if(reservations.isEmpty()){
+            System.err.println("\nNo reservation records available.\n");
+            return;
+        }
+        
         for(ReservationRecordEntity r: reservations){
             System.out.println( "Reservation ID: " + r.getId().toString() + "\n" +
                                 "Start Date: " + r.getStartDateAsString() + "\n" +
@@ -218,13 +226,13 @@ public class MainApp {
                                 "Bill: $" + r.getBill());
             System.out.println();
         }
-        System.out.println("****End of Reservation Records****");
+        System.out.println("****End of Reservation Records****\n");
         
     }
     
     private void guestLogOut(){
         roomReservationController.guestLogout();
         loggedIn = false;
-        System.out.println("Logout successful");
+        System.out.println("\n****Logout successful****\n");
     }
 }

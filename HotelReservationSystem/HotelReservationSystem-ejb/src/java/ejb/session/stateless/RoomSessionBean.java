@@ -411,6 +411,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             AvailabilityRecordEntity avail = (AvailabilityRecordEntity) query.getSingleResult();
             return avail.getAvailableRooms();
         }catch(NoResultException e){
+            System.err.println("Availability Record not found");
             throw new RoomTypeUnavailableException("Availability Record not found");
         }
         

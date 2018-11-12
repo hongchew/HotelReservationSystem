@@ -84,6 +84,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                 try{
                     Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
                     if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
+                        System.err.println("No room available");
                         flag = false;
                         break;
                     }else{
@@ -92,6 +93,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                         flag = true;
                     }
                 }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
+                    System.err.println("No room rate/type");
                     flag = false;
                     break;
                 }
