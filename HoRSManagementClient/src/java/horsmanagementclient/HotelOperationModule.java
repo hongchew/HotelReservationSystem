@@ -16,8 +16,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.RateTypeEnum;
 import util.enumeration.StatusEnum;
 import util.exception.LastAvailableRateException;
@@ -208,14 +206,14 @@ public class HotelOperationModule {
     }
     
     private List<RoomTypeEntity> viewAllRoomTypes(){
-        System.out.println("All Room Types :");
+        System.out.println("****All Room Types****");
         List<RoomTypeEntity> roomTypes = roomSessionBean.retrieveListOfRoomTypes();
         int i = 0;
         for(RoomTypeEntity r: roomTypes){
             System.out.println("(" + i + ")" + r.getTypeName());
             i++;
         }
-        
+        System.out.println("\n****End of list****\n");
         return roomTypes;
     }
     
@@ -332,10 +330,11 @@ public class HotelOperationModule {
     
     private void viewAllRooms(){
         List<RoomEntity> rooms = roomSessionBean.retrieveAllRooms();
-        System.out.println("All Rooms:");
+        System.out.println("****All Rooms****\n");
         for(RoomEntity room: rooms){
             System.out.println(roomSessionBean.viewRoomDetails(room));
         }
+        System.out.println("\n****End of list****\n");
     }
     
     private void viewExceptionReport(){
@@ -347,11 +346,13 @@ public class HotelOperationModule {
             
             List<ExceptionReportEntity> report = roomSessionBean.getListOfExceptionReportsByDate(date);
             if(report.isEmpty()){
-                System.out.println("No Exception Report. ");
+                System.out.println("****No Exception Report.****");
             }else{
+                System.out.println("****Exception Reports****");
                 for(ExceptionReportEntity e:report){
                     System.out.println(e.getErrorReport());
                 }
+                System.out.println("\n****End of list****\n");
             }            
         } catch (ParseException ex) {
             System.err.println("Invalid date format. Please try again.");
@@ -389,7 +390,7 @@ public class HotelOperationModule {
         }
     }    
     
-    public void createNewRate(){
+    private void createNewRate(){
         DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
         
         System.out.println("****Create New Room Rate****");
@@ -454,7 +455,7 @@ public class HotelOperationModule {
         System.out.println("New Room Rate Created");
     }
     
-    public void viewRoomRateDetails(){
+    private void viewRoomRateDetails(){
         List<RoomRateEntity> roomRates = viewAllRoomRates();
         System.out.println("Select number of Room Rate to view details");
         int rateIndex = sc.nextInt();
@@ -485,7 +486,7 @@ public class HotelOperationModule {
         }
     }
     
-    public void updateRoomRate(RoomRateEntity roomRate){
+    private void updateRoomRate(RoomRateEntity roomRate){
         try {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             System.out.print("Enter new rate per night: \n$");
@@ -532,7 +533,7 @@ public class HotelOperationModule {
         
     }
     
-    public void deleteRoomRate(RoomRateEntity roomRate){
+    private void deleteRoomRate(RoomRateEntity roomRate){
         try {
             if(roomSessionBean.deleteRoomRate(roomRate.getRateId())){
                 System.out.println("Room rate deleted.");
@@ -545,14 +546,15 @@ public class HotelOperationModule {
     }
     
     
-    public List<RoomRateEntity> viewAllRoomRates(){
-        System.out.println("All Room Rates :");
+    private List<RoomRateEntity> viewAllRoomRates(){
+        System.out.println("****All Room Rates****\n");
         List<RoomRateEntity> roomRates = roomSessionBean.retrieveAllRoomRates();
         int i = 0;
         for(RoomRateEntity r: roomRates){
             System.out.println("(" + i + ")" + r.getRateName());
             i++;
         }
+        System.out.println("\n****End of list****\n");
         
         return roomRates;
     }

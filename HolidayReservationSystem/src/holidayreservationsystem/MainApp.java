@@ -9,6 +9,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import ws.client.reservation.InvalidLoginCredentialException_Exception;
 import ws.client.reservation.ReservationRecordEntity;
 import ws.client.reservation.ReservationTicket;
@@ -73,14 +76,47 @@ public class MainApp {
             System.out.println("Enter desired check out date (dd/mm/yyyy)");
             dateString = sc.next();
             Date endDate = df.parse(dateString);
-            ticket = searchRoom(startDate, endDate);
+            
+            
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setTime(startDate);
+            XMLGregorianCalendar startGC = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+            gc.setTime(endDate);
+            XMLGregorianCalendar endGC = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+            ticket = searchRoom(startGC, endGC);
+            if(ticket.getAvailableRoomTypes().isEmpty()){
+                System.err.println("There are no available rooms for your desired check in and check out date.");
+                
+            }else{
+                System.out.println("****Available Rooms****");
+                for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
+                    RoomTypeEntity type = ticket.getAvailableRoomTypes().get(i);
+                    System.out.println("(" + i + ")" + type.getTypeName());
+                    System.out.println(type.getDescription());
+                    System.out.println("Amenities: " + type.getAmenities());
+                    System.out.println("Capacity: " + type.getCapacity());
+                    System.out.println("Rooms Available: " + ticket.getRespectiveNumberOfRoomsRemaining().get(i) );
+                    System.out.println("Cost: " + ticket.getRespectiveTotalBill().get(i));
+                    System.out.println();
+                }
+                if(loggedInId > 0L){
+                    System.out.println("Reserve rooms? (Y/N)");
+                    String response  = sc.next();
+                    if(response.equalsIgnoreCase("Y")){
+                        reserve();
+                    }else{
+                        System.out.println("No rooms reserved");
+                    }
+                }
+            }              
         } catch (ParseException ex) {
             System.err.println("Please enter valid a valid date format (dd/mm/yyyy)");
+        } catch (DatatypeConfigurationException ex) {
+            System.err.println(ex.getMessage());
         }
-        
     }
 
-    private void loggedInMenu() {
+     private void loggedInMenu() {
         System.out.println("****Welcome to Holiday.com ****");
 
         while(true){
