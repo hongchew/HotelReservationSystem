@@ -5,6 +5,7 @@
  */
 package horsmanagementclient;
 
+import ejb.session.singleton.SystemHelperRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import entity.EmployeeEntity;
 import entity.ExceptionReportEntity;
@@ -30,6 +31,7 @@ import util.exception.RoomTypeNotFoundException;
 public class HotelOperationModule {
 
     private RoomSessionBeanRemote roomSessionBean;
+    private SystemHelperRemote systemHelper;
     
     private EmployeeEntity currentEmployee;
     private final Scanner sc = new Scanner(System.in);
@@ -38,8 +40,9 @@ public class HotelOperationModule {
     public HotelOperationModule() {
     }
 
-    public HotelOperationModule(RoomSessionBeanRemote roomSessionBean, EmployeeEntity currentEmployee) {
+    public HotelOperationModule(RoomSessionBeanRemote roomSessionBean, SystemHelperRemote systemHelper,  EmployeeEntity currentEmployee) {
         this.roomSessionBean = roomSessionBean;
+        this.systemHelper = systemHelper;
         this.currentEmployee = currentEmployee;
     }
     
@@ -51,7 +54,8 @@ public class HotelOperationModule {
             System.out.println("(1) Room Type Management");
             System.out.println("(2) Room Management");
             System.out.println("(3) View Room Allocation Exception Report");
-            System.out.println("(4) Return");
+            System.out.println("(4) Return\n");
+            System.out.println("(5) Manually Trigger Daily Room Allocation");
             String response = sc.next();
             switch(response){
                 case "1":
@@ -68,7 +72,13 @@ public class HotelOperationModule {
                     
                 case "4":
                     return;
- 
+                    
+                case "5":
+                    System.err.println("\n****Manually triggering room allocation****");
+                    systemHelper.allocateRoomsDaily();
+                    System.err.println("****Allocation complete****\n");
+                    return;
+                    
                 default:
                     System.err.println("Please enter a valid command");
             }           

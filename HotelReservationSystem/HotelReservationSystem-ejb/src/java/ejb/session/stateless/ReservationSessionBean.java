@@ -93,7 +93,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                         flag = true;
                     }
                 }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
-                    System.err.println("No room rate/type");
+                    System.err.println(e.getMessage());
                     flag = false;
                     break;
                 }

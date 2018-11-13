@@ -5,6 +5,7 @@
  */
 package horsmanagementclient;
 
+import ejb.session.singleton.SystemHelperRemote;
 import ejb.session.stateful.RoomReservationControllerRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
@@ -22,6 +23,7 @@ public class MainApp {
     private EmployeeSessionBeanRemote employeeSessionBean;
     private PartnerSessionBeanRemote partnerSessionBean;
     private RoomReservationControllerRemote roomReservationController;
+    private SystemHelperRemote systemHelper;
     private EmployeeEntity currentEmployee;
     private Scanner sc;
     
@@ -29,13 +31,14 @@ public class MainApp {
         this.sc = new Scanner(System.in);
     }
 
-    public MainApp(RoomSessionBeanRemote roomSessionBean, EmployeeSessionBeanRemote employeeSessionBean, PartnerSessionBeanRemote partnerSessionBean, RoomReservationControllerRemote roomReservationController) {
+    public MainApp(RoomSessionBeanRemote roomSessionBean, EmployeeSessionBeanRemote employeeSessionBean, PartnerSessionBeanRemote partnerSessionBean, RoomReservationControllerRemote roomReservationController, SystemHelperRemote systemHelper) {
         this();
         
         this.roomSessionBean = roomSessionBean;
         this.employeeSessionBean = employeeSessionBean;
         this.partnerSessionBean = partnerSessionBean;
         this.roomReservationController = roomReservationController;
+        this.systemHelper = systemHelper;
     }
     
     
@@ -100,7 +103,7 @@ public class MainApp {
                     System.out.println("(1)Hotel Operation (Operation Manager) Module \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
-                        HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, currentEmployee);
+                        HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, systemHelper, currentEmployee);
                         opsMod.runHotelOperationModuleOperationsManager();
                     }else if(response.equals("2")){
                         doLogout();
@@ -117,7 +120,7 @@ public class MainApp {
                     System.out.println("(1)Hotel Operation Module (Sales Manager) \n(2)Logout");
                     response = sc.next();
                     if(response.equals("1")){
-                        HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, currentEmployee);
+                        HotelOperationModule opsMod = new HotelOperationModule(roomSessionBean, systemHelper, currentEmployee);
                         opsMod.runHotelOperationModuleSalesManager();
                     }else if(response.equals("2")){
                         doLogout();

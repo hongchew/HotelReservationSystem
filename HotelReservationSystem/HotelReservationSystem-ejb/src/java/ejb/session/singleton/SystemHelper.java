@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
+import javax.ejb.Remote;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -35,7 +36,8 @@ import util.exception.NoHigherRankException;
 @Singleton
 @LocalBean
 @Startup
-public class SystemHelper {
+@Remote(SystemHelperRemote.class)
+public class SystemHelper implements SystemHelperRemote {
 
     @EJB
     private ReservationSessionBeanLocal reservationSessionBean;
@@ -68,6 +70,7 @@ public class SystemHelper {
     
     //Recursively allocate rooms to all reservation at 2am every day. 
     @Schedule(hour = "2")
+    @Override
     public void allocateRoomsDaily(){
         List<ReservationRecordEntity> reservationsForToday = getAllReservationToday();
         Calendar cal = Calendar.getInstance();
