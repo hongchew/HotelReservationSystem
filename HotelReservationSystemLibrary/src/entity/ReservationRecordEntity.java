@@ -37,7 +37,6 @@ public class ReservationRecordEntity implements Serializable {
     private RoomTypeEntity roomType;
     
     @ManyToOne
-    @JoinColumn(nullable = false)
     private RoomEntity assignedRoom;
     
     @Temporal(TemporalType.DATE)

@@ -86,7 +86,7 @@ public class MainApp {
     }
     
     private void guestLogin(){
-        System.out.println("****Guest Login****");
+        System.out.println("\n****Guest Login****");
         System.out.println("Enter username");
         String username = sc.next();
         System.out.println("Enter password");
@@ -94,7 +94,7 @@ public class MainApp {
         
         try{
             roomReservationController.guestLogin(username, password);
-            System.out.println("Login Successful");
+            System.out.println("\nLogin Successful");
             loggedIn = true;
             guestMenu();
         }catch(InvalidLoginCredentialException e){
@@ -143,13 +143,18 @@ public class MainApp {
             Date startDate = df.parse(sc.next());
             System.out.println("Enter check out date (dd/mm/yyyy):");
             Date endDate = df.parse(sc.next());
-
-            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
-            if(ticket.getAvailableRoomTypes().isEmpty()){
-                System.err.println("There are no available rooms for your desired check in and check out date.");
+            
+            if(startDate.after(endDate) || startDate.equals(endDate)){
+                System.err.println("\nCheck in date must be after checkout date.\n");
                 return null;
             }
-            System.out.println("****Available Rooms****");
+            
+            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
+            if(ticket.getAvailableRoomTypes().isEmpty()){
+                System.err.println("\nThere are no available rooms for your desired check in and check out date.\n");
+                return null;
+            }
+            System.out.println("\n****Available Rooms****");
             for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
                 RoomTypeEntity type = ticket.getAvailableRoomTypes().get(i);
                 System.out.println("(" + i + ")" + type.getTypeName());
@@ -160,6 +165,7 @@ public class MainApp {
                 System.out.println("Cost: " + ticket.getRespectiveTotalBill().get(i));
                 System.out.println();
             }
+            System.out.println("\n****End of list****\n");
             while(loggedIn){
                 System.out.println("Reserve a room? (Y/N)");
                 String resp = sc.next();
@@ -176,7 +182,7 @@ public class MainApp {
             }
             return ticket;
         } catch (ParseException ex) {
-            System.err.println("Please enter valid date format");
+            System.err.println("\nPlease enter valid date format\n");
             return null;
         }
     }
@@ -187,8 +193,10 @@ public class MainApp {
             System.out.println("Enter number of " + type.getTypeName() + " to reserve:");
             int num = sc.nextInt();
             if(num < 0 || num > ticket.getRespectiveNumberOfRoomsRemaining().get(i)){
+                ticket.getRespectiveNumberReserved().add(0);
                 System.out.println("Invalid Number, 0 rooms of this type will be reserved");
             }else{
+                ticket.getRespectiveNumberReserved().add(num);
                 System.out.println(num + " of " + type.getTypeName() + " added to cart");
             }
         }

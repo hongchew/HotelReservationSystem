@@ -437,10 +437,12 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     @Override
     public List<RoomRateEntity> getValidRateList(RoomTypeEntity roomType, Date date, RateTypeEnum rateType){
-        Query q = em.createQuery("SELECT r FROM RoomRateEntity r WHERE r.startDate <= :date AND (r.endDate >= :date OR r.endDate = :null)"
-                                + "AND r.status = :status AND r.rateType = :rateType AND r.roomType = :roomType");
-        q.setParameter("date", date);
-        q.setParameter("null", null);
+        //Query q = em.createQuery("SELECT r FROM RoomRateEntity r WHERE r.startDate <= :date AND (r.endDate >= :date OR r.endDate IS NULL)"
+        //                        + "AND r.status = :status AND r.rateType = :rateType AND r.roomType = :roomType");
+        
+        Query q = em.createQuery("SELECT r FROM RoomRateEntity r WHERE ((:date BETWEEN r.startDate AND r.endDate) OR (:date >= r.startDate AND r.endDate IS NULL)) AND r.status = :status AND r.rateType = :rateType AND r.roomType = :roomType" );
+        q.setParameter("date", date, TemporalType.DATE);
+        //q.setParameter("null", (Date) null, TemporalType.DATE);
         q.setParameter("status", StatusEnum.AVAILABLE);
         q.setParameter("rateType", rateType);
         q.setParameter("roomType", roomType);

@@ -80,7 +80,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             BigDecimal totalBill = new BigDecimal(0);
             Integer numRoomsRemaining = Integer.MAX_VALUE;
             boolean flag = false;
-            for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+            for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
                 try{
                     Integer numAvail = roomSessionBean.getNumberOfRoomsAvailable(type, date);
                     if(numAvail <= 0){ //no room available for 1 day means room type is not available for that search
@@ -117,7 +117,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                 em.persist(record);
                 reservations.add(record);
                 updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
-                
+                System.err.println("i = " + i + " j = " + j + "reserved");
             }
         }
         return reservations;
