@@ -89,11 +89,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         Date date = cal.getTime();
         date = setHoursMinsToZero(date);
         for(int j = 0; j <= 365; j++){ //create next 365 days of availability record in advance.
-            date = addDays(date, 1);
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
             em.persist(avail);
             em.flush();
             newRoomType.addNewAvailabilityRecord(avail);
+            date = addDays(date, 1);
         }
         
         return newRoomType;
@@ -405,7 +405,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public Integer getNumberOfRoomsAvailable(RoomTypeEntity type, Date date) throws RoomTypeUnavailableException{
         Query query = em.createQuery("SELECT a FROM AvailabilityRecordEntity a WHERE a.roomType = :type AND a.availabiltyRecordDate =:date");
         query.setParameter("type", type);
-        query.setParameter("date", date);
+        query.setParameter("date", date, TemporalType.DATE);
         
         try{
             AvailabilityRecordEntity avail = (AvailabilityRecordEntity) query.getSingleResult();

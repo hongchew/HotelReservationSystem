@@ -115,6 +115,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             for(int j = 0; j < ticket.getRespectiveNumberReserved().get(i); j++){ //for each room booked
                 ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guest);
                 em.persist(record);
+                record.setBill(ticket.getRespectiveTotalBill().get(i));
+                guest.getReservationRecords().add(record);
                 reservations.add(record);
                 updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
                 System.err.println("i = " + i + " j = " + j + "reserved");
@@ -131,6 +133,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             for(int j = 0; j < ticket.getRespectiveNumberReserved().get(i); j++){ //for each room booked
                 ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guestEmail);
                 em.persist(record);
+                record.setBill(ticket.getRespectiveTotalBill().get(i));
                 reservations.add(record);
                 updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
             }
@@ -145,6 +148,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             for(int j = 0; j < ticket.getRespectiveNumberReserved().get(i); j++){ //for each room booked
                 ReservationRecordEntity record = new ReservationRecordEntity(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate(), guestEmail, partner);
                 em.persist(record);
+                record.setBill(ticket.getRespectiveTotalBill().get(i));
+                partner.getReservationRecords().add(record);
                 reservations.add(record);
                 updateAvailabilityRecord(ticket.getAvailableRoomTypes().get(i), ticket.getStartDate(), ticket.getEndDate());
             }

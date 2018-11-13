@@ -71,13 +71,18 @@ public class FrontOfficeModule {
             Date startDate = cal.getTime();
             System.out.println("Enter check out date (dd/mm/yyyy):");
             Date endDate = df.parse(sc.next());
-
-            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
-            if(ticket.getAvailableRoomTypes().isEmpty()){
-                System.err.println("There are no available rooms for your desired check in and check out date.");
+            
+            if(startDate.after(endDate) || startDate.equals(endDate)){
+                System.err.println("\nCheck in date must be after checkout date.\n");
                 return null;
             }
-            System.out.println("****Available Rooms****");
+            
+            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
+            if(ticket.getAvailableRoomTypes().isEmpty()){
+                System.err.println("\nThere are no available rooms for your desired check in and check out date.\n");
+                return null;
+            }
+            System.out.println("\n****Available Rooms****");
             for(int i = 0; i < ticket.getAvailableRoomTypes().size(); i++){
                 RoomTypeEntity type = ticket.getAvailableRoomTypes().get(i);
                 System.out.println("(" + i + ")" + type.getTypeName());
@@ -88,6 +93,7 @@ public class FrontOfficeModule {
                 System.out.println("Cost: " + ticket.getRespectiveTotalBill().get(i));
                 System.out.println();
             }
+            System.out.println("\n****End of list****\n");
                 while(true){
                     System.out.println("Reserve a room? (Y/N)");
                     String resp = sc.next();
@@ -124,9 +130,11 @@ public class FrontOfficeModule {
             System.out.println("Enter number of " + type.getTypeName() + " to reserve:");
             int num = sc.nextInt();
             if(num < 0 || num > ticket.getRespectiveNumberOfRoomsRemaining().get(i)){
-                System.out.println("Invalid Number, 0 rooms of this type will be reserved");
+                ticket.getRespectiveNumberReserved().add(0);
+                System.out.println("\nInvalid Number, 0 rooms of this type will be reserved\n");
             }else{
-                System.out.println(num + " of " + type.getTypeName() + " added to cart");
+                ticket.getRespectiveNumberReserved().add(num);
+                System.out.println(num + " of " + type.getTypeName() + " added to cart\n");
             }
         }
         

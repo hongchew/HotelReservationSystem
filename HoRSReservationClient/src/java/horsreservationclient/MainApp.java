@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import util.exception.EntityMismatchException;
 import util.exception.ReservationRecordNotFoundException;
@@ -82,7 +83,7 @@ public class MainApp {
         String email = sc.next();
         
         guestSessionBean.registerNewGuest(name, username, password, email);
-        System.out.println("New Guest Created!\n");
+        System.out.println("\n****New Guest Created!****\n");
     }
     
     private void guestLogin(){
@@ -98,7 +99,7 @@ public class MainApp {
             loggedIn = true;
             guestMenu();
         }catch(InvalidLoginCredentialException e){
-            System.err.println(e.getMessage());
+            System.err.println("\n" + e.getMessage());
         }
     }
     
@@ -174,7 +175,8 @@ public class MainApp {
                         reserveHotelRoom(ticket);
                         return ticket;
                     case "N":
-                        break;
+                        return null;
+                        
                     default:
                         System.out.println("Please choose a valid option");
                         break;
@@ -194,10 +196,10 @@ public class MainApp {
             int num = sc.nextInt();
             if(num < 0 || num > ticket.getRespectiveNumberOfRoomsRemaining().get(i)){
                 ticket.getRespectiveNumberReserved().add(0);
-                System.out.println("Invalid Number, 0 rooms of this type will be reserved");
+                System.out.println("\nInvalid Number, 0 rooms of this type will be reserved\n");
             }else{
                 ticket.getRespectiveNumberReserved().add(num);
-                System.out.println(num + " of " + type.getTypeName() + " added to cart");
+                System.out.println(num + " of " + type.getTypeName() + " added to cart\n");
             }
         }
         

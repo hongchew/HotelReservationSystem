@@ -153,9 +153,11 @@ public class MainApp {
             System.out.println("Enter number of " + type.getTypeName() + " to reserve:");
             int num = sc.nextInt();
             if(num < 0 || num > ticket.getRespectiveNumberOfRoomsRemaining().get(i)){
-                System.out.println("Invalid Number, 0 rooms of this type will be reserved");
+                ticket.getRespectiveNumberReserved().add(0);
+                System.out.println("\nInvalid Number, 0 rooms of this type will be reserved\n");
             }else{
-                System.out.println(num + " of " + type.getTypeName() + " added to cart");
+                ticket.getRespectiveNumberReserved().add(num);
+                System.out.println(num + " of " + type.getTypeName() + " added to cart\n");
             }
         }
         List<ReservationRecordEntity> reserved = partnerReserveRooms(ticket, loggedInId, email);
