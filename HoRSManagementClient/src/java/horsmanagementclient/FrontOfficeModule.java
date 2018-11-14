@@ -161,6 +161,7 @@ public class FrontOfficeModule {
                                         r.getRoomType().getTypeName() + "\n");
                     checkInRoom(r.getId());
                 }
+                System.out.println("****All Rooms Checked In****");
             }
         }catch(ConstraintViolationException e){
             System.err.println("Invalid email entered.");

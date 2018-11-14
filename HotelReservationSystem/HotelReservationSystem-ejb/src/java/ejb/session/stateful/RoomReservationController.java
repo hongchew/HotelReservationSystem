@@ -177,7 +177,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
             r.setCheckOutTime(now);
             r.getAssignedRoom().setOccupancy(IsOccupiedEnum.UNOCCUPIED);
             r.getAssignedRoom().setIsOccupiedTo(null);
-            return "Room " + roomNumber +   "checked out successfully";
+            return "\nRoom " + roomNumber +   " checked out successfully";
         }catch(NoResultException | NonUniqueResultException e){
             throw new ReservationRecordNotFoundException("No reservation records for this room is found");
         }
