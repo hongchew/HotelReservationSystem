@@ -14,6 +14,7 @@ import java.util.Date;
 import util.exception.EntityMismatchException;
 import util.exception.ReservationRecordNotFoundException;
 import util.objects.ReservationTicket;
+import util.objects.ReservationTicketWrapper;
 
 
 /**
@@ -34,5 +35,7 @@ public interface ReservationSessionBeanLocal {
     public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicket ticket, PartnerEntity partner, String guestEmail);
 
     public void setAssignedRoom(RoomEntity room, ReservationRecordEntity res);
+
+    public ReservationTicket unwrapTicketWrapper(ReservationTicketWrapper wrapper);
     
 }

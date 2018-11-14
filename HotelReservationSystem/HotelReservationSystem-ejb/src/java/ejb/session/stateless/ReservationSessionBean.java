@@ -30,6 +30,7 @@ import util.exception.ReservationRecordNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeUnavailableException;
 import util.objects.ReservationTicket;
+import util.objects.ReservationTicketWrapper;
 
 /**
  *
@@ -156,6 +157,23 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
         return reservations;
     } 
+    
+    @Override
+    public ReservationTicket unwrapTicketWrapper(ReservationTicketWrapper wrapper){
+        ReservationTicket ticket = new ReservationTicket(wrapper.getStartDate(), wrapper.getEndDate());
+
+        for(int i = 0; i < wrapper.getReservationDescriptions().size(); i++){
+            Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.typeName = :name");
+            q.setParameter("name", wrapper.getRespectiveRoomTypeName().get(i));
+            RoomTypeEntity type = (RoomTypeEntity) q.getSingleResult();
+            ticket.getAvailableRoomTypes().add(type);
+            ticket.getRespectiveTotalBill().add(wrapper.getRespectiveTotalBill().get(i));
+            ticket.getRespectiveNumberReserved().add(wrapper.getRespectiveNumberToReserve().get(i));
+        }
+        
+        return ticket;
+    }
+    
     
     private void updateAvailabilityRecord(RoomTypeEntity type, Date startDate, Date endDate){
         Calendar start = Calendar.getInstance();

@@ -18,6 +18,7 @@ import java.util.Date;
 import util.exception.EntityMismatchException;
 import util.exception.ReservationRecordNotFoundException;
 import util.objects.ReservationTicket;
+import util.objects.ReservationTicketWrapper;
 
 /**
  *
@@ -54,8 +55,9 @@ public class ReservationWebService {
      * @param endDate
      * @return ReservationTicket with information of available room types
      */
-    public ReservationTicket searchRoom(Date startDate, Date endDate){
-        return reservationSessionBean.searchRooms(startDate, endDate);
+    public ReservationTicketWrapper searchRoom(Date startDate, Date endDate){
+        ReservationTicket reservationTicket = reservationSessionBean.searchRooms(startDate, endDate);
+        return new ReservationTicketWrapper(reservationTicket);
     }
     
     /**
@@ -65,8 +67,10 @@ public class ReservationWebService {
      * @param guestEmail
      * @return ArrayList of ReservationRecordEntity created during reservation
      */
-    public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicket ticket, Long partnerId, String guestEmail){
+    public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicketWrapper ticketWrapper, Long partnerId, String guestEmail){
         PartnerEntity partner = partnerSessionBean.retrievePartnerById(partnerId);
+        ReservationTicket ticket = reservationSessionBean.unwrapTicketWrapper(ticketWrapper);
+        
         return reservationSessionBean.partnerReserveRooms(ticket, partner, guestEmail);
     }
     
@@ -76,8 +80,14 @@ public class ReservationWebService {
      * @param partnerId
      * @return ArrayList of ReservationRecordEntities associated with the partner
      */
-    public ArrayList<ReservationRecordEntity> viewAllPartnerReservation(Long partnerId){
-        return partnerSessionBean.retrieveAllPartnerReservations(partnerId);
+    public ArrayList<String> viewAllPartnerReservation(Long partnerId){
+        
+        ArrayList<String> descriptions = new ArrayList<>();
+        ArrayList<ReservationRecordEntity> reservations = partnerSessionBean.retrieveAllPartnerReservations(partnerId);
+        for(ReservationRecordEntity r : reservations){
+            descriptions.add(r.toString());
+        }
+        return descriptions;
     }
     
     /**

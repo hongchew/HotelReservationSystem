@@ -226,7 +226,11 @@ public class ReservationRecordEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ReservationRecordEntity[ id=" + id + " ]";
+        return "Reservation ID: " + getId() + "\n" +
+                "Start Date: " + getStartDateAsString() + "\n" +
+                "End Date: " + getEndDateAsString() + "\n" +
+                "Room Type Reserved: " + getRoomType().getTypeName() + "\n" +
+                "Bill: $" + getBill();
     }
 
     public ExceptionReportEntity getException() {
