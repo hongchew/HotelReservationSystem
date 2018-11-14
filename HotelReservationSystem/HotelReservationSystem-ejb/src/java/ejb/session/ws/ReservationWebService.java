@@ -15,6 +15,7 @@ import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateless.ReservationSessionBeanLocal;
 import entity.PartnerEntity;
 import java.util.Date;
+import javax.jws.WebParam;
 import util.exception.EntityMismatchException;
 import util.exception.ReservationRecordNotFoundException;
 import util.objects.ReservationTicket;
@@ -41,7 +42,7 @@ public class ReservationWebService {
      * @return PartnerEntity primary key 
      * @throws InvalidLoginCredentialException
      */
-    public Long partnerLogin(String username, String password) throws InvalidLoginCredentialException{
+    public Long partnerLogin(@WebParam(name = "username") String username, @WebParam(name = "password") String password) throws InvalidLoginCredentialException{
         try{
             return partnerSessionBean.partnerLogin(username, password);          
         }catch(InvalidLoginCredentialException e){
@@ -55,7 +56,7 @@ public class ReservationWebService {
      * @param endDate
      * @return ReservationTicket with information of available room types
      */
-    public ReservationTicketWrapper searchRoom(Date startDate, Date endDate){
+    public ReservationTicketWrapper searchRoom(@WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate){
         ReservationTicket reservationTicket = reservationSessionBean.searchRooms(startDate, endDate);
         return new ReservationTicketWrapper(reservationTicket);
     }
@@ -67,11 +68,11 @@ public class ReservationWebService {
      * @param guestEmail
      * @return ArrayList of ReservationRecordEntity created during reservation
      */
-    public ArrayList<ReservationRecordEntity> partnerReserveRooms(ReservationTicketWrapper ticketWrapper, Long partnerId, String guestEmail){
+    public void partnerReserveRooms(@WebParam(name = "ticketWrapper") ReservationTicketWrapper ticketWrapper, @WebParam(name = "partnerId") Long partnerId, @WebParam(name = "guestEmail") String guestEmail){
         PartnerEntity partner = partnerSessionBean.retrievePartnerById(partnerId);
         ReservationTicket ticket = reservationSessionBean.unwrapTicketWrapper(ticketWrapper);
         
-        return reservationSessionBean.partnerReserveRooms(ticket, partner, guestEmail);
+        reservationSessionBean.partnerReserveRooms(ticket, partner, guestEmail);
     }
     
     
@@ -80,7 +81,7 @@ public class ReservationWebService {
      * @param partnerId
      * @return ArrayList of ReservationRecordEntities associated with the partner
      */
-    public ArrayList<String> viewAllPartnerReservation(Long partnerId){
+    public ArrayList<String> viewAllPartnerReservation(@WebParam(name = "partnerId") Long partnerId){
         
         ArrayList<String> descriptions = new ArrayList<>();
         ArrayList<ReservationRecordEntity> reservations = partnerSessionBean.retrieveAllPartnerReservations(partnerId);
@@ -96,7 +97,7 @@ public class ReservationWebService {
      * @param partnerId
      * @return return string with details of the reservation requested. 
      */
-    public String viewReservationDetail(Long reservationId, Long partnerId){
+    public String viewReservationDetail(@WebParam(name = "reservationId") Long reservationId, @WebParam(name = "partnerId") Long partnerId){
         try {
             return partnerSessionBean.viewReservationDetail(reservationId, partnerId);
         } catch (EntityMismatchException | ReservationRecordNotFoundException ex) {

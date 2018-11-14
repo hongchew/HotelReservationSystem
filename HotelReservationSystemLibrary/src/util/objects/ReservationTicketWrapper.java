@@ -19,6 +19,7 @@ public class ReservationTicketWrapper implements Serializable {
     private Date endDate;
     private ArrayList<String> reservationDescriptions = new ArrayList<>();
     private ArrayList<String> respectiveRoomTypeName = new ArrayList<>();
+    private ArrayList<Integer> respectiveRoomRemaining = new ArrayList<>();
     private ArrayList<BigDecimal> respectiveTotalBill = new ArrayList<>(); 
     private ArrayList<Integer> respectiveNumberToReserve = new ArrayList<>();
 
@@ -40,7 +41,16 @@ public class ReservationTicketWrapper implements Serializable {
             reservationDescriptions.add(descriptions);
             respectiveRoomTypeName.add(type.getTypeName());
             respectiveTotalBill.add(ticket.getRespectiveTotalBill().get(i));
+            respectiveRoomRemaining.add(ticket.getRespectiveNumberOfRoomsRemaining().get(i));
         }
+    }
+
+    public ArrayList<Integer> getRespectiveRoomRemaining() {
+        return respectiveRoomRemaining;
+    }
+
+    public void setRespectiveRoomRemaining(ArrayList<Integer> respectiveRoomRemaining) {
+        this.respectiveRoomRemaining = respectiveRoomRemaining;
     }
 
     public ArrayList<String> getReservationDescriptions() {
