@@ -71,10 +71,10 @@ public class HotelOperationModule {
                     break;
                                
                 case "4":
-                    System.err.println("\n****Manually triggering room allocation****");
+                    System.out.println("\n****Manually triggering room allocation****");
                     systemHelper.allocateRoomsDaily();
-                    System.err.println("****Allocation complete****\n");
-                    return;
+                    System.out.println("****Allocation complete****\n");
+                    break;
                     
                 case "5":
                     return;
