@@ -8,7 +8,6 @@ package ejb.session.singleton;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
 import ejb.session.stateless.PartnerSessionBeanLocal;
 import ejb.session.stateless.RoomSessionBeanLocal;
-import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -67,8 +66,6 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
             employeeSessionBean.createNewGuestRelationsOffr("guestrelationsofficer", "guestrelationsofficer", "password");
             partnerSessionBean.createNewPartner("Holiday.com", "holidaycom", "password");
             
-            RoomRankingEntity ranks = new RoomRankingEntity("rankings");
-            em.persist(ranks);
             
             Date today = new Date();
             

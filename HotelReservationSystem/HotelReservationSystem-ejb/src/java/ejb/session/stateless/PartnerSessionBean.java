@@ -105,7 +105,7 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
         ReservationRecordEntity reservation = em.find(ReservationRecordEntity.class, reservationId);
         if(reservation == null){
             throw new ReservationRecordNotFoundException("Reservation not found");
-        }else if(!reservation.getReservedByPartner().getPartnerId().equals(partnerId)){
+        }else if(reservation.getReservedByPartner().getPartnerId().equals(partnerId)){
             String details = "Reservation id: " + reservationId +
                             "\nReserved by: " + reservation.getReservedByPartner() +
                             "\nStart date: " + reservation.getStartDateAsString()+

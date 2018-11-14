@@ -33,7 +33,6 @@ public interface RoomSessionBeanRemote {
     
     public Boolean deleteRoomType(String typeName) throws RoomTypeNotFoundException;
 
-    public List<RoomTypeEntity> retrieveListOfRoomTypes();
 
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException;
 
@@ -47,7 +46,7 @@ public interface RoomSessionBeanRemote {
 
     public String viewRoomDetails(RoomEntity room);
 
-    public List<RoomTypeEntity> getRoomRanks();
+    public List<RoomTypeEntity> getRoomTypesByRanking();
 
     public Long createNewRoomType(String typeName, String description, String bedType, Integer capacity, String amenities, int i);
     

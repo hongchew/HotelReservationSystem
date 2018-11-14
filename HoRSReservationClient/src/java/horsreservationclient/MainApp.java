@@ -138,6 +138,7 @@ public class MainApp {
     private ReservationTicket searchHotelRoom(){
         
         try {
+            System.out.println("\n****Search Hotel Room****");
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println("Kindly note that our hotel only accepts reservations a maximum of 1 year in advance.");
             System.out.println("Enter check in date (dd/mm/yyyy):");
@@ -196,10 +197,10 @@ public class MainApp {
             int num = sc.nextInt();
             if(num < 0 || num > ticket.getRespectiveNumberOfRoomsRemaining().get(i)){
                 ticket.getRespectiveNumberReserved().add(0);
-                System.out.println("\nInvalid Number, 0 rooms of this type will be reserved\n");
+                System.out.println("****Invalid Number, 0 rooms of this type will be reserved****\n");
             }else{
                 ticket.getRespectiveNumberReserved().add(num);
-                System.out.println(num + " of " + type.getTypeName() + " added to cart\n");
+                System.out.println("****" + num + " of " + type.getTypeName() + " added to cart****\n");
             }
         }
         

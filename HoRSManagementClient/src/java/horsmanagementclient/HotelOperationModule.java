@@ -139,7 +139,7 @@ public class HotelOperationModule {
         sc.nextLine();
         String newAmenities = sc.nextLine();
         
-        List<RoomTypeEntity> roomRanks = roomSessionBean.getRoomRanks();
+        List<RoomTypeEntity> roomRanks = roomSessionBean.getRoomTypesByRanking();
         int i = 0;
         System.out.println("Select the room ranking position to insert the new room in (Smaller number = more premium)");
         for(i = 0; i < roomRanks.size(); i++){
@@ -152,13 +152,13 @@ public class HotelOperationModule {
         }*/
         System.out.println("(" + i + ") Least Premium");
         int newRank = sc.nextInt();
-        if(newRank >= i){
-            i = roomRanks.size(); //least premium
+        if(newRank >= roomRanks.size()){
+            newRank = roomRanks.size(); //least premium
         }else if (newRank < 0){
-            i = 0; //most premium
+            newRank = 0; //most premium
         }
         
-        Long roomTypeId = roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities, i);
+        Long roomTypeId = roomSessionBean.createNewRoomType(newTypeName, newDescription, newBeds, capacity, newAmenities, newRank);
         
         try {
             System.out.print("Enter Normal Rate per night for " + newTypeName + " $");
@@ -239,7 +239,7 @@ public class HotelOperationModule {
     
     private List<RoomTypeEntity> viewAllRoomTypes(){
         System.out.println("\n****All Room Types****");
-        List<RoomTypeEntity> roomTypes = roomSessionBean.retrieveListOfRoomTypes();
+        List<RoomTypeEntity> roomTypes = roomSessionBean.getRoomTypesByRanking();
         int i = 0;
         for(RoomTypeEntity r: roomTypes){
             System.out.println("(" + i + ")" + r.getTypeName());
@@ -290,6 +290,7 @@ public class HotelOperationModule {
     
     private void createNewRoom(){
         try {
+            System.out.println("\n****Create New Room****");
             System.out.println("Enter Floor Number of New Room");
             Integer floor = sc.nextInt();
             System.out.println("Enter Unit Number of New Room");
@@ -307,6 +308,7 @@ public class HotelOperationModule {
     }
     
     private void updateRoom(){
+        System.out.println("\n****Update Room****");
         System.out.println("Enter room floor number");
         String floor = sc.next();
         System.out.println("Enter room unit number");
@@ -334,7 +336,7 @@ public class HotelOperationModule {
                     return;
             }
             roomSessionBean.updateRoom(roomNumber, roomType.getTypeName(), status);
-            
+            System.out.println("\n****Room Updated****\n");
         }catch(RoomNotFoundException | NullPointerException | RoomTypeNotFoundException e){
             System.err.println(e.getMessage());
             return;
@@ -342,6 +344,7 @@ public class HotelOperationModule {
     }
     
     private void deleteRoom(){
+        System.out.println("\n****Delete Room****");
         System.out.println("Enter room floor number");
         String floor = sc.next();
         System.out.println("Enter room unit number");
@@ -351,7 +354,7 @@ public class HotelOperationModule {
         
         try{
             if(roomSessionBean.deleteRoom(roomNumber)){
-                System.out.println(roomNumber + " deleted successfully.");
+                System.out.println("\n****"+ roomNumber + " deleted successfully****\n");
             }else{
                 System.out.println(roomNumber + " is currently in use. The room had been disabled instead.");
             }
@@ -363,7 +366,7 @@ public class HotelOperationModule {
     
     private void viewAllRooms(){
         List<RoomEntity> rooms = roomSessionBean.retrieveAllRooms();
-        System.out.println("****All Rooms****\n");
+        System.out.println("\n****All Rooms****");
         for(RoomEntity room: rooms){
             System.out.println(roomSessionBean.viewRoomDetails(room));
         }
@@ -372,13 +375,14 @@ public class HotelOperationModule {
     
     private void viewExceptionReport(){
         try {
-            System.out.println("\nEnter Date of Report to generate (DD/MM/YYYY)");
+            System.out.println("\n****View Exception Report****");
+            System.out.println("Enter Date of Report to generate (DD/MM/YYYY)");
             String dateString = sc.next();
             Date date = dateFormat.parse(dateString);
             
             List<ExceptionReportEntity> report = roomSessionBean.getListOfExceptionReportsByDate(date);
             if(report.isEmpty()){
-                System.err.println("\n****No Exception Report.****");
+                System.out.println("\n****No Exception Report.****\n");
             }else{
                 System.out.println("\n****Exception Reports****");
                 for(ExceptionReportEntity e:report){
@@ -489,6 +493,7 @@ public class HotelOperationModule {
     }
     
     private void viewRoomRateDetails(){
+        System.out.println("\n****View Room Rate Details****");
         List<RoomRateEntity> roomRates = viewAllRoomRates();
         System.out.println("Select number of Room Rate to view details");
         int rateIndex = sc.nextInt();
@@ -543,7 +548,7 @@ public class HotelOperationModule {
                 }
             }
             
-            System.out.println("Select Room Rate Status: \n(1)Disable Room \n(2)Make Room Available");
+            System.out.println("Select Room Rate Status: \n(1)Disable Room Rate \n(2)Make Room Rate Available");
             StatusEnum status;
             switch(sc.next()){
                 case "1":
@@ -558,7 +563,7 @@ public class HotelOperationModule {
             }
             
             roomSessionBean.updateRoomRate(roomRate.getRateId(), newRatePerNight, newStartDate, endDate, status);
-            
+            System.out.println("****Room Rate Updated****\n");
         } catch (ParseException ex) {
             System.err.println("Invalid date entered");
             return;
@@ -571,9 +576,9 @@ public class HotelOperationModule {
     private void deleteRoomRate(RoomRateEntity roomRate){
         try {
             if(roomSessionBean.deleteRoomRate(roomRate.getRateId())){
-                System.out.println("Room rate deleted.");
+                System.out.println("****Room rate deleted****\n");
             }else{
-                System.out.println("Room rate is currently in use and had been disabled instead.");
+                System.out.println("Room rate is currently in use and had been disabled instead.\n");
             }
         } catch (RoomRateNotFoundException | LastAvailableRateException ex) {
             System.err.println(ex.getMessage());
@@ -582,14 +587,14 @@ public class HotelOperationModule {
     
     
     private List<RoomRateEntity> viewAllRoomRates(){
-        System.out.println("****All Room Rates****\n");
+        System.out.println("\n****All Room Rates****");
         List<RoomRateEntity> roomRates = roomSessionBean.retrieveAllRoomRates();
         int i = 0;
         for(RoomRateEntity r: roomRates){
             System.out.println("(" + i + ")" + r.getRateName());
             i++;
         }
-        System.out.println("\n****End of list****\n");
+        System.out.println("****End of list****\n");
         
         return roomRates;
     }

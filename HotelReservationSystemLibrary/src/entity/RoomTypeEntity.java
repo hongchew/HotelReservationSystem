@@ -42,6 +42,8 @@ public class RoomTypeEntity implements Serializable {
     private Integer capacity;
     @Column(length = 140, nullable = false)
     private String amenities;
+    @Column(nullable = false)
+    private Integer ranking;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -172,5 +174,21 @@ public class RoomTypeEntity implements Serializable {
     
     public void addNewRoomRate(RoomRateEntity newRoomRate) {
         roomRate.add(newRoomRate);
+    }
+
+    public Integer getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(Integer ranking) {
+        this.ranking = ranking;
+    }
+    
+    public void upgradeRank(){
+        ranking--;
+    }
+    
+    public void downgradeRank(){
+        ranking++;
     }
 }

@@ -63,7 +63,7 @@ public class ReservationWebService {
     
     /**
      *
-     * @param ticket
+     * @param ticketWrapper
      * @param partnerId
      * @param guestEmail
      * @return ArrayList of ReservationRecordEntity created during reservation

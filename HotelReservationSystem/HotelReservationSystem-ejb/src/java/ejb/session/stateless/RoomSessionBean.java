@@ -8,7 +8,6 @@ package ejb.session.stateless;
 import entity.AvailabilityRecordEntity;
 import entity.ExceptionReportEntity;
 import entity.RoomEntity;
-import entity.RoomRankingEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
@@ -81,9 +80,8 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @Override
     public RoomTypeEntity returnNewRoomTypeEntity(String typeName, String description, String bedType, Integer capacity, String amenities, int i) {
         RoomTypeEntity newRoomType = new RoomTypeEntity(typeName, description, bedType, capacity, amenities);
-        em.persist(newRoomType);
-            
         insertRoomRank(newRoomType, i);
+        em.persist(newRoomType);            
         
         Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
@@ -91,11 +89,10 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         for(int j = 0; j <= 365; j++){ //create next 365 days of availability record in advance.
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(date, newRoomType);
             em.persist(avail);
-            em.flush();
             newRoomType.addNewAvailabilityRecord(avail);
             date = addDays(date, 1);
         }
-        
+        em.flush();
         return newRoomType;
     }
       
@@ -164,12 +161,34 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }        
     }
     
-    
     @Override
-    public List<RoomTypeEntity> retrieveListOfRoomTypes() {
-        Query query = em.createQuery("SELECT roomType FROM RoomTypeEntity roomType");
-        return query.getResultList();
+    public List<RoomTypeEntity> getRoomTypesByRanking(){
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r ORDER BY r.ranking ASC");
+        return q.getResultList();
+        
     }
+
+    
+    private void insertRoomRank(RoomTypeEntity newType, int rank){
+        List<RoomTypeEntity> roomTypes = getRoomTypesByRanking();
+        newType.setRanking(rank);
+        for(RoomTypeEntity r : roomTypes){
+            if(r.getRanking()>= newType.getRanking()&& !r.getTypeId().equals(newType.getTypeId())){
+                r.downgradeRank();
+            }
+        }
+    }
+    
+    private void deleteRoomRank(RoomTypeEntity typeToDelete){
+        Query q = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> roomTypes = q.getResultList();
+        for(RoomTypeEntity r : roomTypes){
+            if(r.getRanking()>= typeToDelete.getRanking()){
+                r.upgradeRank();
+            }
+        }
+    }
+    
     
     @Override
     public void createNewRoom(Integer floor, Integer unit, String roomType) throws RoomTypeNotFoundException { 
@@ -177,7 +196,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             RoomTypeEntity thisRoomType = retrieveRoomTypeByTypeName(roomType);
             RoomEntity newRoom = new RoomEntity(floor, unit, thisRoomType);          
             em.persist(newRoom);
-            em.flush();
             thisRoomType.addRoom(newRoom);
         } catch (RoomTypeNotFoundException roomTypeNotFoundException) {
             eJBContext.setRollbackOnly();
@@ -311,32 +329,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override
-    public List<RoomTypeEntity> getRoomRanks(){
-        RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
-        ranks.getRoomTypeEntities().size();
-        return ranks.getRoomTypeEntities();
-    }
-
-    
-    public void insertRoomRank(RoomTypeEntity roomType, int index){
-        //RoomRankingEntity ranks = em.find(RoomRankingEntity.class, new Long(1));
-        Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
-        query.setParameter("name", "rankings");
-        RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
-        ranks.getRoomTypeEntities().add(index, roomType);
-    }
-    
-    private void deleteRoomRank(RoomTypeEntity roomType){
-        Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
-        query.setParameter("name", "rankings");
-        RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
-        
-        ranks.getRoomTypeEntities().remove(roomType);
-
-        
-    }
-    
-    @Override
     public List<ExceptionReportEntity> getListOfExceptionReportsByDate(Date date){
         Query q = em.createQuery("SELECT e FROM ExceptionReportEntity e WHERE e.exceptionDate = :date");
         q.setParameter("date", date);
@@ -398,6 +390,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         roomRate.setRatePerNight(ratePerNight);
         roomRate.setStartDate(startDate);
         roomRate.setEndDate(endDate);
+        roomRate.setStatus(status);
         
     }
     

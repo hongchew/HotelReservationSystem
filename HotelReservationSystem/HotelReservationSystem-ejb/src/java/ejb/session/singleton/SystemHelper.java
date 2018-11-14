@@ -10,7 +10,6 @@ import entity.AvailabilityRecordEntity;
 import entity.ExceptionReportEntity;
 import entity.ReservationRecordEntity;
 import entity.RoomEntity;
-import entity.RoomRankingEntity;
 import entity.RoomTypeEntity;
 import java.util.Calendar;
 import java.util.Date;
@@ -96,6 +95,7 @@ public class SystemHelper implements SystemHelperRemote {
                 RoomTypeEntity nextType = getNextRank(type);
                 String error = "Allocation Exception: Reservation ID " + reservation.getId() + " - Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
                 report.setErrorReport(error);
+                System.err.println(error);
                 return allocateRoom(reservation, nextType, report);
             } catch (NoHigherRankException ex) {
                 String error = "Allocation Exception: Reservation ID " + reservation.getId() +  " - No rooms available.";
@@ -124,24 +124,23 @@ public class SystemHelper implements SystemHelperRemote {
         Calendar cal = Calendar.getInstance();
         Date today = cal.getTime();
         
-        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.startDate = :today");
+        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.startDate = :today AND r.assignedRoom IS NULL");
         q.setParameter("today", today);
         
         return q.getResultList();
     }
     
     private RoomTypeEntity getNextRank(RoomTypeEntity currentType) throws NoHigherRankException{
-        Query query = em.createQuery("SELECT r FROM RoomRankingEntity r WHERE r.name = :name");
-        query.setParameter("name", "rankings");
-        RoomRankingEntity ranks = (RoomRankingEntity) query.getSingleResult();
-        int currentIndex = ranks.getRoomTypeEntities().indexOf(currentType);
-        currentIndex--;
-        
-        try{
-            return ranks.getRoomTypeEntities().get(currentIndex);
-        }catch(IndexOutOfBoundsException e){
+        int currentRank = currentType.getRanking();
+        int nextRank = currentRank - 1;
+        if(nextRank < 0){
             throw new NoHigherRankException("No Higher Ranks Available.");
         }
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.ranking = :nextRank");
+        query.setParameter("nextRank", nextRank);
+        
+        
+        return (RoomTypeEntity) query.getSingleResult();
     }
 
 }
