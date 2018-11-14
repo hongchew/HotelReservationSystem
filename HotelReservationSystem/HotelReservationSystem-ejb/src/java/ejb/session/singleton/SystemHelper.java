@@ -94,11 +94,11 @@ public class SystemHelper implements SystemHelperRemote {
         } catch (NoAvailableRoomException e) {
             try {
                 RoomTypeEntity nextType = getNextRank(type);
-                String error = "Allocation Exception : Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
+                String error = "Allocation Exception: Reservation ID " + reservation.getId() + " - Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
                 report.setErrorReport(error);
                 return allocateRoom(reservation, nextType, report);
             } catch (NoHigherRankException ex) {
-                String error = "Allocation Exception : No rooms available.";
+                String error = "Allocation Exception: Reservation ID " + reservation.getId() +  " - No rooms available.";
                 report.setErrorReport(error);
                 return report;
             }

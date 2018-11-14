@@ -54,8 +54,8 @@ public class HotelOperationModule {
             System.out.println("(1) Room Type Management");
             System.out.println("(2) Room Management");
             System.out.println("(3) View Room Allocation Exception Report");
-            System.out.println("(4) Return\n");
-            System.out.println("(5) Manually Trigger Daily Room Allocation");
+            System.out.println("(4) Return");
+            System.err.println("(5) Manually Trigger Daily Room Allocation");
             String response = sc.next();
             switch(response){
                 case "1":
@@ -370,19 +370,19 @@ public class HotelOperationModule {
     
     private void viewExceptionReport(){
         try {
-            System.out.println("Enter Date of Report to generate (DD/MM/YYYY)");
+            System.out.println("\nEnter Date of Report to generate (DD/MM/YYYY)");
             String dateString = sc.next();
             Date date = dateFormat.parse(dateString);
             
             List<ExceptionReportEntity> report = roomSessionBean.getListOfExceptionReportsByDate(date);
             if(report.isEmpty()){
-                System.out.println("****No Exception Report.****");
+                System.err.println("\n****No Exception Report.****");
             }else{
-                System.out.println("****Exception Reports****");
+                System.out.println("\n****Exception Reports****");
                 for(ExceptionReportEntity e:report){
                     System.out.println(e.getErrorReport());
                 }
-                System.out.println("\n****End of list****\n");
+                System.out.println("****End of list****\n");
             }            
         } catch (ParseException ex) {
             System.err.println("Invalid date format. Please try again.");
