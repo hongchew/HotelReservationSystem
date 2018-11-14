@@ -162,7 +162,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         start.setTime(startDate);
         Calendar end = Calendar.getInstance();
         end.setTime(endDate);
-        for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()){
+        for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()){
             Query q = em.createQuery("SELECT a FROM AvailabilityRecordEntity a WHERE a.availabiltyRecordDate = :date AND a.roomType = :type");
             q.setParameter("date", date);
             q.setParameter("type", type);
@@ -174,6 +174,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     
     @Override
     public void setAssignedRoom(RoomEntity room, ReservationRecordEntity res){
+        
         res.setAssignedRoom(room);
         room.setOccupancy(IsOccupiedEnum.OCCUPIED);
         room.setIsOccupiedTo(res.getEndDate());

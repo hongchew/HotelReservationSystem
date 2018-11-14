@@ -186,7 +186,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
     @Override
     public void assignWalkInRoom(ArrayList<ReservationRecordEntity> reservations){
         for(ReservationRecordEntity r : reservations){
-            em.merge(r);
+            r = em.merge(r);
             Query q = em.createQuery("SELECT r FROM RoomEntity r WHERE r.occupancy = :notOccupied AND r.roomType = :type");
             q.setParameter("notOccupied", IsOccupiedEnum.UNOCCUPIED);
             q.setParameter("type", r.getRoomType());
