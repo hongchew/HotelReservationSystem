@@ -54,8 +54,8 @@ public class HotelOperationModule {
             System.out.println("(1) Room Type Management");
             System.out.println("(2) Room Management");
             System.out.println("(3) View Room Allocation Exception Report");
-            System.out.println("(4) Return");
-            System.err.println("(5) Manually Trigger Daily Room Allocation");
+            System.out.println("(4) Manually Trigger Daily Room Allocation");
+            System.out.println("(5) Return");
             String response = sc.next();
             switch(response){
                 case "1":
@@ -69,15 +69,17 @@ public class HotelOperationModule {
                 case "3":
                     viewExceptionReport();
                     break;
-                    
+                               
                 case "4":
-                    return;
-                    
-                case "5":
                     System.err.println("\n****Manually triggering room allocation****");
                     systemHelper.allocateRoomsDaily();
                     System.err.println("****Allocation complete****\n");
                     return;
+                    
+                case "5":
+                    return;
+                    
+
                     
                 default:
                     System.err.println("Please enter a valid command");
