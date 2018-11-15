@@ -77,7 +77,7 @@ public class SystemHelper implements SystemHelperRemote {
         for(ReservationRecordEntity r : reservationsForToday){
             RoomTypeEntity type = r.getRoomType();
             ExceptionReportEntity report = new ExceptionReportEntity(today, "", r);
-            report = allocateRoom(r, type, report);
+            report = allocateRoom(r, type, report, false);
             //Save the report if its filled in
             if(!report.getErrorReport().isEmpty()){
                 em.persist(report);
@@ -85,20 +85,24 @@ public class SystemHelper implements SystemHelperRemote {
         }
     }
     
-    private ExceptionReportEntity allocateRoom(ReservationRecordEntity reservation, RoomTypeEntity type, ExceptionReportEntity report){
+    private ExceptionReportEntity allocateRoom(ReservationRecordEntity reservation, RoomTypeEntity type, ExceptionReportEntity report, Boolean upgraded){
         try{
             RoomEntity room = getAvailableRoom(type);
             reservationSessionBean.setAssignedRoom(room, reservation);
             return report;
         } catch (NoAvailableRoomException e) {
             try {
+                if(upgraded){
+                    throw new NoHigherRankException("No room available after upgrade.");
+                }
                 RoomTypeEntity nextType = getNextRank(type);
                 String error = "Allocation Exception: Reservation ID " + reservation.getId() + " - Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
                 report.setErrorReport(error);
                 System.err.println(error);
-                return allocateRoom(reservation, nextType, report);
+                return allocateRoom(reservation, nextType, report, true);
             } catch (NoHigherRankException ex) {
                 String error = "Allocation Exception: Reservation ID " + reservation.getId() +  " - No rooms available.";
+                System.err.println(error);
                 report.setErrorReport(error);
                 return report;
             }
