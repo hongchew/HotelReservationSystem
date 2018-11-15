@@ -23,6 +23,7 @@ import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import util.enumeration.IsOccupiedEnum;
 import util.enumeration.StatusEnum;
 import util.exception.NoAvailableRoomException;
@@ -54,9 +55,28 @@ public class SystemHelper implements SystemHelperRemote {
         List<RoomTypeEntity> roomTypes = q.getResultList();
         for(RoomTypeEntity r : roomTypes){
             AvailabilityRecordEntity avail = new AvailabilityRecordEntity(addDays(new Date(),365), r);
+            em.persist(avail);
+            em.flush();
             r.addNewAvailabilityRecord(avail);
         }
     }
+    
+    //remove the availability record of the day that had just ended so no backdated reservations can be made. 
+    @Schedule(hour = "0")
+    public void removeOldAvailRecordDaily(){
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        Date yesterday = cal.getTime();
+        Query q = em.createQuery("SELECT a FROM AvailabilityRecordEntity a WHERE a.availabiltyRecordDate =:yesterday");
+        q.setParameter("yesterday", yesterday, TemporalType.DATE);
+        List<AvailabilityRecordEntity> availabilityRecords = q.getResultList();
+        for(AvailabilityRecordEntity a : availabilityRecords){
+            RoomTypeEntity type = a.getRoomType();
+            type.getAvailabilityRecordEntities().remove(a);
+            em.remove(a);
+        }
+    }
+    
     
     private Date addDays(Date date, int i){
         Calendar cal = Calendar.getInstance();
@@ -93,14 +113,14 @@ public class SystemHelper implements SystemHelperRemote {
         } catch (NoAvailableRoomException e) {
             try {
                 if(upgraded){
-                    throw new NoHigherRankException("No room available after upgrade.");
+                    throw new NoAvailableRoomException("No room available after upgrade.");
                 }
                 RoomTypeEntity nextType = getNextRank(type);
                 String error = "Allocation Exception: Reservation ID " + reservation.getId() + " - Upgraded from " + reservation.getRoomType().getTypeName() + " to " + nextType.getTypeName();
                 report.setErrorReport(error);
                 System.err.println(error);
                 return allocateRoom(reservation, nextType, report, true);
-            } catch (NoHigherRankException ex) {
+            } catch (NoHigherRankException | NoAvailableRoomException ex) {
                 String error = "Allocation Exception: Reservation ID " + reservation.getId() +  " - No rooms available.";
                 System.err.println(error);
                 report.setErrorReport(error);

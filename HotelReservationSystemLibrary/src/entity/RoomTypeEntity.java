@@ -154,7 +154,7 @@ public class RoomTypeEntity implements Serializable {
         this.rooms = rooms;
     }
 
-    public List<AvailabilityRecordEntity> getAvailabilityRecordEntitiess() {
+    public List<AvailabilityRecordEntity> getAvailabilityRecordEntities() {
         return availabilityRecordEntitiess;
     }
  
