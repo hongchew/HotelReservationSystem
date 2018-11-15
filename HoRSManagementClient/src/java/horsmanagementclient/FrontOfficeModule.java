@@ -149,19 +149,24 @@ public class FrontOfficeModule {
     
     
     private void checkIn(){
-        System.out.println("Enter Email");
-        String email = sc.next();
+        
         try{
+            System.out.println("Enter Email");
+            String email = sc.next();
+        
             List<ReservationRecordEntity> reservations = roomReservationController.getReservationListByEmail(email);
             if(reservations.isEmpty()){
                 System.out.println("No reservations made for this guest today");
             }else{
+                System.out.println("****Checking In****");
+                System.out.println("===================");
                 for(ReservationRecordEntity r : reservations){
                     System.out.println("Reservation ID: " + r.getId() + "\n" +
-                                        r.getRoomType().getTypeName() + "\n");
+                                        r.getRoomType().getTypeName());
                     checkInRoom(r.getId());
+                    System.out.println("===================");
                 }
-                System.out.println("****All Rooms Checked In****");
+                System.out.println("****End of Check In****");
             }
         }catch(ConstraintViolationException e){
             System.err.println("Invalid email entered.");

@@ -137,7 +137,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
         if(!room.getRoomType().equals(reservation.getRoomType())){
             reservation.setCheckInTime(now);
             room.setOccupancy(IsOccupiedEnum.OCCUPIED);
-            throw new RoomUpgradeException("Assigned to Room" + room.getRoomNumber() + "Room upgraded to " + room.getRoomType().getTypeName());
+            throw new RoomUpgradeException("Assigned to Room " + room.getRoomNumber() + " - Room upgraded to " + room.getRoomType().getTypeName() +"\n");
         }
                   
         reservation.setCheckInTime(now);
