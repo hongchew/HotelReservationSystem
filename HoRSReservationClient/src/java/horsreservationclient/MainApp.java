@@ -212,6 +212,7 @@ public class MainApp {
         System.out.println("Enter reservation ID");
         Long resId = new Long(sc.nextInt());
         try {
+            System.out.println("\n****View Reservation Detail****");
             String details = roomReservationController.retrieveReservationDetails(resId);
             System.out.println(details);
         } catch (ReservationRecordNotFoundException | EntityMismatchException ex) {

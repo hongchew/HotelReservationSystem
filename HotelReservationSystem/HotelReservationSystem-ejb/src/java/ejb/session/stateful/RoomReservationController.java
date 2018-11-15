@@ -96,7 +96,7 @@ public class RoomReservationController implements RoomReservationControllerRemot
     public List<ReservationRecordEntity> getReservationListByEmail(String email){
         Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
-        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.guestEmail = :email AND r.startDate = :date");
+        Query q = em.createQuery("SELECT r FROM ReservationRecordEntity r WHERE r.guestEmail = :email AND r.startDate = :date AND r.checkInTime IS NULL");
         q.setParameter("email", email);
         q.setParameter("date", date);
 

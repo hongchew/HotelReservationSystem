@@ -121,7 +121,7 @@ public class HotelOperationModule {
         }
     }
     
-    private void createNewRoomType(){
+     private void createNewRoomType(){
         System.out.println("Enter name of new Room Type");
         sc.nextLine();
         String newTypeName = sc.nextLine();
@@ -133,7 +133,13 @@ public class HotelOperationModule {
         String newBeds = sc.nextLine();
         
         System.out.println("Enter capacity of " + newTypeName);
-        Integer capacity = sc.nextInt();
+        Integer capacity = null;
+        try {
+            capacity = sc.nextInt();
+        } catch (InputMismatchException e) {
+            System.err.println("Not a valid capacity. Retuning to menu.");
+            return;
+        }
         
         System.out.println("Enter amenities available in " + newTypeName);
         sc.nextLine();
@@ -150,8 +156,13 @@ public class HotelOperationModule {
             System.out.println("(" + i + ") " + r.getTypeName());
             i++;
         }*/
-        System.out.println("(" + i + ") Least Premium");
-        int newRank = sc.nextInt();
+        System.out.println("(" + i + ") === Add as Least Premium ===");
+        int newRank = 0;
+        try {
+            newRank = sc.nextInt();
+        } catch (InputMismatchException e) {
+            System.err.println("Invalid rank. Returning to menu.");
+        }
         if(newRank >= roomRanks.size()){
             newRank = roomRanks.size(); //least premium
         }else if (newRank < 0){
@@ -182,7 +193,13 @@ public class HotelOperationModule {
             return;
         }
         System.out.println("Input Room Type number to view/edit details or to delete");
-        int typeNum = sc.nextInt();
+        int typeNum = 0;
+        try {
+            typeNum = sc.nextInt();
+        } catch (InputMismatchException e) {
+            System.err.println("Invalid number, returning to main menu");
+            return;
+        }
         if(typeNum < 0 || typeNum >= roomTypes.size()){
             System.out.println("Invalid number, returning to main menu");
             return;
@@ -227,7 +244,13 @@ public class HotelOperationModule {
         System.out.println("Enter updated bed types for " + typeName);
         String newBeds = sc.nextLine();
         System.out.println("Enter updated capacity for " + typeName);
-        Integer newCap = sc.nextInt();
+        Integer newCap = null;
+        try {
+            newCap = sc.nextInt();
+        } catch (Exception e) {
+            System.err.println("Invalid capacity. Returning to menu.");
+            return;
+        }
 
         try{
             roomSessionBean.updateRoomType(typeName, newDescription, newBeds, newCap, newAmenities);
@@ -303,6 +326,8 @@ public class HotelOperationModule {
             System.out.println("\n****New Room " + floor + "-" + unit +" Created****");
         } catch (RoomTypeNotFoundException | NullPointerException ex) {
             System.err.println(ex.getMessage());
+        } catch (InputMismatchException e){
+            System.err.println("Invalid number entered.");
         }
         
     }
@@ -337,7 +362,7 @@ public class HotelOperationModule {
             }
             roomSessionBean.updateRoom(roomNumber, roomType.getTypeName(), status);
             System.out.println("\n****Room Updated****\n");
-        }catch(RoomNotFoundException | NullPointerException | RoomTypeNotFoundException e){
+        }catch(RoomNotFoundException | NullPointerException | InputMismatchException | RoomTypeNotFoundException e){
             System.err.println(e.getMessage());
             return;
         }
@@ -432,7 +457,13 @@ public class HotelOperationModule {
         System.out.println("\n****Create New Room Rate****");
         List<RoomTypeEntity> roomTypesList = viewAllRoomTypes();
         System.out.println("Select Room type");
-        int roomTypeIndex = sc.nextInt();
+        int roomTypeIndex = 0;
+        try {
+            roomTypeIndex = sc.nextInt();
+        } catch (InputMismatchException e) {
+            System.err.println("Invalid selection. Returning to menu.");
+            return;
+        }
         RoomTypeEntity roomType;
         if(roomTypeIndex < 0 || roomTypeIndex >= roomTypesList.size()){
             System.err.println("Invalid Room Type.");
@@ -496,7 +527,13 @@ public class HotelOperationModule {
         System.out.println("\n****View Room Rate Details****");
         List<RoomRateEntity> roomRates = viewAllRoomRates();
         System.out.println("Select number of Room Rate to view details");
-        int rateIndex = sc.nextInt();
+        int rateIndex = 0;
+        try {
+            rateIndex = sc.nextInt();
+        } catch (InputMismatchException e) {
+            System.err.println("Invalid selection. Returning to menu.");
+            return;
+        }
         if(rateIndex < 0 || rateIndex >= roomRates.size()){
             System.err.println("Invalid number. Please try again");
             return;

@@ -161,7 +161,7 @@ public class MainApp {
     
     public void doLogout(){
         currentEmployee = null;
-        System.out.println("Logout successful.");
+        System.out.println("Logout successful.\n");
     }
     
 }

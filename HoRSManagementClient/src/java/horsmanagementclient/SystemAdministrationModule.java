@@ -75,12 +75,12 @@ public class SystemAdministrationModule {
         System.out.println("Enter employee's name:");
         sc.nextLine();
         String name = sc.nextLine();
-        System.out.println("Enter username:");
+        System.out.println("\nEnter username:");
         String username = sc.nextLine();
-        System.out.println("Enter password:");
+        System.out.println("\nEnter password:");
         String password = sc.nextLine();
         
-        System.out.println("Create new employee as:\n(1)System Administrator \n(2)Operation Manager \n(3)Sales Manager \n(4)Guest Relation Officer \n(5)Cancel");
+        System.out.println("\nCreate new employee as:\n(1)System Administrator \n(2)Operation Manager \n(3)Sales Manager \n(4)Guest Relation Officer \n(5)Cancel");
         String response = sc.next();
         switch(response){
             case "1":
