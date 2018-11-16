@@ -78,8 +78,8 @@ public class RoomReservationController implements RoomReservationControllerRemot
     }
 
     @Override
-    public ReservationTicket searchRooms(Date startDate, Date endDate){
-        return reservationSessionBean.searchRooms(startDate, endDate);
+    public ReservationTicket searchRooms(Date startDate, Date endDate, Boolean isWalkIn){
+        return reservationSessionBean.searchRooms(startDate, endDate, isWalkIn);
     }
     
     @Override

@@ -34,7 +34,7 @@ public interface RoomReservationControllerRemote {
 
     public ArrayList<ReservationRecordEntity> retrieveAllReservation();
 
-    public ReservationTicket searchRooms(Date startDate, Date endDate);
+    public ReservationTicket searchRooms(Date startDate, Date endDate, Boolean isWalkIn);
 
     public ArrayList<ReservationRecordEntity> reserveRoom(ReservationTicket ticket);
 
@@ -47,5 +47,6 @@ public interface RoomReservationControllerRemote {
     public String checkOutRoom(String roomNumber) throws UnoccupiedRoomException, ReservationRecordNotFoundException;
 
     public void assignWalkInRoom(ArrayList<ReservationRecordEntity> reservations);
-    
+
+
 }

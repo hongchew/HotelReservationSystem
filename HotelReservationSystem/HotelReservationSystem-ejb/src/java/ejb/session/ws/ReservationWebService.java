@@ -57,7 +57,7 @@ public class ReservationWebService {
      * @return ReservationTicket with information of available room types
      */
     public ReservationTicketWrapper searchRoom(@WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate){
-        ReservationTicket reservationTicket = reservationSessionBean.searchRooms(startDate, endDate);
+        ReservationTicket reservationTicket = reservationSessionBean.searchRooms(startDate, endDate, false);
         return new ReservationTicketWrapper(reservationTicket);
     }
     

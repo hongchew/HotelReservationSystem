@@ -25,8 +25,8 @@ import util.objects.ReservationTicketWrapper;
 public interface ReservationSessionBeanLocal {
 
     public String retrieveReservationDetails(Long resId, Long guestId) throws ReservationRecordNotFoundException, EntityMismatchException;
-
-    public ReservationTicket searchRooms(Date startDate, Date endDate);
+    
+    public ReservationTicket searchRooms(Date startDate, Date endDate, Boolean isWalkIn);
 
     public ArrayList<ReservationRecordEntity> guestReserveRooms(ReservationTicket ticket, GuestEntity guest);
 
@@ -37,5 +37,7 @@ public interface ReservationSessionBeanLocal {
     public void setAssignedRoom(RoomEntity room, ReservationRecordEntity res);
 
     public ReservationTicket unwrapTicketWrapper(ReservationTicketWrapper wrapper);
+
+
     
 }

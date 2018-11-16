@@ -151,7 +151,7 @@ public class MainApp {
                 return null;
             }
             
-            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
+            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate, false);
             if(ticket.getAvailableRoomTypes().isEmpty()){
                 System.err.println("\nThere are no available rooms for your desired check in and check out date.\n");
                 return null;

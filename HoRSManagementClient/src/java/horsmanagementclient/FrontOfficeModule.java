@@ -77,7 +77,7 @@ public class FrontOfficeModule {
                 return null;
             }
             
-            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate);
+            ReservationTicket ticket = roomReservationController.searchRooms(startDate, endDate, true);
             if(ticket.getAvailableRoomTypes().isEmpty()){
                 System.err.println("\nThere are no available rooms for your desired check in and check out date.\n");
                 return null;

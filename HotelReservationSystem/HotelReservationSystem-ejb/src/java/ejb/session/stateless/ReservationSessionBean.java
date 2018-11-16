@@ -67,7 +67,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     }
     
     @Override
-    public ReservationTicket searchRooms(Date startDate, Date endDate){
+    public ReservationTicket searchRooms(Date startDate, Date endDate, Boolean isWalkIn){
         ReservationTicket reservationTicket = new ReservationTicket(startDate, endDate);
         Query q = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.status = :available");
         q.setParameter("available", StatusEnum.AVAILABLE);
@@ -90,7 +90,11 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                         break;
                     }else{
                         numRoomsRemaining = Math.min(numAvail, numRoomsRemaining);
-                        totalBill = totalBill.add(roomSessionBean.getRatePerNight(type, date));
+                        if(isWalkIn){
+                            totalBill = totalBill.add(roomSessionBean.getPublishedRatePerNight(type, date));
+                        }else{  //partner or guest 
+                            totalBill = totalBill.add(roomSessionBean.getRatePerNight(type, date));
+                        }
                         flag = true;
                     }
                 }catch(RoomTypeUnavailableException | RoomRateNotFoundException e){
