@@ -54,6 +54,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         ReservationRecordEntity res =  em.find(ReservationRecordEntity.class, resId);
         if(res == null){
             throw new ReservationRecordNotFoundException("Reservation Record not found");
+        }else if(res.getReservedByGuest() == null){
+            throw new EntityMismatchException("Guest Id provided does not match Guest Id in reservation record");
         }else if(!res.getReservedByGuest().getId().equals(guestId)){
             throw new EntityMismatchException("Guest Id provided does not match Guest Id in reservation record");
         }else{
