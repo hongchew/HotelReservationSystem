@@ -66,7 +66,6 @@ public class ReservationWebService {
      * @param ticketWrapper
      * @param partnerId
      * @param guestEmail
-     * @return ArrayList of ReservationRecordEntity created during reservation
      */
     public void partnerReserveRooms(@WebParam(name = "ticketWrapper") ReservationTicketWrapper ticketWrapper, @WebParam(name = "partnerId") Long partnerId, @WebParam(name = "guestEmail") String guestEmail){
         PartnerEntity partner = partnerSessionBean.retrievePartnerById(partnerId);

@@ -13,7 +13,5 @@ package ejb.session.singleton;
  */
 
 public interface InitialisationSessionBeanLocal {
-
-    public void postConstruct();
     
 }

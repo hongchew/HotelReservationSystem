@@ -64,7 +64,6 @@ public class InitialisationSessionBean implements InitialisationSessionBeanLocal
             employeeSessionBean.createNewOpsManager("operationmanager", "operationmanager", "password");
             employeeSessionBean.createNewSalesManager("salesmanager", "salesmanager", "password");
             employeeSessionBean.createNewGuestRelationsOffr("guestrelationsofficer", "guestrelationsofficer", "password");
-            partnerSessionBean.createNewPartner("Holiday.com", "holidaycom", "password");
             
             
             Date today = new Date();

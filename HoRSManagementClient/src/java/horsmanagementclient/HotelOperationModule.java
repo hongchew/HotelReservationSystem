@@ -210,6 +210,7 @@ public class HotelOperationModule {
                 
                 System.out.println("(1) Edit Details");
                 System.out.println("(2) Delete Room Type");
+                System.out.println("(3) Return");
                 String response = sc.next();
                 switch(response){
                     case "1":
@@ -228,6 +229,8 @@ public class HotelOperationModule {
                             System.err.println(ex.getMessage());
                         }
                         break;
+                    case "3":
+                        return;
                 }
             } catch (RoomTypeNotFoundException ex) {
                 System.out.println(ex.getMessage());

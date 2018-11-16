@@ -20,7 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
-import javax.validation.constraints.*;
 import util.enumeration.IsOccupiedEnum;
 import util.enumeration.StatusEnum;
 

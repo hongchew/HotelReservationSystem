@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.*;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.hibernate.validator.constraints.*;
 import util.enumeration.IsOccupiedEnum;
 import util.exception.EarlyCheckInUnavailableException;
 import util.exception.EntityMismatchException;

@@ -12,8 +12,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.validation.ConstraintViolationException;
 import util.exception.EarlyCheckInUnavailableException;
 import util.exception.ReservationRecordNotFoundException;

@@ -30,8 +30,10 @@ public class AvailabilityRecordEntity implements Serializable {
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date availabiltyRecordDate;
     
+    @Column(nullable = false)
     private Integer totalReservations;
     
     @ManyToOne

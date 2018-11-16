@@ -31,7 +31,6 @@ public class ReservationRecordEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotNull
     @OneToOne
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
